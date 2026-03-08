@@ -1,0 +1,34 @@
+site_name: 云计算技术实践
+site_description: 云端创世：从一行代码到游戏纪元
+
+theme:
+  name: material
+  language: zh # 设置为中文
+  features:
+    - navigation.tabs # 开启顶部导航栏
+    - navigation.sections # 开启侧边栏折叠
+
+nav:
+  - 首页: index.md
+  - 简介: intro.md
+  - 第一章: sec1.md
+  - 第二章: sec2.md
+  - 第三章: sec3.md
+  - 第四章: sec4.md
+  - 第五章: sec5.md
+  - 第六章: sec6.md
+  - 附录:
+    - 附录 A: AppendixA.md
+    - 附录 B: AppendixB.md
+    - 附录 C: AppendixC.md
+    - 附录 D: AppendixD.md
+    - 附录 E: AppendixE.md
+
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true # 开启标准的 $ 和 $$ 公式解析
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
