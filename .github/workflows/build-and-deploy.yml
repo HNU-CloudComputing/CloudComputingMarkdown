@@ -34,14 +34,14 @@ jobs:
             filename=$(basename -- "$file")
             filename="${filename%.*}"
             if [[ "$filename" != *"bak"* ]]; then
-              pandoc "$file" -f latex -t markdown -o "docs/${filename}.md" --wrap=none
+              pandoc "$file" -f latex -t markdown-multiline_tables-grid_tables-simple_tables -o "docs/${filename}.md" --wrap=none
             fi
           done
           
           for file in latex_source/appendix/*.tex; do
             filename=$(basename -- "$file")
             filename="${filename%.*}"
-            pandoc "$file" -f latex -t markdown -o "docs/${filename}.md" --wrap=none
+            pandoc "$file" -f latex -t markdown-multiline_tables-grid_tables-simple_tables -o "docs/${filename}.md" --wrap=none
           done
 
       - name: 🧹 运行全能 Markdown 处理器
