@@ -30,6 +30,7 @@ jobs:
       - name: 🔄 运行 Pandoc 转换 (LaTeX -> Markdown)
         run: |
           mkdir -p docs
+          cp -r latex_source/figures docs/figures
           for file in latex_source/section/*.tex; do
             filename=$(basename -- "$file")
             filename="${filename%.*}"

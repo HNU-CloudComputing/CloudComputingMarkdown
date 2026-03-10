@@ -1,0 +1,22 @@
+\begin{table}[htbp]
+    \centering
+    \setlength{\tabcolsep}{3pt} % 进一步压缩列间距
+    \renewcommand{\arraystretch}{1.2} % 增加行高，提升可读性
+    \begin{tabular}{|c|c|c|p{2.5cm}|p{3cm}|}
+      \hline
+      阶段 & 对应章节 & 核心架构形态 & 能力目标 & 场景类比 \\
+      \hline
+      \multirow{2}{*}{原型阶段} & \multirow{2}{*}{第二章} & \multirow{2}{*}{单体架构} & 实现双人对战 & 可竞技的单跑道 \\
+      \hline
+      \multirow{2}{*}{ 并发优化} & \multirow{2}{*}{第三章} & \multirow{2}{*}{并发单体架构} & 支持多人对战 & 可容纳多人的单跑道 \\
+      \hline
+      \multirow{2}{*}{分布式阶段} & \multirow{2}{*}{第四章} & \multirow{2}{*}{多服务器架构} & 支持多人多图 & 数据一致的多跑道 \\
+      \hline
+      \multirow{2}{*}{容器化阶段} & \multirow{2}{*}{第五章} & \multirow{2}{*}{容器化集群架构} & 自动化部署和弹性伸缩 & 弹性智能体育场 \\
+      \hline
+      % \multirow{2}{*}{原理深潜} & \multirow{2}{*}{第六章} & \multirow{2}{*}{云原生原理体系} & 理解隔离、调度、治理与安全机理 & 拆解并调校整套战斗系统 \\
+      % \hline
+    \end{tabular}
+    \caption{架构演进图}
+    \label{tab:architecture_evolution}
+  \end{table}
