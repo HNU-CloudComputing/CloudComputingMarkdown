@@ -31,6 +31,8 @@ jobs:
         run: |
           mkdir -p docs
           cp -r latex_source/figures docs/figures
+
+          cd latex_source
           for file in latex_source/section/*.tex; do
             filename=$(basename -- "$file")
             filename="${filename%.*}"

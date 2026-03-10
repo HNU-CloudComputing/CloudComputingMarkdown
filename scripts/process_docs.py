@@ -8,34 +8,32 @@ def process_markdown_file(filepath):
     # 1. 修复被错误转义的双引号
     content = content.replace(r'\"', '"')
 
-    # 2. 清理各类无用标签、失效链接和外壳
-    # 彻底清理 ::: figure* 和单独的 :::
-    content = re.sub(r'^:::\s*figure\*?.*?\n', '', content, flags=re.MULTILINE)
-    content = re.sub(r'^:::\s*\n', '', content, flags=re.MULTILINE)
-    # 清理标题末尾或正文中的 {#id} (解决 {#sec:dockerfile} 问题)
-    content = re.sub(r'\s*\{#[^\}]+\}', '', content)
-    # 清理图片属性 {width=...}
-    content = re.sub(r'\{width=[^\}]+\}', '', content)
-    # 彻底干掉底层的 {reference-type="ref" ...} 属性
-    content = re.sub(r'\{reference-type="ref"[^\}]+\}', '', content)
-    # 清理 Pandoc 生成的空锚点链接，例如 [](#fig:chapter5-2)
-    content = re.sub(r'\[\s*\]\(#[^\)]+\)', '', content)
-    # 清理 Pandoc 暴露的纯文本标签，例如 [tab:architecture_evolution] 或 [sec:appendix]
-    content = re.sub(r'\[(fig|tab|sec):[^\]]+\]', '', content)
+    # 2. 清理各类无用标签、外壳和图片属性
+    # 【核心修复】：彻底清理所有 Pandoc 产生的块级边界，绝不留患
+    content = re.sub(r'^:::\s*[a-zA-Z0-9_\*]*\s*\n', '', content, flags=re.MULTILINE)
     
-    # 智能修复因删除标签而产生的多余空格和微小语病
+    content = re.sub(r'\s*\{#[^\}]+\}', '', content)
+    content = re.sub(r'\{width=[^\}]+\}', '', content)
+
+    # 清理交叉引用残留
+    content = re.sub(r'\{reference-type="ref"[^\}]+\}', '', content)
+    content = re.sub(r'\[\s*\]\(#[^\)]+\)', '', content)
+    content = re.sub(r'\[(fig|tab|sec):[^\]]+\]', '', content)
     content = re.sub(r'如图\s+所示', '如图所示', content)
     content = re.sub(r'如表\s+所示', '如表所示', content)
     content = re.sub(r'附录\s+的', '附录中的', content)
 
-    # 3. 转换 Pandoc 的独立表格标题
-    # Pandoc 生成的 Pipe 表格底部会有 ": 表格标题"，将其转为居中的标准文字
+    # 3. 智能区分代码块标题和表格标题
+    # 【核心修复】：如果是 tcolorbox 产生的代码块标题，转为漂亮的加粗文字
+    content = re.sub(r'^:\s+([^\n]+)\n+(?=```)', r'**\1**\n\n', content, flags=re.MULTILINE)
+    
+    # 剩下的才是真正的表格标题，严格限制冒号后面必须有空格，杜绝误伤
     def caption_replacer(match):
         caption_text = match.group(1).strip()
         return f'\n<center style="color: #888; font-size: 0.9em;">表：{caption_text}</center>\n'
-    content = re.sub(r'^\s*:\s*(.+?)$', caption_replacer, content, flags=re.MULTILINE)
+    content = re.sub(r'^:\s+([^\n]+)$', caption_replacer, content, flags=re.MULTILINE)
 
-    # 4. 修复代码块 (彻底支持所有格式)
+    # 4. 修复代码块 (支持所有格式)
     content = re.sub(r'```[a-zA-Z0-9_-]*\s*\n(```[^\n]*\n.*?)\n```\s*\n```', r'\n\n\1\n```\n\n', content, flags=re.DOTALL)
 
     def code_replacer(match):
@@ -55,14 +53,13 @@ def process_markdown_file(filepath):
     content = re.sub(r'^\[\s*[^\]]*language=([a-zA-Z0-9_-]+)[^\]]*\]\s*\n(.*?)(?=\n{2,}|\n:::|\Z)',
                      plaintext_code_replacer, content, flags=re.MULTILINE | re.DOTALL)
 
-    # 5. 精准修复数学公式 (已彻底修复 f-string 报错！)
+    # 5. 精准修复数学公式
     content = content.replace(r'\$', '___ESCAPED_DOLLAR___')
     def math_replacer(match):
         block_math, inline_math = match.group(1), match.group(2)
         if block_math is not None:
             return f"\n\n$$\n{block_math.strip()}\n$$\n\n"
         elif inline_math is not None:
-            # 兼容低版本 Python：正则运算移出 f-string
             cleaned = inline_math.strip().replace('\n', ' ')
             cleaned = re.sub(r'\s+', ' ', cleaned)
             return f"${cleaned}$"
