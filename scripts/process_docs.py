@@ -16,9 +16,17 @@ def process_markdown_file(filepath):
     content = re.sub(r'\s*\{#[^\}]+\}', '', content)
     # 清理图片属性 {width=...}
     content = re.sub(r'\{width=[^\}]+\}', '', content)
-    # 清理失效的空链接，例如 如图 [](#fig:chapter5-4) 所示 -> 如图 所示
-    content = re.sub(r'\[[^\]]*\]\(#(fig|tab|sec):[^\)]+\)', '', content)
-    content = re.sub(r'\[fig:[^\]]+\]', '', content)
+    # 彻底干掉底层的 {reference-type="ref" ...} 属性
+    content = re.sub(r'\{reference-type="ref"[^\}]+\}', '', content)
+    # 清理 Pandoc 生成的空锚点链接，例如 [](#fig:chapter5-2)
+    content = re.sub(r'\[\s*\]\(#[^\)]+\)', '', content)
+    # 清理 Pandoc 暴露的纯文本标签，例如 [tab:architecture_evolution] 或 [sec:appendix]
+    content = re.sub(r'\[(fig|tab|sec):[^\]]+\]', '', content)
+    
+    # 智能修复因删除标签而产生的多余空格和微小语病
+    content = re.sub(r'如图\s+所示', '如图所示', content)
+    content = re.sub(r'如表\s+所示', '如表所示', content)
+    content = re.sub(r'附录\s+的', '附录中的', content)
 
     # 3. 转换 Pandoc 的独立表格标题
     # Pandoc 生成的 Pipe 表格底部会有 ": 表格标题"，将其转为居中的标准文字
