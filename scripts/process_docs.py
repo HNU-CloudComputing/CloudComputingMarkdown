@@ -127,7 +127,10 @@ def fix_math_formulas(content):
         if block_math is not None:
             return f"\n\n$$\n{block_math.strip()}\n$$\n\n"
         elif inline_math is not None:
-            return f"${re.sub(r'\s+', ' ', inline_math.strip().replace(chr(10), ' '))}$"
+            cleaned = inline_math.strip().replace('\n', ' ')
+            cleaned = re.sub(r'\s+', ' ', cleaned)
+            return f"${cleaned}$"
+            
     content = re.sub(r'\$\$(.*?)\$\$|\$([^\$]+?)\$', replacer, content, flags=re.DOTALL)
     return content.replace('___ESCAPED_DOLLAR___', r'\$')
 
