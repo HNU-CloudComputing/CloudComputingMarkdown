@@ -8,12 +8,15 @@ def process_markdown_file(filepath):
     # 1. 修复被错误转义的双引号
     content = content.replace(r'\"', '"')
 
-    # 2. 清理各类无用标签、外壳和图片属性
-    # 【核心修复】：彻底清理所有 Pandoc 产生的块级边界，绝不留患
-    content = re.sub(r'^:::\s*[a-zA-Z0-9_\*]*\s*\n', '', content, flags=re.MULTILINE)
-    
+    # 2. 彻底清理所有的 Pandoc Div 边界 (:::)，绝不留患
+    content = re.sub(r'^:::.*$', '', content, flags=re.MULTILINE)
+
+    # 3. 清理各类无用标签、外壳、图片属性以及 HTML 乱码
     content = re.sub(r'\s*\{#[^\}]+\}', '', content)
     content = re.sub(r'\{width=[^\}]+\}', '', content)
+    # 彻底干掉 Pandoc 生成的 {=html} 乱码
+    content = re.sub(r'\s*\{=html\}', '', content)
+    content = re.sub(r'\{=html\}', '', content)
 
     # 清理交叉引用残留
     content = re.sub(r'\{reference-type="ref"[^\}]+\}', '', content)
@@ -23,19 +26,15 @@ def process_markdown_file(filepath):
     content = re.sub(r'如表\s+所示', '如表所示', content)
     content = re.sub(r'附录\s+的', '附录中的', content)
 
-    # 3. 智能区分代码块标题和表格标题
-    # 【核心修复】：如果是 tcolorbox 产生的代码块标题，转为漂亮的加粗文字
+    # 4. 智能区分代码块标题和表格标题
     content = re.sub(r'^:\s+([^\n]+)\n+(?=```)', r'**\1**\n\n', content, flags=re.MULTILINE)
-    
-    # 剩下的才是真正的表格标题，严格限制冒号后面必须有空格，杜绝误伤
     def caption_replacer(match):
         caption_text = match.group(1).strip()
-        return f'\n<center style="color: #888; font-size: 0.9em;">表：{caption_text}</center>\n'
+        return f'\n\n<center style="color: #888; font-size: 0.9em;">表：{caption_text}</center>\n\n'
     content = re.sub(r'^:\s+([^\n]+)$', caption_replacer, content, flags=re.MULTILINE)
 
-    # 4. 修复代码块 (支持所有格式)
+    # 5. 修复代码块
     content = re.sub(r'```[a-zA-Z0-9_-]*\s*\n(```[^\n]*\n.*?)\n```\s*\n```', r'\n\n\1\n```\n\n', content, flags=re.DOTALL)
-
     def code_replacer(match):
         attr, code = match.group(1), match.group(2)
         lang_match = re.search(r'language="?([a-zA-Z0-9_-]+)"?', attr)
@@ -45,15 +44,19 @@ def process_markdown_file(filepath):
             lang = class_match.group(1) if class_match and 'numberLines' not in attr else ""
         return f"\n\n```{lang}\n{code}\n```\n\n"
     content = re.sub(r'```\s*[\{\[](.*?)[\}\]]\n(.*?)\n```', code_replacer, content, flags=re.DOTALL)
-
+    
     def plaintext_code_replacer(match):
         lang = match.group(1)
         code = match.group(2).strip()
         return f"\n\n```{lang}\n{code}\n```\n\n"
-    content = re.sub(r'^\[\s*[^\]]*language=([a-zA-Z0-9_-]+)[^\]]*\]\s*\n(.*?)(?=\n{2,}|\n:::|\Z)',
-                     plaintext_code_replacer, content, flags=re.MULTILINE | re.DOTALL)
+    content = re.sub(r'^\[\s*[^\]]*language=([a-zA-Z0-9_-]+)[^\]]*\]\s*\n(.*?)(?=\n{2,}|\Z)', plaintext_code_replacer, content, flags=re.MULTILINE | re.DOTALL)
 
-    # 5. 精准修复数学公式
+    # 6. 表格强制隔离舱 (彻底解决表格变成纯文本的问题)
+    def table_padder(match):
+        return f"\n\n{match.group(1)}\n\n"
+    content = re.sub(r'(^\|[^\n]*(?:\n\|[^\n]*)*)', table_padder, content, flags=re.MULTILINE)
+
+    # 7. 精准修复数学公式
     content = content.replace(r'\$', '___ESCAPED_DOLLAR___')
     def math_replacer(match):
         block_math, inline_math = match.group(1), match.group(2)
@@ -66,7 +69,7 @@ def process_markdown_file(filepath):
     content = re.sub(r'\$\$(.*?)\$\$|\$([^\$]+?)\$', math_replacer, content, flags=re.DOTALL)
     content = content.replace('___ESCAPED_DOLLAR___', r'\$')
 
-    # 6. 压缩多余空行
+    # 8. 压缩多余空行
     content = re.sub(r'\n{3,}', '\n\n', content)
 
     with open(filepath, 'w', encoding='utf-8') as f:
