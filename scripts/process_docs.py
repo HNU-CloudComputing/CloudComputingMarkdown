@@ -115,10 +115,11 @@ def main():
 
     count = 0
     for root, dirs, files in os.walk(target_dir):
-        if file.endswith(".md"):
-            process_markdown_file(os.path.join(root, file))
-            print(f"  [✓] 成功处理: {file}")
-            count += 1
+        for file in files:    
+            if file.endswith(".md"):
+                process_markdown_file(os.path.join(root, file))
+                print(f"  [✓] 成功处理: {file}")
+                count += 1
             
     print(f"\n🎉 共深度清洗了 {count} 个文件。")
 
