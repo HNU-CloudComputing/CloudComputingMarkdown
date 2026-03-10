@@ -1,0 +1,59 @@
+name: Test LaTeX to MkDocs CI/CD
+
+# 1. 触发条件：只在测试分支触发，绝不影响 main
+on:
+  push:
+    branches:
+      - test-cicd
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 拉取仓库代码
+        uses: actions/checkout@v3
+
+      - name: ⚙️ 安装 Pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
+      - name: 🐍 配置 Python 环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 📦 安装 MkDocs 及主题
+        run: |
+          pip install mkdocs-material
+          pip install pymdown-extensions
+
+      - name: 🔄 运行 Pandoc 转换 (LaTeX -> Markdown)
+        run: |
+          mkdir -p docs
+          for file in latex_source/section/*.tex; do
+            filename=$(basename -- "$file")
+            filename="${filename%.*}"
+            if [[ "$filename" != *"bak"* ]]; then
+              pandoc "$file" -f latex -t gfm -o "docs/${filename}.md" --wrap=none
+            fi
+          done
+          
+          for file in latex_source/appendix/*.tex; do
+            filename=$(basename -- "$file")
+            filename="${filename%.*}"
+            pandoc "$file" -f latex -t gfm -o "docs/${filename}.md" --wrap=none
+          done
+
+      - name: 🧹 运行全能 Markdown 处理器
+        run: python scripts/process_docs.py
+
+      # 2. 核心改变：只生成静态文件，绝对不推送到 gh-pages 分支！
+      - name: 🏗️ 仅构建静态网页
+        run: mkdocs build
+
+      # 3. 新增步骤：把生成的网页打成压缩包，让您可以下载预览
+      - name: 📦 上传网页构建产物 (Artifacts)
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-site-build
+          path: site/

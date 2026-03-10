@@ -1,0 +1,188 @@
+\section{科研初体验}
+\label{sec:appendix-research-lab}
+
+本附录面向科研初学者，目标是用可在本地复现的小问题，体验一次完整的科研闭环：提出问题、设计方法、观察结果、形成下一步假设。每个实验都强调思想与方法，不追求工程级完整实现。
+
+\subsection{实验1：CFS节流与游戏帧率的关系}
+
+\subsubsection{问题背景}
+第6.1.2节提到CFS节流悖论：容器整体CPU利用率看起来不高，但业务线程仍会被限速。对实时游戏循环来说，这种限速可能直接表现为帧间隔抖动，影响操作手感与稳定性，因此值得做定量研究。
+
+\subsubsection{核心思路}
+构造一个固定Tick循环，目标帧间隔16\,ms。在不同的\texttt{cpu.max}配置下运行相同负载，记录每一帧真实间隔，并用CDF观察尾部劣化。进一步增加突发线程数，观察节流触发时机变化。
+
+\subsubsection{关键步骤}
+\begin{enumerate}
+\item 编写固定Tick循环，逻辑开销尽量稳定，每帧记录开始与结束时间。
+\item 用cgroups v2配置多组\texttt{cpu.max}，例如\texttt{100000 100000}、\texttt{50000 100000}、\texttt{20000 100000}。
+\item 设计突发线程场景，例如主循环外增加2、4、8个短时CPU burst线程。
+\item 每组运行至少5分钟，保存帧间隔序列。
+\item 计算P50、P95、P99和最大值，并绘制帧间隔CDF。
+\end{enumerate}
+
+\subsubsection{关键接口伪代码}
+\begin{tcolorbox}[title=游戏Tick循环与帧间隔记录]
+\begin{lstlisting}[style=codeblock, language=go]
+target := 16 * time.Millisecond
+for {
+    t0 := time.Now()
+    updateGameLogic()
+    dt := time.Since(t0)
+    logFrameInterval(dt)
+    time.Sleep(max(0, target-dt))
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+\subsubsection{预期观察}
+quota越紧，帧间隔CDF尾部越厚，P99和最大帧时间上升明显。突发线程越多，节流更早出现，周期性卡顿更明显。平均CPU利用率仍可能不高，但帧稳定性已显著恶化。
+
+\subsubsection{延伸方向}
+对比Kubernetes中burstable与guaranteed两类QoS对应容器的帧抖动表现，讨论调度与限流策略对实时业务的影响。
+
+\subsection{实验2：CNI插件对游戏延迟的影响}
+
+\subsubsection{问题背景}
+第6.2.4节讨论了Flannel、Calico、Cilium路径差异。游戏业务对延迟和抖动敏感，网络插件选型会影响状态同步与操作反馈，因此需要低成本量化比较。
+
+\subsubsection{核心思路}
+在同构环境下分别部署三种CNI，使用\texttt{iperf3}测吞吐，使用自定义UDP ping测RTT分布，重点看平均值与P99稳定性。
+
+\subsubsection{关键步骤}
+\begin{enumerate}
+\item 使用3个单节点集群（可用kind）保持CPU、内核与容器运行时一致。
+\item 每个集群部署相同echo服务与相同资源请求限制。
+\item 执行跨Pod网络测试，记录\texttt{iperf3}吞吐和UDP RTT序列。
+\item 每组包大小至少测3档，例如64\,B、512\,B、1200\,B。
+\item 汇总平均RTT、P95、P99与抖动标准差。
+\end{enumerate}
+
+\subsubsection{关键接口伪代码}
+\begin{tcolorbox}[title=CNI对比测试流程]
+\begin{lstlisting}[style=codeblock, language=go]
+for _, cni := range []string{"flannel", "calico", "cilium"} {
+    cluster := deployCluster(cni)
+    deploySvc(cluster, "echo-server")
+    bw := runIperf3(cluster)
+    rtt := runUDPPing(cluster, pktSize)
+    saveMetrics(cni, bw, rtt)
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+\subsubsection{预期观察}
+Overlay路径相对underlay常出现额外毫秒级开销，可在1到3\,ms区间内观察到差异。eBPF数据路径在P99上通常更稳定，长尾抖动较小。包越大，路径差异越容易放大。
+
+\subsubsection{延伸方向}
+将包大小分布改为游戏状态同步包模型，按真实业务包型评估CNI选型对体验的影响。
+
+\subsection{实验3：HPA vs 预测式扩缩容的响应对比}
+
+\subsubsection{问题背景}
+第6.4.2到6.4.3节指出HPA天然存在观测与生效滞后。对周期性流量，若只靠被动扩容，容易在峰值早期触发SLO违约，因此值得探索预测式预热。
+
+\subsubsection{核心思路}
+用历史或合成周期流量回放，构造两种策略：纯HPA、LSTM预测加预热。比较SLO违约率与资源浪费率，验证预测是否在周期场景中更有优势。
+
+\subsubsection{关键步骤}
+\begin{enumerate}
+\item 准备流量曲线，包含明显日周期和少量随机噪声。
+\item 基于短窗口训练轻量LSTM，预测未来5到10分钟流量。
+\item 策略A仅用HPA阈值触发，策略B根据预测提前扩容。
+\item 在同一回放输入下记录P95延迟、SLO违约率和闲置资源比例。
+\item 对比两策略在峰值前后时间段的行为差异。
+\end{enumerate}
+
+\subsubsection{关键接口伪代码}
+\begin{tcolorbox}[title=预测式扩缩容回放框架]
+\begin{lstlisting}[style=codeblock, language=python]
+for t in replay_timeline:
+    pred = model.predict(window(t))
+    if pred > threshold:
+        scale_to(capacity_from(pred))
+    else:
+        run_hpa_tick(current_metrics(t))
+    record_slo_and_cost(t)
+\end{lstlisting}
+\end{tcolorbox}
+
+\subsubsection{预期观察}
+在周期性负载下，预测式方案可明显降低SLO违约率。纯HPA在峰值起始阶段常出现短时拥塞与延迟尖峰。预测式可能带来一定预留成本，但整体收益通常更好。
+
+\subsubsection{延伸方向}
+引入活动日历、节假日等外生特征，研究对非周期突发流量的补偿能力。
+
+\subsection{实验4：采样率对故障发现能力的影响}
+
+\subsubsection{问题背景}
+第6.6.3节讨论了追踪采样策略。生产系统中常因成本限制降低采样率，但低采样可能延迟故障感知，特别是低概率错误场景，需做可量化评估。
+
+\subsubsection{核心思路}
+构建三层调用链模拟器，在最底层注入0.1\%错误。对比头采样与尾采样在不同采样率下发现首个错误Trace所需时间，并结合存储成本分析权衡。
+
+\subsubsection{关键步骤}
+\begin{enumerate}
+\item 实现A调用B、B调用C的三层请求链，固定请求速率。
+\item 在C层注入0.1\%随机错误并写入Trace标签。
+\item 设置1\%、5\%、10\%头采样，以及错误优先的尾采样策略。
+\item 多轮重复实验，统计发现首个错误Trace的平均时间与方差。
+\item 估算各策略Trace写入量，绘制发现能力与成本关系图。
+\end{enumerate}
+
+\subsubsection{关键接口伪代码}
+\begin{tcolorbox}[title=采样策略对比模拟器]
+\begin{lstlisting}[style=codeblock, language=go]
+for req := range requestStream(rps) {
+    trace := callChain(A, B, C, errorProb)
+    keep := headSample(trace, rate) || tailKeepIfError(trace)
+    if keep { store(trace) }
+    if firstErrorSeen(trace) { recordDetectionTime() }
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+\subsubsection{预期观察}
+低头采样率下，首个错误Trace可能需要较长时间才能出现。尾采样在错误场景中的发现延迟更稳定，对基础采样率不那么敏感。成本随采样率上升近似线性增长，但发现能力提升存在边际递减。
+
+\subsubsection{延伸方向}
+把存储成本、检索时延和发现时延共同纳入，构建更完整的Pareto前沿分析。
+
+\subsection{实验5：混沌实验：Pod故障对游戏会话的影响}
+
+\subsubsection{问题背景}
+第6.6.4节强调混沌工程的稳态假设。游戏会话依赖长连接，单个Pod故障可能导致玩家感知中断。该实验帮助读者把可用性从指标转化为用户感知时长。
+
+\subsubsection{核心思路}
+在本地K8s集群部署WebSocket echo服务模拟房间会话，使用chaos-mesh随机杀Pod。客户端持续心跳，记录断连时长与重连成功率，比较不同可靠性配置的效果。
+
+\subsubsection{关键步骤}
+\begin{enumerate}
+\item 部署3副本WebSocket echo服务，暴露统一访问入口。
+\item 客户端维持长连接，每秒发送心跳并记录超时。
+\item 注入PodKill故障，先测无PDB场景，再测有PDB场景。
+\item 增加优雅下线配置（\texttt{preStop}钩子与连接排空），重复同样故障注入。
+\item 统计断连时长分布、重连成功率与会话恢复时间。
+\end{enumerate}
+
+\subsubsection{关键接口伪代码}
+\begin{tcolorbox}[title=混沌实验客户端心跳检测]
+\begin{lstlisting}[style=codeblock, language=go]
+conn := connectWS(addr)
+for {
+    sendHeartbeat(conn)
+    if !receivePong(conn, timeout) {
+        tDown := time.Now()
+        conn = reconnectWithBackoff(addr)
+        logInterrupt(time.Since(tDown))
+    }
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+\subsubsection{预期观察}
+无PDB时，中断时长与失败重连更常见。加入PDB与优雅下线后，中断可收敛到秒级。在同样故障强度下，恢复路径优化能显著提升会话连续性。
+
+\subsubsection{延伸方向}
+加入\texttt{preStop}钩子与连接排空机制的更精细配置，比较中断分布尾部是否继续收敛，并分析对峰值期间容量的影响。
+
+\newpage

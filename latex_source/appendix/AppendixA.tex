@@ -1,0 +1,243 @@
+\section{蓝图落地：定义核心模型与协议}
+% \paragraph{本节目标} 在选定技术栈后，我们将具体定义游戏的核心数据结构和通信方式，这是第二章编码的基础。 在本节中，我们应该带领读者构造一个小型架构开发文档并引导读者思考两个核心问题：
+在完成技术栈选型后，本节将具体定义游戏的核心数据结构和客户端与服务器之间的通信协议，这是第二章编码实现的基础。通过本节内容，读者将能够构建一个小型的架构开发文档，并理解游戏开发中两个核心问题：
+% \begin{enumerate}
+%     \item 在游戏的过程中和结束后 数据应该被怎么存储？零散的存储是否可行？需要定义规范化的数据结构（借用结构体的概念）
+%     \item 是否要规定一种客户端与服务端之间的“交通规则”？ 不然通信的过程数据太混乱了（比如登录需要发送什么数据，以什么样的格式？ 移动又需要发送什么？ 服务器需要按照定义的规则来解析）
+%     \item 需要强调 定义这些是开发一个项目的基本前提，规范化的开发可以加强开发效率 有效避免最后因为逻辑不清晰、架构混乱而导致的查错查不清、Debug不出来的尴尬处境。
+% \end{enumerate}
+\begin{enumerate}
+    \item 数据存储规范：在游戏的过程中和结束后数据应该被怎么存储？零散的存储是否可行？为保证系统的可维护性与扩展性，需要设计规范化的数据结构，可借鉴结构体的概念进行组织。
+    \item 通信协议设计：是否要规定一种客户端与服务端之间的“交通规则”？若无统一规范，数据传输过程容易混乱，例如登录时需要发送哪些信息、使用何种格式，移动操作又需要哪些数据。服务器必须按照既定规则进行解析，以确保系统运行的正确性。
+\end{enumerate}
+明确数据结构和通信协议是项目开发的基本前提。规范化开发能够显著提高开发效率，并有效避免在项目后期因逻辑不清晰或架构混乱而导致的调试困难或错误难以定位的情况。
+% \paragraph{数据} 关于数据结构，我们要引导读者区分“瞬时”与“永恒”。我们会解释为什么玩家数据需要被分为两部分：“Player 实时结构”（如 PlayerID, HP, Position），这是他们在游戏世界中的即时状态，我们会将其设计为 Go struct 并（在未来）存入高速的 Redis；以及“Player 持久化结构”，即玩家的“存档”。在讨论后者时，我们将重点介绍一个“巧妙的设计”：使用 PostgreSQL 的 jsonb 类型来存储玩家的弹性数据（如装备、技能列表）。我们要向读者解释，这样做能让我们在未来增加新装备时，避免痛苦的数据库表结构变更。
+\paragraph{数据} 在数据结构设计方面，读者需区分“瞬时数据”与“持久数据”:
+\begin{itemize}
+    \item Player 实时结构：玩家在游戏世界中的即时状态，例如 PlayerID、血量（HP）、坐标（Position）等。此类数据应设计为 Go 语言的 struct，并在运行时存入高速缓存系统（如 Redis），以满足高频读写需求。
+    \item Player 持久化结构：记录玩家的长期数据，例如装备、技能列表等。为提高系统弹性，本系统建议使用 PostgreSQL 的 jsonb 类型存储这类弹性数据，从而在未来新增装备或技能时，无需频繁修改数据库表结构，避免因数据库的表结构变更而带来过高的开发成本和风险。
+\end{itemize}
+% \paragraph{通信协议} 
+% 为了简化系统实现，我们采用 JSON 作为通用数据交换格式。我们约定统一的封装格式如下：
+\paragraph{通信协议} 
+为了简化系统实现，本系统采用 JSON 作为通用数据交换格式，约定统一的封装格式如下：
+
+\begin{tcolorbox}[title=统一消息格式]
+\begin{verbatim}
+{
+  "type": "MESSAGE_TYPE",
+  "payload": {
+    // 具体消息内容
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+
+\subsection{消息类型(type)定义}
+
+基于上述格式，本小节将定义第二章“双人对决”所需的最小消息集
+
+\paragraph{客户端到服务端消息 (C2S)}
+\begin{itemize}
+    \item \textbf{C2S\_Login}: 用户登录消息
+        
+        当玩家打开游戏并尝试登陆服务器时，客户端向服务器发送登陆申请。登陆消息采用用户名+密码的明文方式进行传输，请求服务器验证身份并加入游戏世界。用户登录消息格式如下：
+\begin{tcolorbox}[title=C2S\_Login]
+\begin{verbatim}
+{
+  "type": "C2S_Login",
+  "payload": {
+    "username": "username",
+    "passwd": "password"
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+    \item \textbf{C2S\_Move}: 玩家移动消息 
+
+        玩家移动的方式有两种，使用键盘wasd控制上下左右，或者使用鼠标点击地图进行的moba式移动。
+        玩家使用方向键移动角色时，客户端每帧向服务器同步实时坐标和移动方向，通知服务器校验合法性并同步给其他玩家。使用方向键盘移动角色的消息样例如下：
+\begin{tcolorbox}[title=C2S\_Move]
+\begin{verbatim}
+{
+  "type": "C2S_Move",
+  "payload": {
+    "uid": "player552",
+    "inputDevice": "keyboard",
+    "pos": {
+      "x": 12.2,
+      "y": 13.5
+    },
+    "direction": "right",
+    "timestamp": 1111100045
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+
+        玩家使用鼠标进行移动时，点击地图的一个位置，在客户端本地计算移动路径后，将整条路径上的坐标列表发送给服务器，请求服务器确认并同步路径。使用鼠标移动角色的消息样例如下：
+\begin{tcolorbox}[title=C2S\_Move]
+\begin{verbatim}
+{
+  "type": "C2S_Move",
+  "payload": {
+  	"uid": "player552",
+    "inputDevice": "mouse",
+    "path": [
+      {"x": 15.8, "y": 8.3},
+      {"x": 17.8, "y": 8.5},
+      {"x": 18.0, "y": 9.0}
+    ],
+    "timestamp": 1231128344
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+
+    \item \textbf{C2S\_FightRequest}: 发起挑战消息
+
+        发起对战请求需要请求方提供要挑战的角色的ID和自己的ID并发送给服务器。发起挑战的消息样例如下：
+\begin{tcolorbox}[title=C2S\_FightRequest]
+\begin{verbatim}
+{
+  "type": "C2S_FightRequest",
+  "payload": {
+    "uid": "player552",
+    "targetId": "player554"
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+
+    \item \textbf{C2S\_FightResponse}: 响应挑战消息  
+
+        响应对战请求需要响应方提供响应者和自己的ID，并返回响应结果，即同意与否。响应挑战的消息样例如下：
+\begin{tcolorbox}[title=C2S\_FightResponse]
+\begin{verbatim}
+{
+  "type": "C2S_FightResponse",
+  "payload": {
+    "uid": "player554",
+    "resopnseId": "player552",
+    "accept": true
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+
+    
+\end{itemize}
+
+\paragraph{服务端到客户端消息 (S2C)}
+\begin{itemize}
+    \item \textbf{S2C\_LoginSuccess}: 登录成功响应
+
+        当服务器接收到登陆信息后，进行验证并将用户进入世界的初始状态返回给用户，包含用户的ID，位置以及世界状态。其中，世界状态包含了在地图中的其他玩家的ID以及位置信息。登陆成功的样例如下：
+\begin{tcolorbox}[title=S2C\_LoginSuccess]
+\begin{verbatim}
+{
+  "type": "S2C_LoginSuccess",
+  "payload": {
+    "uid": "player552",
+    "pos": { // 玩家落地的初始位置
+      "x": 50.0,
+      "y": 50.0
+    },
+    "worldState": {
+      "players": [ // 登陆游戏时，世界中存在的玩家
+        {"uid": "player554", "x": 51.0, "y": 48.0},
+        {"uid": "player237", "x": 87.2, "y": 1.9}
+      ]
+    }
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+
+    \item \textbf{S2C\_BroadcastMove}: 广播玩家移动
+        每当玩家坐标更新后，服务端将该玩家的最新坐标同步给同屏玩家用于前端插值平滑移动显示。广播移动的消息样例如下：
+\begin{tcolorbox}[title=S2C\_BroadcastMove]
+\begin{verbatim}
+{
+  "type": "S2C_BroadcastMove",
+  "payload": {
+    "playerId": "player552",
+    "x": 12.34,
+    "y": 5.67,
+    "timestamp": 1111100045
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+
+    \item \textbf{S2C\_FightInvite}: 转发对战邀请
+        有玩家发起挑战时，服务器接收到挑战申请后，向被挑战者发送挑战申请。转发邀请的消息样例如下：
+\begin{tcolorbox}[title=S2C\_FightInvite]
+\begin{verbatim}
+{
+  "type": "S2C_FightInvite",
+  "payload": {
+    "fightId": "fight001",
+    "from": "player552",
+    "to": "player554"
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+    \item \textbf{S2C\_FightStart}: 战斗建立
+        在被挑战者的邀请结果返回给服务器时，根据战斗的确立与否，建立战斗并将对应的结果返回给战斗双方。战斗建立的消息样例如下：
+\begin{tcolorbox}[title=S2C\_FightStart]
+\begin{verbatim}
+{
+  "type": "S2C_FightStart",
+  "payload": {
+    "fightId": "fight001",
+    "match": {
+      "from": "player552",
+      "to": "player554"
+    },
+    "initialState": {
+      "uid": "player552",
+      "HP": 100,
+      "points": 30,
+      ...
+    },
+    "inviteResult": "Success"
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+        在邀请失败时，消息样例如下：
+\begin{tcolorbox}[title=S2C\_FightStart]
+\begin{verbatim}
+{
+  "type": "S2C_FightStart",
+  "payload": {
+    "fightId": "fight001",
+    "match": {
+      "from": "player552",
+      "to": "player554"
+    },
+    "inviteResult": "Failure"
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+
+    \item \textbf{S2C\_PlayerLeaveWorld}: 玩家离线通知
+        某个玩家离线或者退出地图后，将该玩家的ID广播给地图中的角色。玩家离线通知消息样例如下：
+\begin{tcolorbox}[title=S2C\_PlayerLeaveWorld]
+\begin{verbatim}
+{
+  "type": "S2C_PlayerLeaeWorld",
+  "payload": {
+    "uid": "player552"
+  }
+}
+\end{verbatim}
+\end{tcolorbox}
+\end{itemize}
+
+特别地，\textbf{S2C\_Ack} 消息作为第 2.1 节中用于``打通链路''的临时回声消息。
+
+\newpage

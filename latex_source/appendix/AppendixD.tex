@@ -1,0 +1,544 @@
+\section{实验操作指南}
+\label{sec:appendix-lab-guide}
+
+本附录为第二章至第四章提供配套的实验操作指南。正文侧重于架构原理与设计决策的阐述，本附录则聚焦于具体的代码实现与动手实践，帮助读者将理论知识转化为可运行的工程原型。每个实验均提供核心代码片段与设计说明，读者可在此基础上自行扩展和定制。
+
+\subsection{第二章实验指南：双人对战原型}
+
+本节对应第二章的CS架构双人对战原型，涵盖TCP服务器搭建、协议设计、状态持久化与终端客户端四个实验模块。
+
+\subsubsection{实验一：TCP服务器与连接管理}
+
+第二章正文介绍了连接管理的职责：会话标识、心跳检测与超时清理。本实验展示如何用Go标准库\texttt{net}包实现一个支持多客户端接入的TCP服务器骨架。
+
+核心设计要点：
+\begin{itemize}
+\item 服务器通过\texttt{net.Listen("tcp", addr)}绑定端口，在主循环中调用\texttt{Accept()}等待新连接
+\item 每个新连接启动独立的Goroutine处理（对应第三章的One Goroutine Per Connection模式）
+\item 为每个连接分配递增的整数ID，并维护\texttt{map[int]*clientConn}映射表
+\item 客户端连接结构体封装网络句柄、JSON编解码器、发送通道与心跳时间戳
+\item 独立的心跳监控Goroutine每2秒扫描一次，超过15秒未收到消息的连接判定为超时并清理
+\end{itemize}
+
+\begin{tcolorbox}[title=服务器连接管理核心结构]
+\begin{lstlisting}[style=codeblock, language=go]
+type clientConn struct {
+    id            int
+    conn          net.Conn
+    enc           *json.Encoder
+    send          chan proto.Message
+    lastHeartbeat time.Time
+}
+
+func (s *Server) Start() error {
+    ln, err := net.Listen("tcp", s.addr)
+    go s.monitorHeartbeats() // 心跳监控协程
+    for {
+        conn, _ := ln.Accept()
+        go s.handleConn(conn) // 每连接一协程
+    }
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+\subsubsection{实验二：JSON协议与消息信封设计}
+
+正文讨论了客户端只能上报``意图''、服务器裁决``结果''的原则。本实验展示如何设计一套覆盖完整对战流程的JSON消息协议。
+
+协议采用``信封模式''（Envelope Pattern）：所有消息共享同一个外层结构体，通过\texttt{Type}字段区分消息类型，不同类型的载荷放在对应的可选字段中。这种设计使得编解码逻辑统一，新增消息类型时只需添加字段而无需修改解析框架。
+
+\begin{tcolorbox}[title=消息信封结构定义]
+\begin{lstlisting}[style=codeblock, language=go]
+type Message struct {
+    Type              string             `json:"type"`
+    Join              *Join              `json:"join,omitempty"`
+    Move              *Move              `json:"move,omitempty"`
+    Challenge         *Challenge         `json:"challenge,omitempty"`
+    ChallengeResponse *ChallengeResponse `json:"challenge_response,omitempty"`
+    Welcome           *Welcome           `json:"welcome,omitempty"`
+    State             *State             `json:"state,omitempty"`
+    DeltaState        *DeltaState        `json:"delta_state,omitempty"`
+    Info              *Info              `json:"info,omitempty"`
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+消息类型分为两类：客户端上行消息（\texttt{join}、\texttt{move}、\texttt{challenge}、\texttt{challenge\_response}、\texttt{heartbeat}）代表玩家意图；服务器下行消息（\texttt{welcome}、\texttt{state}、\texttt{delta\_state}、\texttt{challenge\_request}、\texttt{challenge\_result}、\texttt{info}）代表权威结果。其中\texttt{state}为全量快照，\texttt{delta\_state}为增量更新，两者配合实现正文所述的混合同步策略。
+
+\subsubsection{实验三：SQLite持久化与断线恢复}
+
+正文第2.4.2节阐述了服务器端持久化的设计原则。本实验展示如何用SQLite实现轻量级的玩家状态存档。
+
+\begin{tcolorbox}[title=持久化存储实现]
+\begin{lstlisting}[style=codeblock, language=go]
+// 建表：仅存储核心状态字段
+CREATE TABLE IF NOT EXISTS players (
+    name TEXT PRIMARY KEY,
+    x INTEGER NOT NULL,
+    y INTEGER NOT NULL,
+    hp INTEGER NOT NULL
+);
+
+// UPSERT：无论新建还是更新，一条语句搞定
+INSERT INTO players (name, x, y, hp) VALUES (?, ?, ?, ?)
+ON CONFLICT(name) DO UPDATE
+SET x = excluded.x, y = excluded.y, hp = excluded.hp;
+\end{lstlisting}
+\end{tcolorbox}
+
+关键实现细节：
+\begin{itemize}
+\item 使用纯Go实现的SQLite驱动（\texttt{modernc.org/sqlite}），无需CGO编译依赖
+\item 每次合法的状态变更（移动、战斗结算）后同步调用\texttt{SavePlayer}
+\item 玩家重连时在注册阶段调用\texttt{LoadPlayer}，若存在存档则恢复坐标与生命值
+\item 此方案为同步写入，适合双人原型；第三章将演进为Redis缓存+异步写回
+\end{itemize}
+
+\subsubsection{实验四：终端客户端与输入验证}
+
+客户端使用\texttt{tcell}库构建终端UI，实现地图渲染、玩家显示、消息提示等功能。核心架构为双Goroutine模型：一个负责从终端读取按键事件，另一个负责从网络接收服务器消息，两者通过\texttt{select}多路复用驱动主循环。
+
+服务器端的输入验证是权威性的关键保障。示例代码中\texttt{isValidInput}函数对每种消息类型进行合法性检查：移动增量限制在$[-1, 1]$范围内防止瞬移；挑战目标ID必须为正整数；曼哈顿距离超过3的挑战请求被拒绝。这些校验逻辑体现了正文所述的``先校验，后执行''原则。
+
+\subsection{第三章实验指南：多人在线服务器}
+
+本节对应第三章的多人在线游戏服务器，涵盖WebSocket接入、Channel事件循环、对象级锁、冷热数据分层存储、缓存同步策略、对象池复用与性能指标收集七个实验模块。相比第二章的TCP双人原型，本章在协议层升级为WebSocket，在并发模型上从全局锁演进为Channel事件驱动，在存储层从单一SQLite演进为Redis+PostgreSQL冷热分离架构。
+
+\subsubsection{实验五：WebSocket服务器与客户端生命周期}
+
+第二章使用原始TCP连接，需要自行处理粘包与分帧。第三章升级为WebSocket协议，由\texttt{gorilla/websocket}库处理帧边界和控制帧，开发者只需关注业务消息。
+
+每个WebSocket连接对应一个\texttt{Client}实例，启动后立即分裂为读写两个Goroutine。读协程从网络接收消息并封装为\texttt{ClientMessage}投递到Hub的Channel；写协程从\texttt{send}通道取出消息写入网络。两个协程通过Channel解耦，互不阻塞。
+
+\begin{tcolorbox}[title=WebSocket客户端核心结构]
+\begin{lstlisting}[style=codeblock, language=go]
+type Client struct {
+    Hub  *hub.Hub
+    Conn *websocket.Conn
+    send chan []byte  // 有缓冲Channel，流量削峰
+    id   string
+}
+
+// 非阻塞发送：缓冲区满时丢弃而非阻塞
+func (c *Client) Send(data []byte) {
+    select {
+    case c.send <- data:
+    default: // 缓冲区满，丢弃消息
+    }
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+关键设计要点：
+\begin{itemize}
+\item \texttt{send}通道容量设为256，起到流量削峰作用：当网络写入速度跟不上消息产生速度时，消息在通道中排队而非阻塞发送方
+\item 写协程通过WebSocket Ping/Pong机制实现心跳检测，\texttt{pongWait}设为60秒，\texttt{pingPeriod}为其90\%
+\item 读协程退出时自动向Hub发送注销事件，触发玩家离线清理流程
+\item HTTP升级为WebSocket的入口通过\texttt{websocket.Upgrader}实现，\texttt{CheckOrigin}在开发阶段允许跨域
+\item 需要注意，这种丢弃策略仅适用于位置更新等可容忍丢失的高频数据。对于金币交易、物品获取等关键事件，应使用阻塞发送或错误处理机制保证可靠投递
+\end{itemize}
+
+\subsubsection{实验六：Hub事件循环与Channel通信}
+
+正文第3.2节讨论了从全局锁到Channel事件驱动的演进。本实验展示Hub如何通过三个Channel接收事件，在单个Goroutine中串行处理所有状态变更。
+
+\begin{tcolorbox}[title=Hub事件循环核心结构]
+\begin{lstlisting}[style=codeblock, language=go]
+type Hub struct {
+    mu      sync.RWMutex
+    Clients map[Client]bool
+    Players map[string]*models.Player
+
+    // 三条事件通道
+    Broadcast  chan ClientMessage // 消息处理
+    Register   chan Client        // 玩家注册
+    Unregister chan Client        // 玩家离线
+
+    // 存储层
+    Redis *store.RedisStore
+    DB    *store.DBStore
+    Cache *store.CacheLayer
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+Hub的\texttt{Run}方法是整个服务器的心脏。它在一个无限\texttt{select}循环中监听三个Channel：\texttt{Register}处理新玩家加入（分配初始坐标、创建Player对象、广播上线通知）；\texttt{Unregister}处理玩家离线（清理连接、持久化状态、广播下线通知）；\texttt{Broadcast}处理所有游戏操作（移动、攻击、拾取物品等）。由于所有事件在同一个Goroutine中顺序执行，对\texttt{Players}和\texttt{Items}映射表的访问天然无竞争，无需加锁。
+
+需要注意的是，Hub仍然保留了\texttt{sync.RWMutex}。这是因为性能指标收集、HTTP状态查询等外部Goroutine可能需要读取玩家列表，此时通过\texttt{RLock}实现安全的并发读取，而Hub主循环中的写操作则使用\texttt{Lock}。这种``Channel为主、锁为辅''的混合策略在实际工程中非常常见。
+
+\subsubsection{实验七：对象级锁与细粒度并发控制}
+
+正文第3.2节阐述了从全局锁到对象级锁的演进思路。本实验展示如何为每个Player对象配备独立的\texttt{sync.Mutex}，使不同玩家的状态修改可以并行执行。
+
+\begin{tcolorbox}[title=Player对象级锁设计]
+\begin{lstlisting}[style=codeblock, language=go]
+type Player struct {
+    ID     string
+    X, Y   float64
+    HP     int
+    Attack int
+    Gold   int
+    Kills  int
+    Alive  bool
+    mu     sync.Mutex // 每个玩家独立的锁
+}
+
+// 受伤：检查HP-扣减HP-判断死亡 必须是原子操作
+func (p *Player) TakeDamage(damage int) {
+    p.mu.Lock()
+    defer p.mu.Unlock()
+    p.HP -= damage
+    if p.HP <= 0 {
+        p.HP = 0
+        p.Alive = false
+    }
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+对象级锁的核心价值在于缩小临界区范围。当玩家A攻击玩家B时，只需锁定B的\texttt{mu}来扣减HP，不影响玩家C拾取物品或玩家D移动。示例代码中\texttt{TakeDamage}、\texttt{AddGold}、\texttt{Heal}、\texttt{AddKill}等方法均遵循相同模式：进入时加锁，通过\texttt{defer}确保退出时解锁，方法体内完成``读取-修改-写回''的完整操作。
+
+\subsubsection{实验八：PostgreSQL冷数据Schema设计}
+
+正文第3.3节介绍了冷热数据分离的原则。本实验展示冷数据层的PostgreSQL表结构设计，使用\texttt{gorm}作为ORM框架实现自动建表与类型映射。
+
+示例代码定义了三张核心表：
+\begin{itemize}
+\item \texttt{UserAccount}：玩家账户表，存储累计金币、击杀数、死亡数等低频变更的统计数据，以\texttt{PlayerID}为唯一索引
+\item \texttt{GameAchievement}：成就记录表，采用只增不改的追加模式，通过\texttt{PlayerID}外键关联玩家
+\item \texttt{EquipmentConfig}：装备配置表，存储武器、护甲等静态配置数据，读多写少，适合Cache-Aside策略
+\end{itemize}
+
+\begin{tcolorbox}[title=gorm模型与连接池配置]
+\begin{lstlisting}[style=codeblock, language=go]
+type UserAccount struct {
+    ID          uint   `gorm:"primaryKey"`
+    PlayerID    string `gorm:"uniqueIndex;size:64"`
+    TotalGold   int    `gorm:"default:0"`
+    TotalKills  int    `gorm:"default:0"`
+    TotalDeaths int    `gorm:"default:0"`
+}
+
+// 连接池配置
+sqlDB.SetMaxOpenConns(50)          // 最大连接数
+sqlDB.SetMaxIdleConns(10)          // 空闲连接数
+sqlDB.SetConnMaxLifetime(time.Hour) // 连接最大存活时间
+\end{lstlisting}
+\end{tcolorbox}
+
+连接池的三个参数直接影响数据库的并发承载能力。\texttt{MaxOpenConns}限制同时打开的连接总数，防止数据库过载；\texttt{MaxIdleConns}保持一定数量的空闲连接处于预热状态，避免每次请求都经历TCP握手和认证；\texttt{ConnMaxLifetime}定期回收长期存活的连接，防止连接状态累积异常。读者可根据实际负载调整这些参数。
+
+\subsubsection{实验九：Redis热数据操作}
+
+与PostgreSQL存储冷数据相对，Redis负责存储高频访问的热数据。本实验展示五类典型的Redis热数据操作。
+
+\begin{tcolorbox}[title=Redis热数据操作示例]
+\begin{lstlisting}[style=codeblock, language=go]
+// 在线状态：String + TTL自动过期
+func (r *RedisStore) SetPlayerOnline(playerID string) error {
+    key := fmt.Sprintf("player:%s:online", playerID)
+    return r.client.Set(r.ctx, key, "1", 5*time.Minute).Err()
+}
+
+// 实时位置：Hash结构存储x/y坐标
+func (r *RedisStore) UpdatePlayerPosition(playerID string,
+    x, y float64) error {
+    key := fmt.Sprintf("player:%s:pos", playerID)
+    return r.client.HSet(r.ctx, key, map[string]interface{}{
+        "x": x, "y": y,
+    }).Err()
+}
+
+// 排行榜：Sorted Set，Score为击杀数
+func (r *RedisStore) UpdateKillCount(playerID string,
+    kills int) error {
+    return r.client.ZAdd(r.ctx, "leaderboard:kills",
+        redis.Z{Score: float64(kills), Member: playerID}).Err()
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+五类操作分别对应不同的Redis数据结构：在线状态使用String加5分钟TTL，玩家掉线后自动过期无需手动清理；实时位置使用Hash存储坐标分量，支持单独更新x或y；排行榜使用Sorted Set，\texttt{ZRevRangeWithScores}可在$O(\log N + K)$时间内返回前K名；HP缓存使用String加TTL；限流使用\texttt{INCR}+\texttt{EXPIRE}组合实现滑动窗口计数器。Redis连接池配置为100个连接、10个最小空闲连接，与PostgreSQL连接池的设计思路一致。
+
+\subsubsection{实验十：缓存策略层实现}
+
+正文第3.3节介绍了三种缓存同步策略的原理与适用场景。本实验展示如何将这三种策略封装为统一的\texttt{CacheLayer}，使上层业务代码无需关心底层同步细节。
+
+\begin{tcolorbox}[title=三种缓存策略的实现骨架]
+\begin{lstlisting}[style=codeblock, language=go]
+type CacheLayer struct {
+    redis *RedisStore
+    db    *DBStore
+    // Write-Back: 位置数据异步写回缓冲
+    positionBuffer map[string][2]float64
+    positionMu     sync.Mutex
+    // Cache-Aside: 装备配置本地缓存
+    configCache    map[string]*EquipmentConfig
+    configCacheMu  sync.RWMutex
+}
+
+// Write-Through：金币先写DB再写Redis
+func (cl *CacheLayer) WriteThroughGold(playerID string,
+    goldChange int) error {
+    // 先写权威数据源，失败则直接返回
+    if err := cl.db.UpdateAccountStats(playerID,
+        goldChange, 0, 0); err != nil {
+        return err
+    }
+    // DB成功后再更新缓存
+    return cl.redis.UpdateGoldCount(playerID, goldChange)
+}
+
+// Write-Back：位置先写Redis，定期批量刷DB
+func (cl *CacheLayer) WriteBackPosition(playerID string,
+    x, y float64) {
+    cl.redis.UpdatePlayerPosition(playerID, x, y)
+    cl.positionMu.Lock()
+    cl.positionBuffer[playerID] = [2]float64{x, y}
+    cl.positionMu.Unlock()
+}
+
+// Cache-Aside：装备配置先查缓存，未命中查DB并回填
+func (cl *CacheLayer) CacheAsideGetConfig(itemID string)
+    (*EquipmentConfig, error) {
+    cl.configCacheMu.RLock()
+    if cfg, ok := cl.configCache[itemID]; ok {
+        cl.configCacheMu.RUnlock()
+        return cfg, nil
+    }
+    cl.configCacheMu.RUnlock()
+    cfg, err := cl.db.GetEquipmentConfig(itemID)
+    // 回填缓存...
+    return cfg, err
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+Write-Back策略的核心是后台刷盘协程。\texttt{CacheLayer}初始化时启动一个独立Goroutine，每5秒将\texttt{positionBuffer}中的脏数据批量写入PostgreSQL。刷盘时先加锁复制缓冲区内容再释放锁，将锁持有时间降到最低。需要注意，Cache-Aside示例中的缓存是进程内的Go map（本地L1缓存），而非Redis。对于装备配置这类读多写少的静态数据，本地缓存可以省去Redis网络往返，进一步降低读取延迟。读路径使用\texttt{RLock}允许并发读取，只在缓存未命中需要回填时才升级为\texttt{Lock}。配置更新时调用\texttt{InvalidateConfigCache}删除缓存条目，下次读取自动从数据库加载最新版本。
+
+\subsubsection{实验十一：sync.Pool对象池复用}
+
+正文第3.3节讨论了高并发场景下频繁内存分配对GC的压力。本实验展示如何用\texttt{sync.Pool}复用JSON序列化所需的\texttt{bytes.Buffer}。
+
+\begin{tcolorbox}[title=sync.Pool复用序列化缓冲区]
+\begin{lstlisting}[style=codeblock, language=go]
+var bufferPool = sync.Pool{
+    New: func() interface{} {
+        return bytes.NewBuffer(make([]byte, 0, 256))
+    },
+}
+
+func MarshalJSON(v interface{}) ([]byte, error) {
+    buf := bufferPool.Get().(*bytes.Buffer)
+    buf.Reset() // 必须重置，防止脏数据
+
+    err := json.NewEncoder(buf).Encode(v)
+    if err != nil {
+        bufferPool.Put(buf)
+        return nil, err
+    }
+
+    result := make([]byte, len(buf.Bytes()))
+    copy(result, buf.Bytes())
+    bufferPool.Put(buf) // 归还到池中
+    return result, nil
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+使用\texttt{sync.Pool}时有两个容易忽略的细节。第一，从池中取出的对象必须调用\texttt{Reset()}清空旧数据，否则会出现数据污染。第二，序列化结果必须复制到新的\texttt{[]byte}后再归还Buffer，因为归还后Buffer的底层数组可能被其他Goroutine覆写。示例代码中\texttt{New}函数预分配256字节容量，减少后续\texttt{grow}操作。在每秒数千次广播的场景下，对象池可将内存分配次数降低一个数量级，显著减少GC暂停时间。
+
+\subsubsection{实验十二：性能指标收集与可观测性}
+
+正文强调了性能验证的重要性。本实验展示如何构建一个轻量级的指标收集器，实时追踪QPS、延迟分布、连接数与GC统计。
+
+示例代码中的\texttt{Metrics}结构体使用\texttt{atomic.Int64}实现无锁的请求计数和连接数追踪，避免在热路径上引入互斥锁开销。延迟分布采用滑动窗口方式保留最近10000个样本，通过排序计算P95和P99百分位数。GC统计直接读取\texttt{runtime.MemStats}，获取当前内存占用、GC次数和最近一次GC暂停时间。
+
+所有指标通过\texttt{/stats}端点以JSON格式暴露，开发者可在浏览器中实时查看服务器运行状态。需要注意，\texttt{runtime.ReadMemStats}会触发短暂的全局暂停以收集一致的内存快照，在生产环境中不宜高频调用；Go 1.16之后可改用\texttt{runtime/metrics}包获取更轻量的指标。这种内建的可观测性机制为后续章节的性能调优和容量规划提供了数据基础。
+
+\subsection{第四章实验指南：分布式模拟器}
+
+本节对应第四章的分布式游戏服务器架构，涵盖数据库分片路由、负载均衡策略与跨服擂台协调三个实验模块。与前两章不同，第四章的示例代码采用单进程模拟器的方式实现：用Goroutine模拟多个服务器节点，用内存数据结构模拟数据库分片和网络通信，无需部署真实的多台机器或外部依赖（不需要Redis、PostgreSQL），运行\texttt{go run main.go}即可观察分布式概念的完整运作过程。
+
+\subsubsection{实验十三：数据库分片路由}
+
+正文第4.1节介绍了三种分片策略的原理与权衡。本实验将这三种策略实现为可插拔的路由器，通过统一的\texttt{Router}接口与业务层解耦。
+
+\begin{tcolorbox}[title=分片路由接口与哈希分片]
+\begin{lstlisting}[style=codeblock, language=go]
+// 统一路由接口，业务层与分片策略解耦
+type Router interface {
+    GetShard(playerID int) int
+    AddNode(nodeID int)
+    RemoveNode(nodeID int)
+    GetNodeCount() int
+}
+
+// 哈希分片：playerID % N
+type HashRouter struct{ nodes []int }
+
+func (r *HashRouter) GetShard(playerID int) int {
+    idx := playerID % len(r.nodes)
+    return r.nodes[idx]
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+哈希分片的优势在于数据分布均匀，即使玩家ID连续注册也会被打散到不同分片。但扩容时取模基数变化会导致几乎所有数据需要迁移。范围分片按ID区间划分，扩容只需调整边界，但容易产生热点——新注册的活跃玩家集中在最后一个区间。示例代码同时实现了这两种策略，读者可以通过替换\texttt{NewHashRouter}为\texttt{NewRangeRouter}来对比两者的分片分布差异。
+
+\subsubsection{实验十四：一致性哈希与虚拟节点}
+
+正文第4.1节讨论了一致性哈希如何降低扩容时的数据迁移量。本实验展示完整的一致性哈希实现，包括SHA256哈希、虚拟节点映射和环上顺时针查找。
+
+\begin{tcolorbox}[title=一致性哈希核心逻辑]
+\begin{lstlisting}[style=codeblock, language=go]
+type ConsistentHashRouter struct {
+    vnodes int              // 每个物理节点150个虚拟节点
+    nodes  map[int]struct{} // 物理节点集合
+    ring   map[uint64]int   // 哈希值 -> 物理节点ID
+    keys   []uint64         // 排序后的哈希环
+}
+
+func (r *ConsistentHashRouter) AddNode(nodeID int) {
+    for i := 0; i < r.vnodes; i++ {
+        h := sha256Hash(fmt.Sprintf("%d#%d", nodeID, i))
+        r.ring[h] = nodeID
+    }
+    r.rebuildKeys() // 重建排序后的哈希环
+}
+
+func (r *ConsistentHashRouter) GetShard(playerID int) int {
+    h := sha256Hash(fmt.Sprintf("player:%d", playerID))
+    // 在环上顺时针找到第一个 >= h 的节点
+    i := sort.Search(len(r.keys),
+        func(i int) bool { return r.keys[i] >= h })
+    if i == len(r.keys) { i = 0 } // 环形回绕
+    return r.ring[r.keys[i]]
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+每个物理节点在哈希环上映射150个虚拟节点，确保即使物理节点数量较少也能实现均匀的数据分布。新增节点时只有环上相邻区间的数据需要迁移，其余数据不受影响。示例代码使用\texttt{crypto/sha256}的前8字节作为哈希值，在教学场景下提供了足够的分布均匀性。生产环境中通常使用MurmurHash或FNV等非加密哈希函数以获得更好的计算性能，此处选择SHA256是为了避免引入第三方依赖。
+
+\subsubsection{实验十五：分片集群与全局排行榜}
+
+正文第4.1.3节讨论了跨分片查询的scatter-gather策略。本实验用内存map模拟多个数据库分片，展示分片写入、单点查询和全局排行榜的完整流程。
+
+\begin{tcolorbox}[title=scatter-gather全局排行榜]
+\begin{lstlisting}[style=codeblock, language=go]
+func (c *ShardCluster) GetGlobalRanking(topN int) []Player {
+    // 1. 并行收集各分片的本地数据
+    ch := make(chan []Player, len(c.shards))
+    for _, shard := range c.shards {
+        go func(s map[int]Player) {
+            local := make([]Player, 0, len(s))
+            for _, p := range s { local = append(local, p) }
+            ch <- local
+        }(shard)
+    }
+    // 2. 汇总所有分片结果
+    all := make([]Player, 0)
+    for i := 0; i < len(c.shards); i++ {
+        all = append(all, (<-ch)...)
+    }
+    // 3. 全局排序并截取TopN
+    sort.Slice(all, func(i, j int) bool {
+        return all[i].Power > all[j].Power
+    })
+    return all[:topN]
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+这种scatter-gather模式的效率低于单库查询：需要向所有分片发起请求，每个分片独立排序，应用层再做二次排序。正文建议对排行榜这类全局聚合数据采用异步汇总——后台定时任务定期从各分片拉取数据写入Redis缓存，玩家查询时直接读缓存。示例代码中的并行收集使用了带缓冲的Channel，各分片的数据收集在独立Goroutine中并发执行。
+
+\subsubsection{实验十六：负载均衡策略对比}
+
+正文第4.2节介绍了从轮询到动态调度的策略演进。本实验实现三种策略并在相同条件下对比分配效果。
+
+\begin{tcolorbox}[title=三种负载均衡策略]
+\begin{lstlisting}[style=codeblock, language=go]
+// 策略接口
+type Strategy interface {
+    Select(servers []*GameServer) *GameServer
+}
+
+// 轮询：atomic计数器取模
+type RoundRobin struct{ counter uint64 }
+func (r *RoundRobin) Select(servers []*GameServer)
+    *GameServer {
+    idx := atomic.AddUint64(&r.counter, 1) - 1
+    return servers[idx % uint64(len(servers))]
+}
+
+// 最少连接：选在线人数最少的服务器
+type LeastConn struct{}
+
+// 加权负载：多指标综合评分
+// score = players*0.2 + cpu*0.3 + mem*0.2
+//       + respTime*0.2 + battles*0.1
+// 最终得分除以服务器权重（权重代表服务器承载能力，
+// 权重越高表示配置越强，同等负载下得分越低，
+// 从而承担更多流量）
+type WeightedLoad struct{}
+\end{lstlisting}
+\end{tcolorbox}
+
+示例代码创建5台初始负载各异的模拟服务器，用每种策略分配100个玩家，并在每次分配后通过心跳上报更新服务器状态。运行结果可以直观看到：轮询策略均匀分配但忽略实际负载；最少连接策略倾向于向空闲服务器分配但只看人数；加权负载策略综合考虑CPU、内存、响应时间等多维指标，分配最为合理。负载均衡器还实现了健康检查机制：每台服务器需要在15秒内发送心跳，超时则被标记为不可用并从分配池中移除。
+
+\subsubsection{实验十七：跨服擂台协调服务器}
+
+正文第4.3节通过跨服擂台案例讲解了分布式环境下的玩家交互。本实验实现完整的协调服务器与游戏服务器代理，演示报名、查询、挑战、裁决的全流程。
+
+\begin{tcolorbox}[title=协调服务器与游戏服务器代理]
+\begin{lstlisting}[style=codeblock, language=go]
+// 协调服务器：维护全局报名列表，执行唯一裁决
+type Coordinator struct {
+    globalList map[int]*ArenaPlayer
+    mu         sync.RWMutex
+}
+
+// 挑战裁决：锁定双方 -> 比较战力 -> 更新战绩
+func (c *Coordinator) Challenge(challengerID,
+    defenderID int) (*BattleResult, error) {
+    c.mu.Lock()
+    defer c.mu.Unlock()
+    // 检查双方状态，锁定为"fighting"
+    challenger.Status = "fighting"
+    defender.Status = "fighting"
+    // 战力高者胜
+    if defender.Power > challenger.Power {
+        winnerID = defenderID
+    }
+    // 更新战绩，解锁状态
+    challenger.Status = "idle"
+    defender.Status = "idle"
+    return &BattleResult{...}, nil
+}
+
+// 游戏服务器代理：转发请求，处理本地奖励
+type GameServerProxy struct {
+    ServerID     string
+    coordinator  *Coordinator
+    mu           sync.RWMutex
+    LocalPlayers map[int]*LocalPlayer
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+协调服务器是整个跨服擂台的唯一裁决点，体现了正文所述的``单点裁决、多点跟随''模式。示例代码中\texttt{Challenge}方法使用协调服务器的全局互斥锁（而非按玩家加锁）来串行化所有挑战请求，从根本上避免了死锁风险；生产环境中若需更高并发度，可改为按玩家ID排序后依次加锁的细粒度方案。所有挑战请求无论来自哪台游戏服务器，最终都在协调服务器上汇聚并裁决，避免了不同服务器各自裁决导致的``双重历史''问题。游戏服务器代理负责将本服玩家的请求转发给协调服务器，并在收到战斗结果后更新本地的奖励和战绩统计。代理的\texttt{LocalPlayers}映射表使用\texttt{sync.RWMutex}保护，确保并发安全。
+
+查询对手列表时支持按战力范围筛选和分页返回，避免一次性传输全部报名数据。协调服务器按战力差距排序，优先匹配实力相近的对手，提升竞技公平性。
+
+\subsubsection{实验十八：运行分布式模拟器}
+
+本实验将前述三个模块串联为一个完整的模拟器。运行\texttt{go run main.go}后，程序依次演示三个场景：
+
+\begin{enumerate}
+\item 数据库分片：创建4个分片，写入20个玩家，打印每个玩家的分片落点，执行scatter-gather全局排行榜查询
+\item 负载均衡：创建5台负载各异的服务器，分别用轮询、最少连接、加权负载三种策略分配100个玩家，对比分配结果
+\item 跨服擂台：创建1个协调服务器和3个游戏服务器代理（华东一区、华北三区、西南二区），每服注册5个玩家，进行10轮随机跨服挑战，打印战斗结果和各服本地战绩
+\end{enumerate}
+
+整个模拟器零外部依赖，仅使用Go标准库。读者可以在此基础上自行扩展：例如将哈希分片替换为一致性哈希观察扩容时的数据迁移量变化，或为负载均衡器添加动态权重调整逻辑，或为擂台协调服务器实现主从热备的故障转移机制。
+

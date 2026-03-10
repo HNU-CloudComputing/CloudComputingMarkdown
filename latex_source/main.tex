@@ -1,0 +1,118 @@
+\documentclass[12pt, a4paper]{article}
+
+% 中文支持包
+\usepackage[UTF8]{ctex}  % 主要中文支持包
+\usepackage{xeCJK}       % 额外的中文支持
+
+\usepackage{tikz}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings, skins}
+\usepackage{booktabs}
+\usepackage{xurl}
+% 页面设置
+\usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing  % 1.5倍行距
+
+% 页眉页脚设置
+\usepackage{fancyhdr}
+\usepackage{multirow} 
+\pagestyle{fancy}
+\fancyhf{} % 清除所有页眉页脚
+\fancyfoot[C]{\today} % 底部居中显示日期
+\fancyfoot[R]{\thepage} % 底部右侧显示页码
+\renewcommand{\headrulewidth}{0pt} % 去掉页眉横线
+\setcounter{secnumdepth}{3} 
+
+% 数学包
+\usepackage{amsmath, amssymb, amsthm}
+
+% 图形和颜色
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{float}
+
+% 链接和参考文献
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+% 代码样式
+\lstdefinestyle{codeblock}{
+    basicstyle=\ttfamily\footnotesize,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=5pt,
+    aboveskip=0pt,
+    belowskip=0pt,
+    lineskip=-1pt,
+    commentstyle=\color{gray},
+    keywordstyle=\color{blue}\bfseries,
+    breaklines=true,
+    showstringspaces=false
+}
+
+% comment样式
+\newcommand{\xfl}[1]{\textcolor{blue}{#1}}
+\newcommand{\previos}[1]{\textcolor{gray}{#1}}
+
+\usepackage{longtable}
+\usepackage{array}
+
+% 文档开始
+\begin{document}
+
+% 标题页
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge \bfseries 云计算技术实践\par}
+    
+    \vspace{1.5cm}
+    
+    {\Large 云端创世：从一行代码到游戏纪元\par}
+    
+    \vspace{2cm}
+
+    
+    \vfill
+\end{titlepage}
+
+% 目录
+\tableofcontents
+\newpage
+
+
+% 正文开始
+
+\input{section/intro}
+\input{section/sec1}
+\input{section/sec2}
+\input{section/sec3}
+\input{section/sec4}
+\input{section/sec5}
+\input{section/sec6}
+
+\appendix
+
+\phantomsection
+
+\addtocontents{toc}{\protect\newpage}
+
+\addtocontents{toc}{\bigskip \noindent\textbf{\Large 附录}\par \bigskip}
+
+% \input{appendix/AppendixA}
+\input{appendix/AppendixB}
+\input{appendix/AppendixC}
+\input{appendix/AppendixD}
+% \input{appendix/AppendixE}
+
+\end{document}
