@@ -1,10 +1,10 @@
 name: Test LaTeX to MkDocs CI/CD
 
-# 1. 触发条件：只在测试分支触发，绝不影响 main
+# 1. 触发条件：main 触发
 on:
   push:
     branches:
-      - test-cicd
+      - main
 
 jobs:
   test-build:
