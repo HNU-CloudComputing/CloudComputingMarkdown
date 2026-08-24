@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   test-build:
     runs-on: ubuntu-latest
@@ -54,13 +57,6 @@ jobs:
       - name: 🧹 运行全能 Markdown 处理器
         run: python scripts/process_docs.py
 
-      # 2. 核心改变：只生成静态文件，绝对不推送到 gh-pages 分支！
-      - name: 🏗️ 仅构建静态网页
-        run: mkdocs build
 
-      # 3. 新增步骤：把生成的网页打成压缩包，让您可以下载预览
-      - name: 📦 上传网页构建产物 (Artifacts)
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-site-build
-          path: site/
+      - name: 🚀 构建并自动推送到 gh-pages 分支
+        run: mkdocs gh-deploy --force
