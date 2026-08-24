@@ -3,8 +3,10 @@ name: Test LaTeX to MkDocs CI/CD
 # 1. 触发条件：main 触发
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+    workflow_dispatch:
+    repository_dispatch:
+      types: [ source_book_updated ]
 
 permissions:
   contents: write
@@ -15,7 +17,14 @@ jobs:
     
     steps:
       - name: 📥 拉取仓库代码
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: 📥 拉取私有仓库 CCBook 的源码
+        uses: actions/checkout@v4
+        with:
+          repository: 'HNU-CloudComputing/CCBook'
+          token: ${{ secrets.BOOK_READ_PAT }}
+          path: 'latex_source'
 
       - name: ⚙️ 安装 Pandoc
         run: sudo apt-get update && sudo apt-get install -y pandoc
