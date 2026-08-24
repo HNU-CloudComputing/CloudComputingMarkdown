@@ -4,9 +4,9 @@ name: Test LaTeX to MkDocs CI/CD
 on:
   push:
     branches: [ main ]
-    workflow_dispatch:
-    repository_dispatch:
-      types: [ source_book_updated ]
+  workflow_dispatch:
+  repository_dispatch:
+    types: [ source_book_updated ]
 
 permissions:
   contents: write
