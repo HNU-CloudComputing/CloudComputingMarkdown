@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: 'HNU-CloudComputing/CCBook'
-          token: ${{ secrets.BOOK_READ_PAT }}
+          token: ${{ secrets.NOTIFY_PAT }}
           path: 'latex_source'
 
       - name: ⚙️ 安装 Pandoc
