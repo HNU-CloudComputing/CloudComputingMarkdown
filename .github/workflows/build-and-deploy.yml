@@ -1,6 +1,5 @@
-name: Test LaTeX to MkDocs CI/CD
+name: LaTeX to MkDocs CI/CD
 
-# 1. 触发条件：main 触发
 on:
   push:
     branches: [ main ]
@@ -12,14 +11,14 @@ permissions:
   contents: write
 
 jobs:
-  test-build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     
     steps:
-      - name: 📥 拉取仓库代码
+      - name: 📥 检出当前仓库
         uses: actions/checkout@v4
 
-      - name: 📥 拉取私有仓库 CCBook 的源码
+      - name: 📥 拉取私有源仓库 CCBook 源码
         uses: actions/checkout@v4
         with:
           repository: 'HNU-CloudComputing/CCBook'
@@ -29,43 +28,40 @@ jobs:
       - name: ⚙️ 安装 Pandoc
         run: sudo apt-get update && sudo apt-get install -y pandoc
 
-      - name: 🐍 配置 Python 环境
-        uses: actions/setup-python@v4
+      - name: 🐍 配置 Python 环境与依赖
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: 📦 安装 MkDocs 及主题
+      - name: 📦 安装 MkDocs 及依赖包
         run: |
-          pip install mkdocs-material
-          pip install pymdown-extensions
+          pip install mkdocs-material pymdown-extensions pyyaml
 
       - name: 🔄 运行 Pandoc 转换 (LaTeX -> Markdown)
         run: |
-          mkdir -p docs
-          cp -r latex_source/figures docs/figures
+          # 1. 清理并重建纯净的 docs/figures 目录
+          rm -rf docs/figures
+          mkdir -p docs/figures
+          
+          # 2. 避免目录多层嵌套复制
+          if [ -d "latex_source/figures" ]; then
+            cp -r latex_source/figures/. docs/figures/
+          fi
 
+          # 3. 批量转换 LaTeX 文件为 Markdown
           cd latex_source
-          for file in section/*.tex; do
-            [ -e "$file" ] || continue 
-            
+          for file in section/*.tex appendix/*.tex; do
+            [ -f "$file" ] || continue 
             filename=$(basename -- "$file")
             filename="${filename%.*}"
             if [[ "$filename" != *"bak"* ]]; then
               pandoc "$file" -f latex -t markdown-multiline_tables-grid_tables-simple_tables -o "../docs/${filename}.md" --wrap=none
             fi
           done
-          
-          for file in appendix/*.tex; do
-            [ -e "$file" ] || continue
-            
-            filename=$(basename -- "$file")
-            filename="${filename%.*}"
-            pandoc "$file" -f latex -t markdown-multiline_tables-grid_tables-simple_tables -o "../docs/${filename}.md" --wrap=none
-          done
 
-      - name: 🧹 运行全能 Markdown 处理器
+      # 4. 执行合并后的全能清洗与动态主页/导航生成
+      - name: 🧹 运行全能清洗与动态导航处理器
         run: python scripts/process_docs.py
 
-
-      - name: 🚀 构建并自动推送到 gh-pages 分支
+      - name: 🚀 构建并自动发布到 gh-pages 分支
         run: mkdocs gh-deploy --force

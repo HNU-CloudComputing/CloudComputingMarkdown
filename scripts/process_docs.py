@@ -1,6 +1,16 @@
 import os
 import re
+import yaml
 
+CCBOOK_PATH = "latex_source"
+MAIN_TEX = os.path.join(CCBOOK_PATH, "main.tex")
+DOCS_DIR = "docs"
+MKDOCS_YML = "mkdocs.yml"
+TITLE_PATTERN = re.compile(r'\\(?:chapter|section)\*?\{([^}]+)\}')
+
+# ==========================================
+# 1. 深度清洗 Markdown 文件（保留你原有的全部规则）
+# ==========================================
 def process_markdown_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -8,13 +18,12 @@ def process_markdown_file(filepath):
     # 1. 修复被错误转义的双引号
     content = content.replace(r'\"', '"')
 
-    # 2. 彻底清理所有的 Pandoc Div 边界 (:::)，绝不留患
+    # 2. 彻底清理所有的 Pandoc Div 边界 (:::)
     content = re.sub(r'^:::.*$', '', content, flags=re.MULTILINE)
 
     # 3. 清理各类无用标签、外壳、图片属性以及 HTML 乱码
     content = re.sub(r'\s*\{#[^\}]+\}', '', content)
     content = re.sub(r'\{width=[^\}]+\}', '', content)
-    # 彻底干掉 Pandoc 生成的 {=html} 乱码
     content = re.sub(r'\s*\{=html\}', '', content)
     content = re.sub(r'\{=html\}', '', content)
 
@@ -51,7 +60,7 @@ def process_markdown_file(filepath):
         return f"\n\n```{lang}\n{code}\n```\n\n"
     content = re.sub(r'^\[\s*[^\]]*language=([a-zA-Z0-9_-]+)[^\]]*\]\s*\n(.*?)(?=\n{2,}|\Z)', plaintext_code_replacer, content, flags=re.MULTILINE | re.DOTALL)
 
-    # 6. 表格强制隔离舱 (彻底解决表格变成纯文本的问题)
+    # 6. 表格强制隔离
     def table_padder(match):
         return f"\n\n{match.group(1)}\n\n"
     content = re.sub(r'(^\|[^\n]*(?:\n\|[^\n]*)*)', table_padder, content, flags=re.MULTILINE)
@@ -69,28 +78,114 @@ def process_markdown_file(filepath):
     content = re.sub(r'\$\$(.*?)\$\$|\$([^\$]+?)\$', math_replacer, content, flags=re.DOTALL)
     content = content.replace('___ESCAPED_DOLLAR___', r'\$')
 
-    # 8. 压缩多余空行
+    # 8. 修复图片可能多了一层目录的问题
+    content = content.replace("figures/figures/", "figures/")
+
+    # 9. 压缩多余空行
     content = re.sub(r'\n{3,}', '\n\n', content)
 
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(content)
 
+# ==========================================
+# 2. 动态解析 LaTeX 结构与标题
+# ==========================================
+def parse_structure():
+    if not os.path.exists(MAIN_TEX):
+        print(f"⚠️ 未找到 {MAIN_TEX}，跳过动态目录生成")
+        return [], []
+    
+    with open(MAIN_TEX, "r", encoding="utf-8") as f:
+        main_content = f.read()
+
+    inputs = re.findall(r'\\input\{([^}]+)\}', main_content)
+    chapters = []
+    appendices = []
+    
+    for item in inputs:
+        item = item.strip()
+        if "preamble" in item:
+            continue
+            
+        tex_rel = item if item.endswith(".tex") else f"{item}.tex"
+        tex_full = os.path.join(CCBOOK_PATH, tex_rel)
+        
+        if os.path.exists(tex_full):
+            with open(tex_full, "r", encoding="utf-8") as tf:
+                content = tf.read()
+                match = TITLE_PATTERN.search(content)
+                raw_title = match.group(1).strip() if match else os.path.splitext(os.path.basename(item))[0]
+                clean_title = re.sub(r'\\[a-zA-Z]+(\{[^}]*\})?', '', raw_title).strip()
+                
+                base_name = os.path.splitext(os.path.basename(item))[0]
+                md_target = f"{base_name}.md"
+                
+                info = {"title": clean_title, "file": md_target}
+                if "appendix" in item.lower():
+                    appendices.append(info)
+                else:
+                    chapters.append(info)
+                    
+    return chapters, appendices
+
+# ==========================================
+# 3. 动态更新 docs/index.md 与 mkdocs.yml 的 nav
+# ==========================================
+def update_index_and_nav(chapters, appendices):
+    # 动态生成 index.md
+    index_content = "# ☁️ 云计算技术实践课程在线文档\n\n"
+    index_content += "这是由 **GuoLab** 倾力编写的教科书在线阅读版。以下为最新章节导航：\n\n"
+    index_content += "### 📖 章节目录\n\n"
+    for ch in chapters:
+        index_content += f"- [**{ch['title']}**]({ch['file']})\n"
+    
+    if appendices:
+        index_content += "\n### 📑 附录内容\n\n"
+        for ap in appendices:
+            index_content += f"- [**{ap['title']}**]({ap['file']})\n"
+            
+    with open(os.path.join(DOCS_DIR, "index.md"), "w", encoding="utf-8") as f:
+        f.write(index_content)
+    print("✅ 已动态更新 docs/index.md")
+
+    # 动态更新 mkdocs.yml 中的 nav
+    if os.path.exists(MKDOCS_YML):
+        with open(MKDOCS_YML, "r", encoding="utf-8") as f:
+            config = yaml.safe_load(f) or {}
+
+        nav = [{"首页": "index.md"}]
+        for ch in chapters:
+            nav.append({ch["title"]: ch["file"]})
+            
+        if appendices:
+            app_nav = []
+            for ap in appendices:
+                app_nav.append({ap["title"]: ap["file"]})
+            nav.append({"附录": app_nav})
+
+        config["nav"] = nav
+
+        with open(MKDOCS_YML, "w", encoding="utf-8") as f:
+            yaml.dump(config, f, allow_unicode=True, sort_keys=False)
+        print("✅ 已根据最新 LaTeX 目录动态重写 mkdocs.yml 的 nav 导航")
+
+# ==========================================
+# 4. 流水线主入口
+# ==========================================
 def main():
-    target_dir = "docs"
-    print("🚀 开始执行云端 Markdown 深度清洗流水线...")
-    if not os.path.exists(target_dir):
-        print(f"⚠️ 未找到 {target_dir} 目录，请检查路径。")
-        return
-
+    print("🚀 第一步：执行 Markdown 深度清洗流水线...")
     count = 0
-    for root, dirs, files in os.walk(target_dir):
+    for root, dirs, files in os.walk(DOCS_DIR):
         for file in files:
-            if file.endswith(".md"):
+            if file.endswith(".md") and file != "index.md":
                 process_markdown_file(os.path.join(root, file))
-                print(f"  [✓] 成功处理: {file}")
                 count += 1
+    print(f"🎉 清洗完成，共处理了 {count} 个章节文件。")
 
-    print(f"\n🎉 共清洗了 {count} 个文件。")
+    print("\n🚀 第二步：动态提取 LaTeX 结构并更新主页与侧边栏...")
+    chapters, appendices = parse_structure()
+    update_index_and_nav(chapters, appendices)
+    print("🎉 全部构建准备工作完成！")
 
 if __name__ == "__main__":
     main()

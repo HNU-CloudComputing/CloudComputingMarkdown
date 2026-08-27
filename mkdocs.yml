@@ -3,30 +3,20 @@ site_description: 云端创世：从一行代码到游戏纪元
 
 theme:
   name: material
-  language: zh # 设置为中文
+  language: zh
   features:
-    - navigation.tabs # 开启顶部导航栏
-    - navigation.sections # 开启侧边栏折叠
-
-nav:
-  - 首页: index.md
-  - 简介: intro.md
-  - 第一章: sec1.md
-  - 第二章: sec2.md
-  - 第三章: sec3.md
-  - 第四章: sec4.md
-  - 第五章: sec5.md
-  - 第六章: sec6.md
-  - 附录:
-    - 附录 A: AppendixA.md
-    - 附录 B: AppendixB.md
-    - 附录 C: AppendixC.md
-    - 附录 D: AppendixD.md
-    - 附录 E: AppendixE.md
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
 
 markdown_extensions:
   - pymdownx.arithmatex:
-      generic: true # 开启标准的 $ 和 $$ 公式解析
+      generic: true
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - tables
 
 extra_javascript:
   - javascripts/mathjax.js
