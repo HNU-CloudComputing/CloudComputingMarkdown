@@ -9,7 +9,7 @@ MKDOCS_YML = "mkdocs.yml"
 TITLE_PATTERN = re.compile(r'\\(?:chapter|section)\*?\{([^}]+)\}')
 
 # ==========================================
-# 1. 深度清洗 Markdown 文件（保留你原有的全部规则）
+# 1. 深度清洗 Markdown 文件（完全保留你的原始代码）
 # ==========================================
 def process_markdown_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
@@ -88,7 +88,7 @@ def process_markdown_file(filepath):
         f.write(content)
 
 # ==========================================
-# 2. 动态解析 LaTeX 结构与标题
+# 2. 动态解析 LaTeX 结构与标题 (生成完整标题与导航短标题)
 # ==========================================
 def parse_structure():
     if not os.path.exists(MAIN_TEX):
@@ -101,6 +101,7 @@ def parse_structure():
     inputs = re.findall(r'\\input\{([^}]+)\}', main_content)
     chapters = []
     appendices = []
+    cn_nums = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
     
     for item in inputs:
         item = item.strip()
@@ -115,12 +116,35 @@ def parse_structure():
                 content = tf.read()
                 match = TITLE_PATTERN.search(content)
                 raw_title = match.group(1).strip() if match else os.path.splitext(os.path.basename(item))[0]
-                clean_title = re.sub(r'\\[a-zA-Z]+(\{[^}]*\})?', '', raw_title).strip()
+                # 清洗 LaTeX 宏指令与反斜杠
+                clean_title = re.sub(r'\\[a-zA-Z]+(\{[^}]*\})?', '', raw_title).replace('\\', ' ').strip()
+                clean_title = re.sub(r'\s+', ' ', clean_title)
                 
                 base_name = os.path.splitext(os.path.basename(item))[0]
                 md_target = f"{base_name}.md"
+
+                # 提取导航栏专用的短标题 (前言 / 第一章 / 附录 A 等)
+                if "intro" in base_name.lower():
+                    short_title = "前言"
+                elif "sec" in base_name.lower():
+                    num_match = re.search(r'\d+', base_name)
+                    if num_match:
+                        idx = int(num_match.group(0)) - 1
+                        cn = cn_nums[idx] if idx < len(cn_nums) else str(idx + 1)
+                        short_title = f"第{cn}章"
+                    else:
+                        short_title = clean_title.split()[0]
+                elif "appendix" in base_name.lower():
+                    app_letter = base_name.replace("Appendix", "").replace("appendix", "")
+                    short_title = f"附录 {app_letter}" if app_letter else "附录"
+                else:
+                    short_title = clean_title.split()[0]
                 
-                info = {"title": clean_title, "file": md_target}
+                info = {
+                    "full_title": clean_title,
+                    "short_title": short_title,
+                    "file": md_target
+                }
                 if "appendix" in item.lower():
                     appendices.append(info)
                 else:
@@ -132,35 +156,35 @@ def parse_structure():
 # 3. 动态更新 docs/index.md 与 mkdocs.yml 的 nav
 # ==========================================
 def update_index_and_nav(chapters, appendices):
-    # 动态生成 index.md
+    # 1. 动态生成 index.md (主页使用完整标题展示)
     index_content = "# ☁️ 云计算技术实践课程在线文档\n\n"
     index_content += "这是由 **GuoLab** 倾力编写的教科书在线阅读版。以下为最新章节导航：\n\n"
     index_content += "### 📖 章节目录\n\n"
     for ch in chapters:
-        index_content += f"- [**{ch['title']}**]({ch['file']})\n"
+        index_content += f"- [**{ch['full_title']}**]({ch['file']})\n"
     
     if appendices:
         index_content += "\n### 📑 附录内容\n\n"
         for ap in appendices:
-            index_content += f"- [**{ap['title']}**]({ap['file']})\n"
+            index_content += f"- [**{ap['full_title']}**]({ap['file']})\n"
             
     with open(os.path.join(DOCS_DIR, "index.md"), "w", encoding="utf-8") as f:
         f.write(index_content)
     print("✅ 已动态更新 docs/index.md")
 
-    # 动态更新 mkdocs.yml 中的 nav
+    # 2. 动态更新 mkdocs.yml 中的 nav (导航栏使用短标题)
     if os.path.exists(MKDOCS_YML):
         with open(MKDOCS_YML, "r", encoding="utf-8") as f:
             config = yaml.safe_load(f) or {}
 
         nav = [{"首页": "index.md"}]
         for ch in chapters:
-            nav.append({ch["title"]: ch["file"]})
+            nav.append({ch["short_title"]: ch["file"]})
             
         if appendices:
             app_nav = []
             for ap in appendices:
-                app_nav.append({ap["title"]: ap["file"]})
+                app_nav.append({ap["short_title"]: ap["file"]})
             nav.append({"附录": app_nav})
 
         config["nav"] = nav
