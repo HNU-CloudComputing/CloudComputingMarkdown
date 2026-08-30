@@ -1,6 +1,7 @@
 import os
 import re
 import html
+from urllib.parse import quote
 import yaml
 
 CCBOOK_PATH = "latex_source"
@@ -10,6 +11,22 @@ MKDOCS_YML = "mkdocs.yml"
 TITLE_PATTERN = re.compile(r'\\(?:chapter|section)\*?\{([^}]+)\}')
 BOOK_TITLE = "云计算原理与实践：以在线游戏为载体"
 LICENSE_URL = "https://github.com/HNU-CloudComputing/CloudComputingMarkdown/blob/main/LICENSE"
+FIGURE_PUBLIC_BASE = "https://hnu-cloudcomputing.github.io/CloudComputingMarkdown/"
+
+def resolve_figure_src(src):
+    """把构建输入中的相对图片路径转换为本站公开图片的绝对 URL。"""
+    src = html.unescape(src.strip())
+    if re.match(r'^(?:https?:|data:)', src, flags=re.IGNORECASE):
+        return src
+
+    while src.startswith("../"):
+        src = src[3:]
+    if src.startswith("./"):
+        src = src[2:]
+
+    if src.startswith("figures/"):
+        return FIGURE_PUBLIC_BASE + quote(src, safe="/")
+    return src
 
 def normalize_figures(content):
     """把 Pandoc 的独立图片统一转换为带编号、锚点和可见图注的 HTML figure。"""
@@ -20,7 +37,7 @@ def normalize_figures(content):
 
     def markdown_figure_replacer(match):
         caption = match.group(1).strip()
-        src = html.escape(match.group(2), quote=True)
+        src = html.escape(resolve_figure_src(match.group(2)), quote=True)
         attrs = match.group(3) or ""
         id_match = re.search(r'(?:^|\s)#([^\s]+)', attrs)
         figure_id = f' id="{html.escape(id_match.group(1), quote=True)}"' if id_match else ""
@@ -44,11 +61,23 @@ def normalize_figures(content):
         nonlocal figure_number
         figure_number += 1
         attrs, image, caption = match.groups()
+        image = re.sub(
+            r'(\bsrc=["\'])(.*?)(["\'])',
+            lambda src_match: (
+                src_match.group(1)
+                + html.escape(resolve_figure_src(src_match.group(2)), quote=True)
+                + src_match.group(3)
+            ),
+            image,
+            count=1,
+            flags=re.IGNORECASE
+        )
         caption = re.sub(r'^图\s*\d+\s*[：:]\s*', '', caption.strip())
         return (
             f'<figure{attrs}>\n'
             f'{image}\n'
-            f'<figcaption>图 {figure_number}：{caption}</figcaption>\n'
+            f'<figcaption style="font-size:0.85em; font-style:normal; color:#666; '
+            f'text-align:center; margin-top:0.5rem;">图 {figure_number}：{caption}</figcaption>\n'
             f'</figure>'
         )
 
