@@ -282,6 +282,23 @@ def restore_cross_document_references(content):
 
     return EMPTY_CROSS_REFERENCE_PATTERN.sub(replacer, content)
 
+def finalize_known_cross_document_references(content):
+    """在全部清洗完成后，确定性替换已知跨文件 label。"""
+    content = re.sub(r'\\*\[\\*\]\\*\(', '[](', content)
+    replacements = {
+        **{
+            f'sec:chapter{number}': f'[{number}](sec{number}.md)'
+            for number in range(2, 7)
+        },
+        'sec:appendix-lab-guide': '[B](AppendixB.md)',
+        'tab:serverless-k8s-decision': (
+            '[“Serverless 与 Kubernetes 的场景化决策参考”](sec5.md)'
+        ),
+    }
+    for label, replacement in replacements.items():
+        content = content.replace(f'[](#' + label + ')', replacement)
+    return content
+
 # ==========================================
 # 1. 深度清洗 Markdown 文件
 # ==========================================
@@ -387,6 +404,7 @@ def process_markdown_file(filepath):
     # 9. 修复图片路径与压缩空行
     content = content.replace("figures/figures/", "figures/")
     content = re.sub(r'\n{3,}', '\n\n', content)
+    content = finalize_known_cross_document_references(content)
 
     processed_heading_count = len(re.findall(r'^#{1,6}\s+', content, flags=re.MULTILINE))
     if processed_heading_count != source_heading_count:
