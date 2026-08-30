@@ -25,8 +25,13 @@ jobs:
           token: ${{ secrets.NOTIFY_PAT }}
           path: 'latex_source'
 
-      - name: ⚙️ 安装 Pandoc
-        run: sudo apt-get update && sudo apt-get install -y pandoc
+      - name: ⚙️ 安装并固定 Pandoc 3.8
+        run: |
+          curl -fsSL -o /tmp/pandoc.deb \
+            https://github.com/jgm/pandoc/releases/download/3.8/pandoc-3.8-1-amd64.deb
+          sudo dpkg -i /tmp/pandoc.deb
+          pandoc --version
+          test "$(pandoc --version | head -n 1)" = "pandoc 3.8"
 
       - name: 🐍 配置 Python 环境与依赖
         uses: actions/setup-python@v5
