@@ -230,6 +230,15 @@ def normalize_figures(content, metadata=None):
 def restore_empty_figure_references(content, metadata):
     """在 Pandoc 属性清理后，用 TeX 元数据恢复残留的空图引用。"""
     by_label = metadata.get("by_label", {})
+    html_numbers = {
+        label: int(number)
+        for label, number in re.findall(
+            r'<figure\b[^>]*\bid=["\']([^"\']+)["\'][^>]*>.*?'
+            r'<figcaption[^>]*>\s*图\s*(\d+)\s*[：:]',
+            content,
+            flags=re.DOTALL | re.IGNORECASE
+        )
+    }
 
     def replacer(match):
         normalized = match.group(0).replace("\\", "")
@@ -238,7 +247,9 @@ def restore_empty_figure_references(content, metadata):
             return match.group(0)
         label = label_match.group(1).strip()
         item = by_label.get(label)
-        number = item.get("number") if item else None
+        number = html_numbers.get(label)
+        if not number and item:
+            number = item.get("number")
         return f'[{number}](#{label})' if number else match.group(0)
 
     return EMPTY_FIGURE_REFERENCE_PATTERN.sub(replacer, content)
