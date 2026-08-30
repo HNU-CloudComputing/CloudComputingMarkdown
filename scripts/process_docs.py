@@ -227,6 +227,22 @@ def normalize_figures(content, metadata=None):
 
     return EMPTY_FIGURE_REFERENCE_PATTERN.sub(empty_figure_reference_replacer, content)
 
+def restore_empty_figure_references(content, metadata):
+    """在 Pandoc 属性清理后，用 TeX 元数据恢复残留的空图引用。"""
+    by_label = metadata.get("by_label", {})
+
+    def replacer(match):
+        normalized = match.group(0).replace("\\", "")
+        label_match = re.search(r'#([^\)]+)', normalized)
+        if not label_match:
+            return match.group(0)
+        label = label_match.group(1).strip()
+        item = by_label.get(label)
+        number = item.get("number") if item else None
+        return f'[{number}](#{label})' if number else match.group(0)
+
+    return EMPTY_FIGURE_REFERENCE_PATTERN.sub(replacer, content)
+
 # ==========================================
 # 1. 深度清洗 Markdown 文件
 # ==========================================
@@ -255,7 +271,8 @@ def process_markdown_file(filepath):
     )
 
     # 统一 Pandoc 不同版本产生的图片结构，保留图编号、锚点和可见图注。
-    content = normalize_figures(content, load_figure_metadata(filepath))
+    figure_metadata = load_figure_metadata(filepath)
+    content = normalize_figures(content, figure_metadata)
 
     # 3. 彻底清理其他残留的 Pandoc Div 边界 (:::)
     content = re.sub(r'^:::.*$', '', content, flags=re.MULTILINE)
@@ -272,6 +289,7 @@ def process_markdown_file(filepath):
     content = re.sub(r'\{width=[^\}]+\}', '', content)
     content = re.sub(r'\s*\{=html\}', '', content)
     content = re.sub(r'\{reference-type="ref"[^\}]+\}', '', content)
+    content = restore_empty_figure_references(content, figure_metadata)
     content = re.sub(r'\[\s*\]\(#[^\)]+\)', '', content)
     content = re.sub(r'\[(fig|tab|sec):[^\]]+\]', '', content)
     content = re.sub(r'如图\s+所示', '如图所示', content)
