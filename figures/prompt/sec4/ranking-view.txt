@@ -1,0 +1,139 @@
+Target image path: figures/sec4/ranking-view.png
+Source TeX: section/sec4.tex
+Figure label: fig:async-ranking-materialized-view
+Created for imagegen: 2026-07-10
+
+FIGURE CONTRACT
+
+Figure id: fig:async-ranking-materialized-view
+Nearby section: 第四章，存储分片，跨分片排行榜查询
+Why this figure exists: 解释异步汇总如何把跨分片查询与合并移出用户请求主路径。
+One teaching question: 三个 PostgreSQL 分片的局部榜单如何经过后台服务形成 Redis 全服榜单，而用户查询为什么只访问 Redis？
+Beginner misconception to prevent: Redis 是权威用户数据库，或者 Redis 在每次查询时实时访问所有 PostgreSQL 分片。
+Diagram role: 三段式教材机制图，右侧嵌入轻量游戏排行榜界面。
+Required mechanism: 分片产生局部 Top100；汇总服务接收榜单、合并排序、写入缓存；Redis 保存物化榜单；用户查询只读取 Redis 并得到全服 Top100。
+Required labels: 权威数据、分片 1、分片 2、分片 3、局部 Top100、排行榜汇总、接收榜单、合并排序、写入缓存、Redis 榜单、用户查询、全服 Top100、排名、用户、战力。
+Details to leave in prose: 定时拉取与事件消费的差异、Redis 有序集合命令、刷新频率和陈旧度取舍。
+Caption job: 后台汇总写 Redis，用户查询不再扇出到 PostgreSQL 分片。
+Post-figure sentence: 查询缩短为一次 Redis 读取，但榜单存在刷新延迟。
+
+REFERENCE IMAGE ROLES
+
+Image 1: figures/sec4/sharding-types.png — primary visual-style reference. Match its cream background, top-tab group labels, thin consistent outlines, low-saturation blue/teal/orange palette, concrete service/database objects, compact spacing, and textbook visual hierarchy.
+Image 2: figures/sec4/proxy-routing.png — mechanism-detail reference. Match its numbered internal steps, clear arrows, short labels, and restrained module styling.
+Image 3: figures/sec4/staged-migration.png — embedded-interface reference. Learn how a small game interface can appear as one endpoint of a technical mechanism without becoming a large commercial game screenshot.
+All input images are style references only, not edit targets. Do not copy their exact technical content.
+
+SYSTEM STYLE PROMPT
+
+Create a polished Chinese undergraduate cloud-computing textbook figure that belongs visually to the supplied chapter references.
+
+Visual language:
+- warm cream-white paper background
+- semi-flat technical textbook illustration
+- thin navy, teal, and muted orange outlines with consistent line weight
+- pale blue, pale teal, and pale warm-orange group backgrounds
+- top-tab group labels like the primary reference image
+- concrete icons and modules, not abstract metaphors
+- compact, balanced, and calm; enough detail to teach, no empty presentation space
+- minimal soft shading only where needed for depth; no glossy 3D, no strong gradients, no heavy shadows
+
+Hard prohibitions:
+- no funnel
+- no gear-only abstraction
+- no dark fantasy leaderboard frame
+- no anime character portraits
+- no giant outer card, giant vertical title bar, dashboard, or marketing infographic
+- no product logos
+- no decorative filler
+- no invented Chinese text
+
+Typography:
+- clean Chinese sans-serif similar to Source Han Sans / PingFang
+- exact short labels only
+- no long in-image sentences
+- no distorted glyphs, cropped labels, floating punctuation, or text overlap
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width mechanism diagram for a Chinese undergraduate textbook
+
+Source context:
+Authoritative user power data is distributed across three PostgreSQL shards. Each shard generates a local Top100. A background leaderboard aggregation service collects these lists, merges and sorts them, and writes a derived global leaderboard into Redis. User requests read only Redis and receive the full-server Top100.
+
+Teaching goal:
+Show that cross-shard fan-out and merge happen in the background update path, while the user query path reads only the materialized Redis leaderboard.
+
+Beginner misconception to prevent:
+Redis is not the source of authoritative user power data and does not query PostgreSQL shards live for every user request.
+
+COMPOSITION
+
+Create one compact wide landscape figure with three visually coherent textbook groups from left to right. Use the top-tab visual language of the primary reference image. Meaningful content should fill about 85% of the canvas, with consistent gaps and no large blank regions.
+
+GROUP 1 — authoritative data, about 30% width
+- pale-blue group with top tab “权威数据”
+- exactly three compact rows, labeled “分片 1”, “分片 2”, “分片 3”
+- each row contains a simple database cylinder and a small local ranking slip with three numbered rows, avatar dots, and score bars
+- one shared label “局部 Top100” above the three outgoing result arrows
+- keep this group concrete and orderly, similar to the database and server rows in the references
+
+GROUP 2 — aggregation service, about 28% width
+- pale warm-orange or pale blue group with top tab “排行榜汇总”
+- inside, three numbered steps stacked vertically, styled like the numbered proxy steps in Image 2:
+  1 “接收榜单” with a small multi-list icon
+  2 “合并排序” with several rows becoming one sorted list
+  3 “写入缓存” with a small outbound data icon
+- three short blue arrows from the local ranking slips enter step 1
+- short internal arrows connect step 1 to 2 to 3
+- no funnel and no gears as the explanation
+
+GROUP 3 — materialized result and user read, about 42% width
+- pale-teal group with top tab “Redis 榜单”
+- left side of this group: a compact teal cache stack plus a derived ranking table with several rows
+- right side: a light, elegant, textbook-rendered game leaderboard panel titled “全服 Top100”
+- the game panel uses a white or very pale blue background, thin navy/teal frame, small muted gold accents for ranks 1–3, generic avatar circles, rank numbers, score bars, and 5–7 rows
+- no dark fantasy frame, no character illustrations, no commercial game screenshot look
+- a short blue arrow from step 3 “写入缓存” enters the Redis ranking table
+- a short teal arrow goes from the Redis ranking table to the “全服 Top100” panel
+
+USER QUERY BRANCH
+- place two or three tiny outline user/device icons directly below the Redis ranking table, labeled “用户查询”
+- no faces, hair, clothing, or character details
+- one short upward teal arrow from “用户查询” enters the Redis ranking table
+- no query arrow may touch the PostgreSQL shards or the aggregation service
+
+Required labels, exact and short:
+- 权威数据
+- 分片 1
+- 分片 2
+- 分片 3
+- 局部 Top100
+- 排行榜汇总
+- 接收榜单
+- 合并排序
+- 写入缓存
+- Redis 榜单
+- 用户查询
+- 全服 Top100
+- 排名
+- 用户
+- 战力
+
+Quality constraints:
+- compact three-group composition, no large blank regions
+- precise technical arrows, no crossings
+- background update arrows blue; user query arrows teal
+- final game UI is attractive but visually subordinate to the mechanism
+- all text readable after scaling to full LaTeX text width
+- no extra Chinese labels, watermark, cropping, or overlapping text
+- never show “玩家” or the English word “player”; every person-column header must be “用户”
+
+FINAL TERMINOLOGY CORRECTION
+
+Image 1 is the edit target. Preserve the complete three-group composition, arrows, colors, icons, ranking rows, scores, spacing, and every existing required label. Change only terminology inside the two ranking tables:
+- replace every visible “玩家” column header with “用户”
+- keep the neighboring headers as “排名” and “战力”
+
+Do not add, remove, or rearrange ranking rows. Do not show “玩家” or the English word “player” anywhere in the image.

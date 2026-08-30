@@ -1,0 +1,172 @@
+Target image path: figures/sec4/multi-node-challenges.png
+Source TeX: section/sec4.tex
+Figure label: fig:single_to_multi_server
+Created for imagegen: 2026-07-27
+Reference image: figures/sec4/multi-node-challenges.png
+Change request: 深度重构现图。保留本书低饱和半扁平教材风格与基础技术图标语言，但重新组织信息层级、空间比例和三类问题的视觉表达，不沿用现图左右等宽大面板、巨大升级箭头和静态图标堆叠。
+
+FIGURE CONTRACT
+
+Figure id: fig:single_to_multi_server
+Nearby section: 第四章章首，从单机资源上限进入多机扩展，并首次提出均衡、协同和容错。
+Why this figure exists: 正文已经提出三个具体问题，本图要把它们放回同一条多机请求路径，使读者看清问题分别在哪个位置产生，而不是只记住三个抽象名词。
+One teaching question: 单机固定路径被扩展为多机路径后，为什么系统必须显式处理实例选择、跨节点结果确认和故障接管？
+Beginner misconception to prevent: 增加机器只是复制单机结构，容量和可用性会随节点数自然增加，不需要额外的分配、协作和接管规则。
+Diagram role: 机制路径图，左侧用小型单机基线作对照，右侧以一条连贯的多机请求路径为主体。
+Required mechanism: 用户请求经过请求入口分流到多个应用实例；分流处呈现负载差异与选择问题；一个操作跨越两个实例并需要确认结果；一个实例故障后，未完成请求需要由其他实例接管。数据实例只作为请求路径的终点，不展开分片算法、共识协议或故障切换实现。
+Required labels: 单机固定路径、用户请求、应用服务器、数据库、容量上限、增加节点、多机请求路径、请求入口、应用实例、数据实例、均衡、请求交给谁、负载高、负载低、协同、结果如何统一、容错、故障后谁接管。
+Details to leave in prose: 负载均衡算法、分片键与路由、一致性协议、事务提交、复制和故障切换流程。
+Caption job: 说明单机中的固定处理关系在多机架构中转化为实例选择、跨节点结果确认和故障接管三个显式问题。
+Post-figure sentence: 横向扩展只增加资源，不会自动建立请求分配、节点协作和故障接管规则。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration with clean technical structure and a light cream-white paper background
+- muted blue and teal as the main colors, warm gray for secondary structure, restrained orange for problem anchors, and red only for the failed node
+- thin but confident ink-like outlines with one consistent stroke weight, subtle paper texture, no gradients, no glossy icons, no heavy shadows
+- calm, readable, technically serious, and visually richer than a row of repeated server icons
+- use subtle variation in shape and grouping to create hierarchy without decorative clutter
+
+Layout rules:
+- wide landscape composition, approximately 16:9, designed to remain readable at full text width in LaTeX
+- one strong left-to-right reading path; all arrows must have stable meanings and must not cross labels
+- reserve a separate clear area for every Chinese label; no text may overlap icons, paths, borders, or other text
+- keep generous outer margins and balanced internal spacing
+- do not use large framed panels, large decorative title banners, card grids, floating badges, or a bottom slogan strip
+- the multi-machine mechanism must occupy about 72 percent of the canvas; the single-machine baseline must occupy only about 23 percent; use a narrow transition between them
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans, Noto Sans CJK, or PingFang
+- render every required Chinese label exactly; no invented synonyms, duplicated characters, distorted glyphs, cropped labels, or random text
+- use short labels only; no long explanatory sentences or punctuation-heavy text inside the image
+- keep all text horizontal and aligned on a stable baseline
+
+Content rules:
+- preserve the technical meaning from the textbook and show concrete decisions on a connected request path
+- use solid teal arrows only for request and data flow
+- use dashed blue arrows only for cross-node coordination or result confirmation
+- use one restrained red broken segment or red X only for failure
+- every orange numbered anchor must attach to an actual event on the path, never float as decoration
+- no watermark, no logo, no random English text, no decorative cloud, no people beyond minimal user-request symbols
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Deeply redesign the reference figure into a connected causal diagram. Show how one fixed single-machine path becomes one multi-machine request path with three newly explicit decisions: balancing, coordination, and fault tolerance. Preserve only the reference image's restrained textbook palette and technical icon language; replace its composition, hierarchy, spacing, and problem visualization.
+
+Source context from the textbook:
+Single-machine optimization eventually reaches physical resource limits, so users, data, and requests must be distributed across several machines. In a single-machine path, the processing server, data location, and operation owner are naturally fixed. Once several nodes participate, the system must decide which instance receives a request, how a cross-node operation produces a confirmable result, and who continues the work after a node fails. The textbook then names these three design dimensions as 均衡, 协同, and 容错.
+
+Teaching goal:
+Let a beginner follow one request from entrance to processing and data, and see exactly where the three distributed-system problems arise. The figure must visualize questions created by adding nodes, not solutions that the chapter has not yet taught.
+
+Beginner misconception to prevent:
+Horizontal expansion is just several independent copies of the single-machine stack and automatically provides capacity, agreement, and availability.
+
+Diagram type:
+Mechanism path with a compact baseline comparison, not a side-by-side architecture poster.
+
+Required visual structure:
+1. Compact baseline on the far left, no enclosing panel:
+   - small label "单机固定路径"
+   - one small user-request group labeled "用户请求"
+   - one solid teal arrow to a single server labeled "应用服务器"
+   - one solid teal arrow to one cylinder labeled "数据库"
+   - a small restrained orange capacity gauge beside the server labeled "容量上限"
+   - this baseline must be visually compact and immediately readable, using no more than one quarter of the canvas
+
+2. Narrow transition in the center-left:
+   - one modest rightward arrow labeled "增加节点"
+   - keep the arrow narrow and functional, not a giant success or upgrade symbol
+
+3. Main multi-machine request path on the right:
+   - small label "多机请求路径" above the connected topology, not inside a banner
+   - one user-request stream labeled "用户请求" enters one compact routing junction labeled "请求入口"
+   - the junction fans out through three clean solid teal paths to three peer boxes or server forms collectively representing "应用实例"; use visually consistent peers without repeating bulky labels under every icon
+   - the application instances connect onward to a compact group of two or three cylinders labeled "数据实例"; show a shared distributed topology, never three isolated one-to-one server/database stacks
+
+4. Three numbered problem anchors attached to concrete events on that same path:
+   - orange marker ① with label "均衡" and secondary label "请求交给谁" placed at the fan-out from the request entrance; show one upper instance with a small gauge labeled "负载高" and one lower instance with a small gauge labeled "负载低" so the routing choice is visible before reading the words
+   - orange marker ② with label "协同" and secondary label "结果如何统一" placed between two application instances; show one small operation token spanning them, two dashed blue arrows entering a single confirmation/checkpoint symbol, and one short dashed return arrow, so the picture means two nodes must confirm one operation result rather than merely exchange messages
+   - orange marker ③ with label "容错" and secondary label "故障后谁接管" attached to one failed application instance; show one restrained red X on that instance, a short interrupted red request segment, and a visible pending request token beside the interruption; show one neighboring healthy instance nearby, but do not draw a complete rerouting or replication solution
+
+5. Visual hierarchy:
+   - make the multi-machine path the dominant continuous structure
+   - vary vertical spacing and local callouts so the composition does not become a monotonous row or grid
+   - use light unfilled grouping contours only when necessary; do not enclose the left and right halves in large boxes
+   - the three numbered anchors should form a subtle diagonal reading rhythm across the connected topology
+   - balance visual density across the full width; avoid large empty regions
+
+Required labels, exact and short:
+- 单机固定路径
+- 用户请求
+- 应用服务器
+- 数据库
+- 容量上限
+- 增加节点
+- 多机请求路径
+- 请求入口
+- 应用实例
+- 数据实例
+- ① 均衡
+- 请求交给谁
+- 负载高
+- 负载低
+- ② 协同
+- 结果如何统一
+- ③ 容错
+- 故障后谁接管
+
+Do not add any labels beyond this list. Avoid labels longer than 8 Chinese characters. No long Chinese sentences inside the image.
+
+Main takeaway:
+Do not add a slogan. The connected path and three anchored questions must carry the teaching point; the complete conclusion belongs in the LaTeX caption.
+
+Quality constraints:
+- the three problems must remain recognizable even if the orange labels are hidden
+- all labels must remain legible after scaling to full text width in a printed textbook
+- no text overlap, no label touching arrowheads, no cropped elements, no tiny detached annotations
+- arrow semantics must remain stable: solid teal for request or data flow, dashed blue for coordination, red only for failure
+- the multi-machine side must read as one connected distributed system, not several independent copies
+- do not depict a particular load-balancing algorithm, consensus protocol, transaction protocol, database product, or failover solution
+- preserve enough white space for reading, but avoid the sparse and monotonous feeling of the reference image
+- exact Chinese labels only; no English, no watermark, no logo
+
+Avoid:
+- PPT-style colored cards, dashboard tiles, marketing infographic layout, academic black-and-white line art
+- large left/right frames, large blue heading tabs, giant central upgrade arrow
+- repeated server icons in a rigid row or repeated one-to-one server/database chains
+- three separate cards for 均衡, 协同, and 容错
+- floating numbered badges that do not point to mechanisms
+- generic two-way arrows presented as coordination without a shared operation result
+- a failed node without an interrupted or pending request
+- decorative clouds, mascots, business people, glossy 3D icons, gradients, heavy shadows
+- long sentences, extra explanatory text, random symbols, watermarks
+
+TARGETED REVISION AFTER FIRST IMAGEGEN REVIEW
+
+First generated candidate:
+/Users/lin/.codex/generated_images/019f9dcd-137d-7dd2-a3e2-27ddf18c6b6b/exec-58a15e5a-782f-42ad-b1b0-a03a8b4654bb.png
+
+Selected final imagegen output:
+/Users/lin/.codex/generated_images/019f9dcd-137d-7dd2-a3e2-27ddf18c6b6b/exec-350885a8-c3eb-4f47-943d-6f7b580a377d.png
+
+Preserve from the first candidate:
+- the cream-white textbook background, restrained blue/teal/orange palette, clear Chinese typography, and overall left-to-right reading direction
+- the compact single-machine baseline without a large enclosing panel
+- the numbered orange problem anchors and their exact wording
+- the request entrance, coordination confirmation token, restrained failed-node marker, and data-instance group
+
+Correct these specific problems without redesigning unrelated elements:
+1. Make the single-machine baseline visibly smaller, about 20-23 percent of the full width. Use only three small user icons, not five, and tighten the spacing between user requests, application server, and database.
+2. On the multi-machine side, use only three user icons. Their short arrows must merge into ONE solid teal shared trunk before reaching the request entrance. Do not let multiple arrowheads touch different sides of the routing junction.
+3. Keep three application instances in a compact staggered pool: top healthy instance with "负载高", middle healthy instance with "负载低", and lower failed instance with the red X. Place the shared label "应用实例" so it clearly names the pool rather than only the top node.
+4. Attach the dashed-blue coordination token only between the top and middle healthy instances. Keep "② 协同 / 结果如何统一" adjacent to that shared token.
+5. The failed lower instance must have only the interrupted red incoming path and pending request token. Remove every solid teal outgoing data path from the failed instance. It must not appear to continue serving a database.
+6. Draw solid teal data paths only from the two healthy application instances toward the shared "数据实例" group. The "负载低" gauge must sit next to the middle healthy instance, never below or beside the failed instance.
+7. Reduce empty space and make the multi-machine topology feel like one coherent mechanism. Keep labels separated from arrows and icons. Do not add any new text.

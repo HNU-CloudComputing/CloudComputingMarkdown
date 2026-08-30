@@ -1,0 +1,140 @@
+Target image path: figures/sec2/tcp-udp-realtime-imagegen-v2.png
+Source TeX: section/sec2.tex
+Figure label: fig:tcp-udp-realtime
+Created for imagegen: 2026-07-12
+
+FIGURE CONTRACT
+
+Nearby section:
+TCP 队头阻塞与消息语义：为什么需要 UDP。
+
+Why this figure exists:
+正文用服务器连续发送 A、B、C 三次游戏状态更新说明队头阻塞。图需要把同一次 A 丢失放入 TCP 和 UDP 两条对齐的时间路径，让读者直接看到 B、C 在两种协议中能否继续交付。
+
+One teaching question:
+当前序状态更新 A 丢失时，已经到达的 B 和 C 为什么在 TCP 中必须等待，而在 UDP 中可以立即交给应用？
+
+Beginner misconception to prevent:
+- 不要让学生以为 A、B、C 是 TCP 包；它们是应用层的三次游戏状态更新。
+- 不要让学生以为 UDP 自动实现可靠性；UDP 只是独立交付数据报，是否覆盖或重传由应用层决定。
+- 不要使用“ACK重传”这一误导性标签，必须改为“确认与重传”。
+
+Diagram role:
+同一场景下的双时间轴对比图，上方 TCP，下方 UDP。
+
+Required mechanism:
+- 两条路径使用同一个从左到右的时间方向，且 A、B、C 的发送顺序完全一致。
+- TCP 路径：发送端依次发出 A、B、C；A 在网络中丢失；B 和 C 后续到达接收缓冲区，但被明确的“队头阻塞”隔挡，不能交给应用；发送端后续重传 A；A 到达后，A、B、C 按序交付。
+- UDP 路径：发送端依次发出 A、B、C；A 在网络中丢失；B 和 C 作为独立数据报到达后，立即交给应用层，不等待 A。
+- UDP 路径右侧保留一个小型“应用层取舍”区域：高频状态走向“新状态覆盖”；关键事件走向“确认与重传”和“请求编号”。
+- 不要创造“重传阻塞延迟”或“尾延迟”等新术语。图的唯一核心术语是“队头阻塞”。
+
+Details to leave in the prose:
+TCP 字节序号、重传计时器、拥塞控制、具体往返时间、幂等处理和持久化细节。
+
+Caption job:
+概括同一次 A 丢失在 TCP 和 UDP 中对 B、C 交付的不同影响。
+
+Post-figure sentence:
+由队头阻塞推进到消息语义：高频状态可以用新更新覆盖，关键事件需要确认与重传。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue for TCP, muted teal for UDP, warm gray for shared structure, and a small amount of orange only for packet loss, waiting, and the blocking point
+- thin but confident ink-like outlines, consistent stroke width, very subtle paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- wide landscape composition suitable for a full-width LaTeX textbook figure
+- exactly two aligned horizontal timeline panels: TCP on top, UDP below
+- time always flows left to right; A, B, C must appear in correct chronological order in both panels
+- one clear reading path per panel; no crossing arrows
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use only the small panel labels TCP and UDP
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the same baseline as the text
+- no floating comma, no raised comma, no Latin comma inside Chinese sentences
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; no long sentence labels inside the image
+
+Content rules:
+- preserve the technical meaning from the source text
+- A, B, C are three application-level game state updates, not TCP packet names; show a small shared label “游戏状态更新” near the three symbols
+- show relationships, delivery timing, buffering, blocking, and application decisions, not decorative icons
+- use the exact required labels only; do not invent terms or explanatory sentences
+- no watermark, no logo, no random English text beyond TCP, UDP, A, B, C
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: mechanism comparison figure for a Chinese undergraduate cloud computing textbook
+Input image: Image 1 is the edit target and visual reference. Preserve its calm semi-flat textbook palette and overall two-panel idea, but redraw the mechanism layout to correct the TCP chronology, simplify the labels, and remove misleading wording.
+
+Source context from the textbook:
+The game server sends application-level state updates A, B, and C in order. When A is lost, TCP receives later bytes for B and C but cannot deliver them to the application until the missing earlier bytes are retransmitted. UDP treats A, B, and C as independent datagrams, so B and C can still reach the application. The application then decides by message semantics whether a new state may cover an old state or a key event needs confirmation and retransmission.
+
+Teaching goal:
+Make a beginner see, on the same aligned time axis, why one lost earlier update blocks later delivery in TCP but does not block later independent delivery in UDP, then use that contrast to introduce application-level semantic choices.
+
+Beginner misconception to prevent:
+Do not imply that A, B, and C are TCP packets. Do not imply that UDP automatically provides reliability. Do not imply that an ACK itself is retransmitted.
+
+Diagram type:
+Two-panel aligned timeline comparison.
+
+Required visual structure:
+- Top TCP panel: sender on the far left, application-level updates A then B then C moving right; A is lost first; B and C later arrive in a clearly labeled receive buffer; a visible blocking barrier prevents B and C from reaching the application; a later retransmitted A arrives; only then A, B, C pass the barrier and are delivered in order.
+- Bottom UDP panel: same sender and same A then B then C order; A is lost; B and C continue independently and are immediately delivered to the application without waiting for A.
+- On the far right of the UDP panel, one compact application decision area: high-frequency state points to new-state replacement; key event points to confirmation-and-retransmission and request ID.
+- Keep the time axes physically continuous and aligned. Do not duplicate symbols in a way that obscures which A is the original and which A is the retransmission. Mark the retransmitted A with a small orange “重传 A” label.
+
+Required labels, exact and short:
+- TCP
+- UDP
+- 发送端
+- 网络
+- 游戏状态更新
+- A
+- B
+- C
+- A 丢失
+- 重传 A
+- 接收缓冲区
+- B 已到达
+- C 已到达
+- 队头阻塞
+- 按序交付
+- 独立交付
+- 应用层取舍
+- 高频状态
+- 新状态覆盖
+- 关键事件
+- 确认与重传
+- 请求编号
+- 时间
+
+Main takeaway, if shown in the image:
+语义决定取舍
+
+Quality constraints:
+- technically correct chronology is more important than decorative similarity to the input
+- all Chinese labels must be verbatim, readable, and correctly aligned
+- no label longer than the exact required labels; no extra Chinese sentences
+- no text overlap, no label touching arrows, no cropped elements
+- the figure must remain readable when scaled to 0.98 linewidth in a LaTeX book
+- no PPT-style colored cards, no marketing infographic style, no dashboard, no watermark
+- specifically forbid the labels “ACK重传”, “重传阻塞延迟”, “尾延迟”, and “物理时间”
+
+Primary request:
+Redraw Image 1 into a corrected, cleaner textbook mechanism figure following every rule above. Change the flawed chronology and misleading labels; keep only the two-panel TCP-versus-UDP teaching structure and the restrained textbook visual character.

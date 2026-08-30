@@ -1,0 +1,122 @@
+Target image path: figures/sec1/distributed-nodes.png
+Source TeX: section/sec1.tex
+Figure label: fig:intro-phase4
+Created for imagegen: 2026-08-04
+FIGURE BRIEF
+
+正文锚点：
+本图位于第一章"阶段三：拆分到多台机器"。正文先说明单机物理资源有上限，系统扩展到多机后请求、计算和状态需按规则分配到不同节点；然后介绍分片路由、状态迁移、状态同步和故障接管四组机制；最后指出多机扩展的代价是进程内操作变为跨节点通信，网络延迟、消息重复和部分失败开始影响状态正确性。
+
+教学目标：
+让本科生看清多台计算节点共同承载在线系统的完整结构，并理解多机扩展不仅是"机器变多了"，还引入了路由分配、节点间协作、故障备份和跨机通信代价四组新问题。图必须与前一张"单机并发"图形成承接——每个节点内部仍然有并发处理，但读者的注意力应被引导到节点之间新增的跨机协作机制和代价上。
+
+读者误区：
+- 把多机扩展理解为"把地图切成几块放在不同机器上"，忽略每个节点内部仍然是并发处理结构。
+- 以为多机只有好处，忽略跨节点网络延迟、消息丢失、部分失败等新代价。
+- 认为故障接管是瞬时完成的，不理解需要副本同步作为前提。
+
+图型选择：
+三层结构的多机协作架构图。上层是请求入口与分片路由；中层是三个并列的计算节点，节点内部保留并发执行的暗示（与阶段二承接），节点之间有状态迁移和状态同步两条协作路径；底层左侧是跨节点代价与观测指标区域，底层右侧是备用节点与故障接管路径。整体视觉密度应与 concurrent-server.png 和 platform-control.png 对齐，不能出现大面积空白。
+
+SYSTEM STYLE PROMPT
+
+Create a polished multi-machine distributed-system architecture figure for a Chinese undergraduate cloud computing textbook. Use a clean semi-flat educational illustration style on a light cream-white paper background, restrained muted blue, teal, purple, and warm gray, thin confident outlines, subtle paper texture, precise alignment, and generous whitespace — but NOT empty blank areas. The result must look like a technically accurate textbook architecture diagram, not a PowerPoint slide, marketing infographic, dashboard, game map, or academic monochrome sketch.
+
+The three compute nodes must dominate the middle layer. Each node should show internal structure (execution units and state shard) to match the information density of the concurrent-server figure. Use solid blue arrows for request routing, dashed teal bidirectional arrows for state migration and synchronization with small data-particle symbols to show movement, and dashed purple arrows for failure takeover. Use a small red warning symbol for node failure, restrained and not overwhelming. Add a bottom-left observation/cost area showing cross-node latency, message loss, and partial failure signals — these are the costs of distributed systems.
+
+Chinese typography must be clean and textbook-like, similar to Source Han Sans or Noto Sans CJK. Render every required label verbatim. Keep labels short, horizontal, well spaced, and fully inside their intended modules. No malformed glyphs, missing strokes, duplicate characters, text overlap, arrows through text, cropped elements, watermark, random English, or invented terms.
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width multi-machine architecture figure for a Chinese undergraduate cloud computing textbook
+Reference style: figures/sec1/concurrent-server.png and figures/sec1/platform-control.png set the visual density and style baseline. The current distributed-nodes.png is too sparse and has a large empty bottom-left area. Redraw it to match the richness and information density of those two figures while keeping the same calm blue-teal textbook aesthetic.
+
+Primary request:
+Redraw the multi-node distributed architecture figure with three layers and much richer detail. The top layer handles request routing, the middle layer shows three compute nodes cooperating across the network, and the bottom layer balances the left side with cross-node cost/observation signals and the right side with standby failure takeover.
+
+Required composition:
+- Wide landscape canvas, approximately 2:1 aspect ratio.
+- Top layer (roughly top 20% of canvas), left-to-right flow:
+  - Top-left: a compact group labeled "客户端" with desktop, laptop, and mobile icons (3-4 devices, dashed lines converging rightward).
+  - Top-center-left: one box labeled "服务入口" with a shield/gateway icon.
+  - Top-center-right: one box labeled "分片路由" with a routing/distributor icon.
+  - Solid blue path: 客户端 → 服务入口 → 分片路由.
+  - From 分片路由, three solid blue arrows fan downward to the three compute nodes below, each arrow carrying a small tag or color hint showing it targets a different shard (A / B / C).
+
+- Middle layer (roughly middle 45% of canvas), three large physical compute node containers arranged horizontally:
+  - Each container is labeled "计算节点1" / "计算节点2" / "计算节点3" at the top inside, and has a small server-rack icon on the left side inside the container.
+  - Inside each node, show two internal areas side by side:
+    - Left area: labeled "并发执行" with 2-3 small gear/worker icons stacked vertically — this visually承接 the previous stage's concurrent execution and prevents the node from looking empty.
+    - Right area: a state tile labeled "分片A" / "分片B" / "分片C" with a small puzzle-piece shape.
+  - Between 计算节点1 and 计算节点2: a dashed teal bidirectional arrow labeled "状态迁移". Along the arrow, add 2-3 small moving data-packet symbols (small rectangles or dots) to show state is physically moving across the network, not just a static label.
+  - Between 计算节点2 and 计算节点3: a dashed teal bidirectional arrow labeled "状态同步". Along the arrow, add 2-3 small sync/replica symbols (paired dots or mirrored blocks) to show state is being replicated, not migrated.
+  - Mark 计算节点3 with a small restrained red warning triangle icon near its top-right corner and the short label "节点故障" beside it. Keep the node fully readable; do not cover it with a large red frame.
+
+- Bottom layer (roughly bottom 35% of canvas), split into left and right zones to fill the previously empty bottom-left:
+  - Bottom-left zone (about 50% of bottom width): a grouped area labeled "跨节点代价与观测" with three small callout cards arranged horizontally:
+    - Card 1: "网络延迟" with a small latency/timer icon and a tiny up-arrow hinting at increased delay compared to local calls.
+    - Card 2: "消息丢失与重传" with a small broken-envelope or retry icon.
+    - Card 3: "部分失败" with a partial-checkmark or half-success icon.
+    - Connect these three cards with thin dashed gray lines upward to the node-to-node arrows, showing that these costs arise from cross-node communication.
+    - This zone fills the bottom-left area and visually balances the bottom-right standby node.
+  - Bottom-right zone (about 50% of bottom width): one physical machine container labeled "备用节点", slightly smaller than the main compute nodes.
+    - Inside: "服务实例C" (restored/standby style, e.g., slightly lighter or with a standby badge) and "分片C副本" labeled as a replica.
+    - From the failed 计算节点3 downward to 备用节点, draw one dashed purple arrow labeled "故障接管". The arrow should show direction clearly (from failed node to standby).
+    - Add a very thin dashed teal sync arrow (small) between 计算节点3 and 备用节点 before the failure arrow, to hint that replica synchronization is a prerequisite for takeover. Label it "副本同步" in small text.
+
+- Visual hierarchy reading order:
+  1. Requests enter from top-left, pass through 服务入口, get split by 分片路由 to different machines.
+  2. Each machine runs concurrent execution against its own state shard.
+  3. Nodes cooperate: state moves between nodes (迁移) and replicas stay in sync (同步).
+  4. Bottom-left: cross-node communication has costs (延迟/丢失/部分失败).
+  5. Bottom-right: when a node fails, a standby takes over using its replica.
+
+Required labels, exact:
+- 客户端
+- 服务入口
+- 分片路由
+- 计算节点1
+- 计算节点2
+- 计算节点3
+- 并发执行 (appears inside each node, same label)
+- 分片A
+- 分片B
+- 分片C
+- 状态迁移
+- 状态同步
+- 节点故障
+- 跨节点代价与观测 (section header)
+- 网络延迟
+- 消息丢失与重传
+- 部分失败
+- 备用节点
+- 服务实例C (inside standby)
+- 分片C副本 (inside standby)
+- 副本同步 (small label, sync arrow to standby)
+- 故障接管
+
+Constraints:
+- Physical compute nodes are the main subject, not map regions or cards.
+- Each node must have visible internal structure (并发执行 + 分片), not just two flat boxes.
+- State migration and synchronization arrows must show movement/packet symbols, not just a line with text.
+- Bottom-left must be filled with the 跨节点代价与观测 zone — no large empty bottom-left area.
+- Bottom-right contains the standby node, balanced against the bottom-left observation zone.
+- No central "协调服务" box.
+- No large 区域A、区域B、区域C map containers.
+- No long explanatory sentences inside the figure.
+- No separate legend box; arrow styles are self-explanatory through their labels.
+- No orange text, orange footer, slogan, title, chapter number, or takeaway box.
+- No product names, vendor logos, cloud-provider logos, Kubernetes logos, or database brands.
+- No arrows crossing labels or passing through node interiors unnecessarily.
+- Keep all Chinese labels readable after scaling to full text width in LaTeX.
+- Match the visual density and style quality of concurrent-server.png and platform-control.png.
+
+Target output:
+Landscape raster image intended to be saved as figures/sec1/distributed-nodes.png. Use this as the canonical final asset.
+
+Input image roles used for imagegen:
+- Image 1 (figures/sec1/distributed-nodes.png): current content and layout reference. Preserve its correct routing, migration, synchronization, and standby-takeover semantics, but redesign the sparse layout.
+- Image 2 (figures/sec1/concurrent-server.png): primary style and visual-density reference for node interiors, line weight, palette, label treatment, and technical richness.
+- Image 3 (figures/sec1/platform-control.png): secondary style reference for the same textbook series, especially layer balance, calm palette, and full-width composition.
+- Generate one new final candidate, not a collage and not a literal copy of the references.

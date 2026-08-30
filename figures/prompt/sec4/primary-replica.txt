@@ -1,0 +1,125 @@
+Target image path: figures/sec4/primary-replica.png
+Source TeX: section/sec4.tex
+Figure label: fig:master_slave_replication
+Created for imagegen: 2026-06-23
+
+Figure contract:
+Figure id: fig:master_slave_replication
+Nearby section: section/sec4.tex, 容错机制与备份策略
+Why this figure exists: 帮助本科生理解一个数据库分片内部如何通过主从复制同时承担读写分离和故障接管。
+One teaching question: 主库的写入如何通过复制日志同步到从库，从库又如何分担读请求并在主库故障时接管？
+Beginner misconception to prevent: 读者可能误以为从库天然就是主库的即时完整副本，或者误以为普通读请求仍然主要走主库。
+Diagram role: Mechanism path
+Required mechanism: 用户请求进入业务服务；写请求进入主库；普通读请求只进入从库；主库将变更写入复制日志；从库接收并重放复制日志；主库故障时某个从库可以接管写入。
+Required labels: 用户请求, 业务服务, 修改数据, 结算状态, 读取配置, 查询记录, 主库, 复制日志, 从库 1, 从库 2, 接收日志, 重放日志, 故障接管, 读写分离, 主库写入, 从库承接读
+Details to leave in the prose: 不在图中解释 WAL、binlog、GTID、LSN；不在图中写长句解释复制延迟和写后读一致性。
+Caption job: 说明主从复制把写请求集中到主库，把部分读请求分摊到从库；主库通过复制日志记录变更，从库接收并重放日志，主库故障时可由从库接管。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- Use three horizontal zones from left to right: requests and service on the left, primary and replication log in the middle, replicas on the right.
+- Blue write arrows must go only from “业务服务” to “主库”.
+- Green read arrows must go only from “业务服务” to “从库 1” and “从库 2”.
+- There must be no green read arrow pointing to “主库”.
+- Replication arrows must go only from “主库” to “复制日志”, then from “复制日志” to each replica.
+- Orange dashed failover arrow must be visually separate from normal write/read/log arrows.
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Create a revised chapter 4 master-slave replication figure. Use the generic term “复制日志” instead of database-specific terms such as binlog or WAL. Make the read and write paths impossible to confuse.
+
+Source context from the textbook:
+The section explains fault tolerance for database shards in a distributed game backend. A database shard stores one group of player data. Master-slave replication gives each shard one primary database and one or more replica databases. Writes go to the primary. Ordinary reads can be served by replicas. The primary records changes in a replication log. Replicas receive and replay that log. If the primary fails, a fresh replica can take over.
+
+Teaching goal:
+Show one database shard internal mechanism: blue write path to primary, green read path to replicas, replication log from primary to replicas, and orange failover path from replica to primary role.
+
+Beginner misconception to prevent:
+The most important mistake to avoid: do not show normal read arrows going to the primary. This figure teaches read-write separation, so ordinary read arrows must terminate at replicas.
+
+Diagram type:
+Mechanism path, landscape 16:9 textbook diagram.
+
+Required visual structure:
+- Left side: dashed rounded group labeled “用户请求”, containing four short request labels: “修改数据”, “结算状态”, “读取配置”, “查询记录”.
+- Center-left: rounded rectangle labeled “业务服务”.
+- Center: large database cylinder labeled “主库”.
+- Right of primary: notebook or log icon labeled “复制日志”.
+- Far right: two database cylinders stacked vertically labeled “从库 1” and “从库 2”.
+- Blue write path: two blue arrows from “业务服务” to “主库”, labeled “主库写入”, with small labels “修改数据” and “结算状态”.
+- Green read path: two green arrows from “业务服务” directly to the replicas only, one to “从库 1” and one to “从库 2”, labeled “从库承接读”, with small labels “读取配置” and “查询记录”.
+- No green arrow may touch or point to “主库”.
+- Replication path: blue or teal arrows from “主库” to “复制日志”, then from “复制日志” to both replicas, labeled “接收日志”.
+- Beside each replica: short label “重放日志”.
+- Failover: one orange dashed arrow from “从库 2” toward the primary role area, labeled “故障接管”.
+- Bottom legend strip with exactly three short labels: “读写分离”, “主库写入”, “从库承接读”.
+
+Required labels, exact and short:
+- 用户请求
+- 修改数据
+- 结算状态
+- 读取配置
+- 查询记录
+- 业务服务
+- 主库
+- 复制日志
+- 从库 1
+- 从库 2
+- 接收日志
+- 重放日志
+- 故障接管
+- 读写分离
+- 主库写入
+- 从库承接读
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Quality constraints:
+- The term “binlog” must not appear anywhere.
+- The term “WAL” must not appear anywhere.
+- Use “复制日志” consistently for the replication log.
+- Green read arrows must terminate at replicas, not at the primary.
+- Both green read arrows must visibly originate at the right edge of “业务服务”, split there, bypass “主库” and “复制日志”, and terminate separately at “从库 1” and “从库 2”.
+- The upper green read path must carry one of “读取配置” or “查询记录”, and the lower green read path must carry the other. Both labels must appear exactly once on green paths.
+- No green line, bend, junction, or arrowhead may touch the “主库” cylinder or make the primary look like the source of a read path.
+- Show the direction of log flow clearly: 主库 -> 复制日志 -> 从库.
+- Show failover as an orange dashed path, not as normal read or write traffic.
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+
+Avoid:
+- no database-specific labels such as binlog, WAL, GTID, LSN
+- no long explanatory paragraphs inside the image
+- no PPT-style colored cards
+- no marketing infographic style
+- no cute mascot, no stock business people, no decorative cloud icons
+- no watermark, no logo, no random English text, no invented terms

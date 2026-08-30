@@ -1,0 +1,113 @@
+Target image path: figures/sec4/database-sharding.png
+Source TeX: section/sec4.tex
+Figure label: fig:database_sharding_comparison
+Created for imagegen: 2026-07-18
+Change request: 将图中所有"玩家组"改为"用户组"，"按玩家ID分流"改为"按用户ID分流"，"故障影响全服"保持通用含义不变，保持其余视觉结构不变。
+
+FIGURE CONTRACT
+
+Figure id: fig:database_sharding_comparison
+Nearby section: section/sec4.tex, 存储分片深度展开，单一数据库瓶颈与风险
+Why this figure exists: 对比单库架构（容量上限、故障影响全服）与分片架构（容量分散、故障隔离），说明水平拆分的两条收益路径。
+One teaching question: 为什么分片后单个分片故障不会阻断其他分片的正常读写？
+Beginner misconception to prevent: 学生可能把分片等同于高可用，误以为分片本身就能让故障分片继续提供服务。
+Diagram role: 左右对比图。
+Required mechanism: 左侧单一数据库集中所有用户请求和故障影响；右侧路由层按用户ID分流到多个分片，单个分片故障只影响对应用户组。
+Details to leave in prose: 副本和故障切换机制在后续容错小节展开。
+Caption job: 水平拆分按用户 ID 分散请求和数据容量，并把单个数据库故障的影响限制在对应用户组；分片缩小了故障范围，但不能保证故障分片继续提供服务。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange/red for warnings and failures
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+
+Layout rules:
+- one clear left-to-right comparison
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label
+- keep all important content inside the safe area with wide margins
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels
+
+Content rules:
+- preserve the technical meaning from the source text
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Draw a side-by-side comparison of single-database vs. sharded-database architecture.
+
+Teaching goal:
+Show that sharding disperses request capacity and data capacity, and isolates failure impact to one shard instead of the whole system.
+
+Beginner misconception to prevent:
+Sharding alone provides high availability for the failed shard.
+
+Diagram type:
+Side-by-side comparison.
+
+Required visual structure:
+- LEFT PANEL labeled "单一数据库":
+  - Four user groups (small clusters of user icons) labeled "用户组 A", "用户组 B", "用户组 C", "用户组 D" on the left
+  - All arrows from user groups converge into a single "请求队列" rectangle
+  - One large database cylinder labeled "单一数据库"
+  - A red warning label "容量上限" with a dashed line near the top of the database
+  - A red warning label "故障影响全服" at the bottom with an explosion icon
+  - Bottom banner in warm red: "风险集中"
+
+- CENTER: a large blue arrow labeled "水平拆分" pointing right.
+
+- RIGHT PANEL labeled "分片数据库":
+  - Same four user groups on the left
+  - A routing layer rectangle labeled "路由层" with text "按用户ID分流"
+  - Four database cylinders labeled "分片 1", "分片 2", "分片 3", "分片 4"
+  - Each user group arrow goes through the routing layer to its corresponding shard
+  - Highlight "分片 3" with a red X and "故障" label
+  - A red dashed box around "分片 3" and its user group, labeled "只影响用户组 C"
+  - Other three shards shown in green with "可用" tags
+  - Right side tag: "其他分片正常"
+  - Bottom banner in green: "容量与风险分散"
+
+Required labels, exact and short:
+- 单一数据库
+- 用户组 A, 用户组 B, 用户组 C, 用户组 D
+- 请求队列
+- 容量上限
+- 故障影响全服
+- 风险集中
+- 水平拆分
+- 分片数据库
+- 路由层
+- 按用户ID分流
+- 分片 1, 分片 2, 分片 3, 分片 4
+- 可用
+- 故障
+- 只影响用户组 C
+- 其他分片正常
+- 容量与风险分散
+
+Main takeaway, if shown in the image:
+分片分散容量并隔离故障
+
+Quality constraints:
+- all labels must remain readable when scaled to full text width in a LaTeX book
+- no text overlap, no label touching arrows, no cropped elements
+- no watermark, no logo
+
+Avoid:
+- no PPT-style colored cards
+- no marketing infographic style
+- no decorative clipart
+- no game-specific terms like "玩家" or "player"

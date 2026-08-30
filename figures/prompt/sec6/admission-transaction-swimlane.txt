@@ -1,0 +1,96 @@
+Target image path: figures/sec6/admission-transaction-swimlane.png
+Source TeX: section/sec6.tex
+Figure label: fig:admission-transaction-swimlane
+Created for imagegen: 2026-07-08 13:55
+
+Figure contract:
+- Nearby section: section/sec6.tex, "控制面：维护全局秩序".
+- Why this figure exists: The prose and pseudocode explain admission checks and reservations, but readers need to see the transaction boundary across model budget, sandbox lease, and trajectory writer.
+- One teaching question: When is an Attempt really allowed to enter the system, and how are partial reservations rolled back?
+- Beginner misconception to prevent: Students may think admission is only a CPU/memory check, or that each service can reserve independently without rollback.
+- Diagram role: Swimlane mechanism path.
+- Required mechanism: Queue peek, three reservation steps, rollback on any failure, commit only after all reservations succeed, and backpressure signs.
+- Details to leave in the prose: Exact code, retry policy, and internal reservation data structures.
+- Caption job: Explain that admission binds model budget, sandbox lease, and trajectory writer into one reversible resource commitment.
+- Post-figure sentence: Service boundaries isolate failures, while the transaction boundary keeps resource state consistent.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for rollback and backpressure
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture
+- no glossy icons, no gradients, no heavy drop shadows
+
+Layout rules:
+- 16:9 landscape textbook figure
+- horizontal swimlanes with clear left-to-right time flow
+- one clear normal path and one rollback path
+- every text label must sit in its own reserved label area
+- no text may overlap arrows, borders, or other text
+- avoid a large decorative title banner
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography
+- no distorted Chinese characters, no cropped text
+- prefer short labels of 2-8 Chinese characters
+- do not put long sentences inside the image
+
+Content rules:
+- preserve the technical meaning from the source text
+- show checks, reservations, rollback, and commit as different arrow styles
+- no watermark, no logo, no invented services
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+The text explains that before an Attempt starts, the control plane must confirm model budget, sandbox lease, and trajectory log capacity. A simple check is not enough; the scheduler needs a reversible reservation transaction so partial success can be released if a later step fails.
+
+Teaching goal:
+Show one admission transaction across Model Service, Environment Service, and Trajectory Log, including releaseAll rollback and final commit.
+
+Beginner misconception to prevent:
+Do not imply that resource checks alone prevent oversubscription. Do not imply that a partially reserved Attempt can safely start.
+
+Diagram type:
+Swimlane transaction diagram.
+
+Required visual structure:
+- Four horizontal swimlanes: 调度器, 模型服务, 环境服务, 轨迹日志.
+- At the far left show a small queue with "队首 Attempt".
+- Normal arrows: 调度器 -> 模型服务 "预留预算"; 调度器 -> 环境服务 "预留租约"; 调度器 -> 轨迹日志 "打开写入"; then a thick commit arrow "提交运行".
+- Add a light shaded vertical band around the three reservation calls labeled "准入事务".
+- Add orange rollback arrows from failed reservation points back to already reserved services, labeled "撤销预留".
+- Add a side column with three small backpressure indicators: 预算已满, 租约不足, 日志积压.
+- Show "任务留队" near failed or backpressure path.
+
+Required labels, exact and short:
+- 调度器
+- 模型服务
+- 环境服务
+- 轨迹日志
+- 队首 Attempt
+- 准入事务
+- 预留预算
+- 预留租约
+- 打开写入
+- 提交运行
+- 撤销预留
+- 任务留队
+- 预算已满
+- 租约不足
+- 日志积压
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+先预留再启动
+
+Quality constraints:
+- enough mechanism detail to support the textbook explanation
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width
+- no decorative people, no generic cloud icons, no PPT card stack

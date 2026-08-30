@@ -1,0 +1,89 @@
+Target image path: figures/sec6/cold-start.png
+Source TeX: section/sec6.tex
+Figure label: fig:serverless-cold-start-path
+Created for imagegen: 2026-07-22
+
+Figure contract
+Nearby section: Serverless 的冷启动与执行环境准备
+Why this figure exists: 正文把冷启动优化分成减少工作、复用结果和预留容量，图片需要让三者的机制差异一眼可见。
+One teaching question: MicroVM、Wasm、Snapshot 和暖池分别减少了哪一段首次请求路径？
+Beginner misconception to prevent: MicroVM 只缩短沙箱阶段，Wasm 也仍有模块和应用初始化；二者都不能无条件从运行时名称直接跳到处理请求。
+Diagram role: 同一时间方向上的路径对比图
+Required mechanism: 完整冷启动包含沙箱、运行时和应用初始化；MicroVM 路径仍保留运行时与应用初始化；Wasm 路径仍保留轻量运行时与应用初始化；Snapshot 复用初始化结果；暖池预留就绪容量。
+Required labels: 完整冷启动、沙箱启动、运行时启动、应用初始化、处理请求、减少工作、MicroVM、Wasm、轻量运行时、复用结果、Snapshot 恢复、预留容量、暖池实例、时间。
+Details to leave in the prose: 各阶段的具体时长、恢复后的连接与时效性状态补齐。
+Caption job: 说明三类机制分别是减少初始化、复用初始化和预留就绪容量。
+Post-figure sentence: Serverless 通过更轻的沙箱、更快的恢复和适量的后台预热压低用户可感知的启动成本。
+
+SYSTEM STYLE PROMPT
+
+You are editing an existing concept figure for a Chinese undergraduate cloud computing textbook.
+Preserve the reference image's landscape aspect ratio, light cream-white paper background, calm semi-flat textbook style, muted blue/teal/warm-gray palette, small orange accents, thin dark-gray outlines, rounded rectangles, generous whitespace, and clean Chinese sans-serif typography.
+
+The result must look like a textbook mechanism diagram, not a PowerPoint slide, marketing infographic, dashboard, poster, or academic black-and-white paper figure.
+
+Layout rules:
+- preserve the baseline, Snapshot, and warm-pool mechanism semantics
+- expand only the orange “减少工作” band into two compact parallel subpaths
+- keep one shared left-to-right time direction
+- show actual remaining stages with solid arrows
+- no crossing arrows, disconnected axes, text overlap, cropped labels, or distorted Chinese glyphs
+- keep all important content inside wide safe margins
+- use short labels only and add no explanatory sentences inside the image
+
+Content rules:
+- MicroVM and Wasm are alternative paths, never sequential stages
+- MicroVM shortens the sandbox stage but still proceeds through runtime startup and application initialization
+- Wasm uses a lightweight runtime but still proceeds through application initialization
+- Snapshot reuse is separate from warm-pool reservation
+- the diagram is schematic rather than quantitatively to scale
+- no watermark, logo, decorative cloud, mascot, gradient, glossy icon, heavy shadow, large title banner, or bottom slogan
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width figure for a Chinese undergraduate cloud computing textbook
+Input image: Image 1 is the edit target. Preserve its overall style and all non-orange rows unless extra vertical spacing is needed.
+
+Teaching goal:
+Correct the orange “减少工作” band so that neither MicroVM nor Wasm appears to skip all remaining initialization before request processing.
+
+Required visual structure:
+- Baseline row “完整冷启动” remains: “沙箱启动” -> “运行时启动” -> “应用初始化” -> “处理请求”.
+- The left category box “减少工作” spans two small parallel subpaths.
+- MicroVM subpath: label “MicroVM”, then a visibly narrow orange “沙箱启动” block, then normal “运行时启动”, then “应用初始化”, then “处理请求”. This path must clearly retain runtime and application initialization.
+- Wasm subpath: label “Wasm”, then a visibly narrow orange “轻量运行时” block, then “应用初始化”, then “处理请求”. This path must clearly retain application initialization.
+- MicroVM and Wasm subpaths begin from the same category band and never connect to each other.
+- Row “复用结果” remains “Snapshot 恢复” -> “处理请求”.
+- Row “预留容量” remains “暖池实例” -> “处理请求”.
+- Keep one shared arrow labeled “时间”.
+
+Required labels, render verbatim and add no other text:
+- 完整冷启动
+- 沙箱启动
+- 运行时启动
+- 应用初始化
+- 处理请求
+- 减少工作
+- MicroVM
+- Wasm
+- 轻量运行时
+- 复用结果
+- Snapshot 恢复
+- 预留容量
+- 暖池实例
+- 时间
+
+Keep Chinese text crisp and readable. No text overlap, no cropped labels, no distorted Chinese characters, no watermark. The final image must remain readable at full text width in a LaTeX textbook.
+
+FINAL REVISION INSTRUCTION
+
+Preserve the generated diagram, all text, colors, baseline row, Snapshot row, warm-pool row, and the two correct orange subpaths. Make only these layout corrections:
+
+- “MicroVM” and “Wasm” are technology labels, not time-consuming stages. Move each into a small label above its corresponding subpath. No arrow may enter or leave the technology label box.
+- The branch from “减少工作” must connect directly to the first actual stage of each subpath.
+- MicroVM actual path remains “沙箱启动” -> “运行时启动” -> “应用初始化” -> “处理请求”. Make “沙箱启动” visibly narrower than the baseline sandbox block, and place its “处理请求” earlier on the time axis than the baseline “处理请求”.
+- Wasm actual path remains “轻量运行时” -> “应用初始化” -> “处理请求”. Place its “处理请求” earlier than the MicroVM path.
+- Keep arrows solid and continuous. The blank space that represents saved time must appear after the earlier “处理请求” box, never before the first stage.
+- The timing positions are schematic, not quantitative.
+- Add no new text and remove no required text.

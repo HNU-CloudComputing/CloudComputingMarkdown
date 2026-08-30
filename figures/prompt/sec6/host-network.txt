@@ -1,0 +1,100 @@
+Target image path: figures/sec6/host-network.png
+Source TeX: section/sec6.tex
+Figure label: fig:container-topo
+Created for imagegen: 2026-07-05 23:26 CST
+
+Figure contract:
+- Nearby section: section/sec6.tex, "同宿主机容器互联与 bridge 组网".
+- Why this figure exists: The prose has just explained that a veth pair gives each container a point-to-point link, but multiple independent host-side veth interfaces do not automatically forward frames to each other. The figure shows how a Linux bridge gathers these links into one local layer-2 network.
+- One teaching question: How do two containers on the same host communicate through veth pairs and a bridge without using the physical network card?
+- Beginner misconception to prevent: Students may think container-to-container traffic must leave the host through the physical NIC or be routed by an external network device.
+- Diagram role: Mechanism path / local topology.
+- Required mechanism: Container A eth0 -> veth pair -> docker0 bridge -> veth pair -> Container B eth0. The host physical NIC is shown only as an unused outbound path for this local communication.
+- Details to leave in the prose: ARP broadcast, MAC table learning, and exact bridge lookup rules.
+- Caption job: Explain that veth attaches each container to the bridge, and the bridge forwards Ethernet frames between ports.
+- Post-figure sentence: Bridge forwarding then determines the concrete packet path and leads into MAC table behavior.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- one clear reading path with arrows; no crossing arrows unless unavoidable
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the same baseline as the text
+- no floating comma, no raised comma, no Latin comma inside Chinese sentences
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if a sentence would be long, replace it with a short label or leave the detailed explanation to the caption
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- avoid decorative clipart, cute characters, mascots, stock-business people, and generic cloud icons unless they explain the mechanism
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+The text explains that a veth pair connects a container Network Namespace to the host network namespace, but one veth pair only carries frames between its two ends. When multiple containers run on the same host, their host-side veth interfaces need to be gathered by a Linux bridge. The bridge acts as a software layer-2 switch so frames can move between containers inside the host.
+
+Teaching goal:
+Show that same-host container communication is a local layer-2 forwarding path: container eth0, veth pair, docker0 bridge, veth pair, peer container eth0. The physical NIC is not on this path.
+
+Beginner misconception to prevent:
+Do not imply that same-host container traffic must pass through the host physical NIC, an external router, or the public network.
+
+Diagram type:
+Mechanism path / local topology diagram.
+
+Required visual structure:
+- 16:9 landscape textbook figure.
+- Outer rounded rectangle labeled "宿主机" with a light warm-gray fill.
+- Inside the host, place "容器 A" on the left and "容器 B" on the right. Each container is a teal-bordered rounded rectangle with a simple container icon, an "eth0" interface label, and a private IP label.
+- Put "docker0 bridge" in the center as a small software switch module with several ports.
+- Draw one veth link from Container A eth0 to the bridge and one veth link from the bridge to Container B eth0.
+- Draw a thick teal data arrow from Container A through the bridge to Container B, labeled "二层转发".
+- At the bottom of the host, show a small "物理网卡" module connected by a faint dashed line, with a small orange note "本路径不经过".
+- Add a small bottom takeaway strip only if it stays readable; use a short phrase, not a long sentence.
+
+Required labels, exact and short:
+- 宿主机
+- 容器 A
+- 容器 B
+- eth0
+- 172.17.0.2
+- 172.17.0.3
+- docker0 bridge
+- veth pair
+- 二层转发
+- 物理网卡
+- 本路径不经过
+- 命名空间 A
+- 命名空间 B
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+bridge 内转发
+
+Quality constraints:
+- the figure should contain enough concrete mechanism detail to support the textbook explanation
+- no text overlap, no label touching arrows, no cropped elements
+- Chinese punctuation baseline must be normal; if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+- final image must remain readable after being scaled to full text width in a LaTeX book
+- no SVG style, no vector wireframe placeholder, no watermark

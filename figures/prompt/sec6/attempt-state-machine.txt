@@ -1,0 +1,100 @@
+Target image path: figures/sec6/attempt-state-machine.png
+Source TeX: section/sec6.tex
+Figure label: fig:attempt-state-machine
+Created for imagegen: 2026-07-08 13:55
+
+Figure contract:
+- Nearby section: section/sec6.tex, "总体架构：先分清任务状态、资源状态和轨迹状态".
+- Why this figure exists: The prose lists many Attempt states and explains compare-and-swap version checks, but readers need a state lifecycle to see which transitions are normal, timeout, cancellation, or verifier-related.
+- One teaching question: How can a distributed control plane keep one accepted Attempt timeline when scheduling, model calls, tool calls, timeout, cancellation, and verification overlap?
+- Beginner misconception to prevent: Students may think an Attempt is a simple single-machine linear procedure, or may treat verifier failure as model failure.
+- Diagram role: State lifecycle.
+- Required mechanism: Normal path, terminal states, timeout/cancel branches, verifier-abnormal branch, and a version gate before state updates.
+- Details to leave in the prose: Exact timeout durations, storage schema, and detailed CAS implementation.
+- Caption job: Explain that state transitions plus compare-and-swap version checks keep only one accepted task timeline.
+- Post-figure sentence: Later admission, lease, timeout recycling, and failure attribution all attach to this Attempt timeline.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for timeout or warning transitions
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+
+Layout rules:
+- 16:9 landscape textbook figure
+- one clear reading path from left to right, with a few downward exception branches
+- every text label must sit in its own reserved label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters
+- do not place long Chinese sentences inside the image
+
+Content rules:
+- preserve the technical meaning from the source text
+- show state transitions, terminal states, and the version-check boundary
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+The text explains that an Agent Attempt may wait for scheduling, create an environment, run, wait for the model or tools, verify, succeed, fail, cancel, or time out. It also says state transitions must be persisted with version checks so two controllers cannot both advance the same Attempt. Verifier abnormal exit must not be treated as a model task failure.
+
+Teaching goal:
+Show the Attempt lifecycle as a state machine with one normal timeline, several exception branches, and a compare-and-swap version gate before every accepted transition.
+
+Beginner misconception to prevent:
+Do not make the Attempt look like a simple local loop. Do not merge "验证异常" into "任务失败".
+
+Diagram type:
+State lifecycle diagram.
+
+Required visual structure:
+- Put a small vertical gate near the top or left labeled "版本检查"; all transition arrows pass through or carry a small version-check marker.
+- Main normal path left to right: 等待调度 -> 创建环境 -> 环境就绪 -> 执行中 -> 验证中 -> 成功.
+- Put terminal states in double-border boxes: 成功, 任务失败, 验证异常, 已取消, 已超时.
+- Add a lower branch from 执行中 to 等待模型 and 等待工具, then back to 执行中.
+- Add orange dashed timeout arrows from 创建环境, 等待模型, 等待工具, 执行中 to 已超时.
+- Add a red or orange cancellation arrow from non-terminal states to 已取消.
+- Add a branch from 验证中 to 验证异常, visually separate from 任务失败.
+- Add a small side tag near the version gate: "版本号" and "租约持有者".
+
+Required labels, exact and short:
+- 等待调度
+- 创建环境
+- 环境就绪
+- 执行中
+- 等待模型
+- 等待工具
+- 验证中
+- 成功
+- 任务失败
+- 验证异常
+- 已取消
+- 已超时
+- 版本检查
+- 版本号
+- 租约持有者
+- 正常推进
+- 超时分支
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+一条时间线
+
+Quality constraints:
+- the figure should contain enough concrete mechanism detail to support the textbook explanation
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+- no PPT-style colored card deck, no marketing infographic style, no decorative people or mascots

@@ -1,0 +1,129 @@
+Target image path: figures/sec5/pod-scheduling.png
+Source TeX: section/sec5.tex
+Figure label: fig:k8s-scheduling
+Created for imagegen: 2026-06-26
+
+Figure contract:
+Figure id: fig:k8s-scheduling
+Nearby section: section/sec5.tex, 调度：新副本放在哪台机器上
+Why this figure exists: 帮助本科生看清 K8s Scheduler 对一个新 Pod 的放置决策：先逐台过滤不满足 requests 的 Node，再对候选 Node 打分，最后绑定到得分最高的一台 Node。
+One teaching question: 一个需要 2 核 CPU 和 4Gi 内存的 battle Pod，为什么不能把资源拆到多台 Node 上，而必须由调度器选出一台完整满足条件的 Node？
+Beginner misconception to prevent: 读者可能误以为集群总剩余资源够就一定能调度成功，或者误以为 Pod 的 CPU 和内存可以跨 Node 平摊。图中必须表现“每台 Node 单独接受完整 Pod 检查”。
+Diagram role: Decision flow, concrete scheduling example.
+Required mechanism: 待调度 Pod 声明 requests；Scheduler 逐台检查 Node-A、Node-B、Node-C；Node-A 因 CPU 余量不足被过滤；Node-B 与 Node-C 进入打分；Node-C 因资源余量更大且已有 battle 副本更少而被选中；Pod 绑定到 Node-C。
+Required labels: 待调度Pod, requests, 需求2核, 内存4Gi, 过滤, Node-A, CPU余1.5, 不满足, Node-B, CPU余2.5, 候选, Node-C, CPU余3.2, 打分, battle×2, battle×1, 余量大, 副本少, 选中, 绑定
+Details to leave in the prose: 不画具体打分权重、抢占、驱逐、维护污点、GPU 约束、Topology Spread 语法和数据局部性细节。
+Caption job: 说明调度器先过滤资源不足的 Node，再对候选 Node 按资源余量和副本分散度打分，最终选择 Node-C。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange only for rejection or warning
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the scheduling decision; not sparse, not decorative
+
+Layout rules:
+- landscape 16:9 textbook diagram
+- one clear left-to-right reading path
+- divide the canvas into four zones: Pod input, Filtering, Scoring, Binding result
+- no large title banner and no bottom conclusion strip
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label
+- keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans, Noto Sans CJK, PingFang, or Microsoft YaHei
+- prefer short labels of 2-8 Chinese characters
+- avoid long Chinese sentences inside the image
+- avoid Chinese punctuation inside labels when possible
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes
+- no decorative clipart, no cute characters, no stock business people
+- no generic cloud icons unless they explain the mechanism
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Create a Kubernetes Scheduler decision-flow figure. The figure must show that a Pod is placed on one Node, not split across Nodes. The figure must show the two scheduling phases: filtering first, scoring second.
+
+Source context from the textbook:
+The text explains that controllers decide what to do, such as creating a replacement Pod, but the Scheduler decides where the Pod should run. A Pod declares resource requests, and the Scheduler checks each Node individually. Nodes that cannot satisfy the full Pod requests are filtered out. Candidate Nodes are then scored by resource headroom and replica distribution, so same-deployment replicas are spread across different Nodes when possible.
+
+Teaching goal:
+Help beginners understand scheduling as a concrete two-step decision process: filter unsuitable Nodes, then score the remaining candidates. The reader should see why total cluster resources are not enough; one Node must have enough allocatable resources for the full Pod.
+
+Beginner misconception to prevent:
+Do not show CPU or memory being split across multiple Nodes. Do not imply that the Scheduler directly creates the Pod. The Scheduler only chooses and binds a target Node.
+
+Diagram type:
+Decision flow with concrete example.
+
+Required visual structure:
+- Left zone: one Pod card labeled "待调度Pod". Inside or next to it, show two small chips: "requests", "需求2核", "内存4Gi".
+- Center-left zone, phase label "过滤": three Node cards checked individually.
+  - Node-A is gray and rejected with a small orange X. Labels: "Node-A", "CPU余1.5", "不满足".
+  - Node-B passes. Labels: "Node-B", "CPU余2.5", "候选".
+  - Node-C passes. Labels: "Node-C", "CPU余3.2", "候选".
+- Use arrows from the Pod card toward each Node card in the filtering phase to show each Node is checked against the full Pod request.
+- Center-right zone, phase label "打分": only Node-B and Node-C continue.
+  - Node-B shows labels "battle×2" and a smaller neutral score marker.
+  - Node-C shows labels "battle×1", "余量大", "副本少".
+  - Node-C should be visually stronger than Node-B, with teal outline or check mark.
+- Right zone, phase label "绑定": show the Pod placed inside Node-C or connected by a final arrow to Node-C. Add the label "选中" on Node-C.
+- A subtle dashed vertical divider may separate Filtering and Scoring.
+- Reading path should be: 待调度Pod -> 过滤 -> 打分 -> 绑定.
+
+Required labels, exact and short:
+- 待调度Pod
+- requests
+- 需求2核
+- 内存4Gi
+- 过滤
+- Node-A
+- CPU余1.5
+- 不满足
+- Node-B
+- CPU余2.5
+- 候选
+- Node-C
+- CPU余3.2
+- 打分
+- battle×2
+- battle×1
+- 余量大
+- 副本少
+- 选中
+- 绑定
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Quality constraints:
+- The three-step mechanism must be immediately readable from left to right.
+- Node-A must be clearly rejected in the filtering phase.
+- Node-B and Node-C must both pass filtering, then be compared in scoring.
+- Node-C must win because it has more remaining CPU and fewer existing battle replicas.
+- The image must not show a Pod split across multiple Nodes.
+- The image must not show Scheduler creating containers or starting Pods.
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to 0.95 text width in a LaTeX book
+
+Avoid:
+- no bottom banner with conclusion text
+- no PPT-style colored summary cards
+- no marketing infographic style
+- no dense formula or algorithm weights
+- no preemption, eviction, or topology-spread syntax
+- no cute mascot, no stock business people, no decorative cloud icons
+- no watermark, no logo, no random English text, no invented terms

@@ -1,0 +1,129 @@
+Target image path: figures/sec4/arena-coordinator.png
+Source TeX: section/sec4.tex
+Figure label: fig:cross_server_arena_architecture
+Created for imagegen: 2026-07-19
+Built-in imagegen output: 019f756d-f739-7330-8b3f-66ef7ae51bf7/call_gnqbDEyybf2hSQVmk6d1kdcM.png
+Change request: 将图中所有游戏特定术语改为通用术语："小明""李四"改为"用户A""用户B"；"游戏服务器"改为"应用服务器"；"战力比较"改为"状态比较"；"加积分""记败场"改为"更新状态""记录结果"；"擂台协调服务器"改为"协调服务器"；"玩家"改为"用户"；"发起挑战""被挑战"改为"发起请求""接收请求"；"其他玩家"改为"其他用户"。
+
+FIGURE CONTRACT
+
+Figure id: fig:cross_server_arena_architecture
+Nearby section: section/sec4.tex, 4.3.4 事务类跨服交互
+Why this figure exists: 帮助本科生理解跨服事务中"唯一裁决点"架构的核心思想：协调服务器维护全局状态并生成唯一结果，各应用服务器只负责转发请求和执行各自用户的状态更新。
+One teaching question: 为什么跨节点事务必须先由一个协调服务器生成唯一结果，再分发给各应用服务器执行，而不是让各服务器自行裁决？
+Beginner misconception to prevent: 读者可能误以为各应用服务器可以依据本地数据自行判断操作结果；图中必须明确只有协调服务器能生成正式结果。
+Diagram role: 流程架构图（请求上行 → 协调裁决 → 结果下行）。
+Required mechanism: 用户A通过应用服务器A发起请求 → 请求上行到协调服务器 → 协调服务器查询全局状态表 → 权威裁决生成唯一结果 → 结果分别下发到应用服务器A和应用服务器B → 各服务器执行本地状态更新。
+Required labels: 协调服务器, 全局状态表, 权威裁决, 状态比较, 结果事件, 用户A成功, 用户B失败, 唯一权威源, 请求, 成功结果, 失败结果, 应用服务器A, 应用服务器B, 应用服务器C, 本地代理, 更新状态, 记录结果, 用户A, 发起请求, 用户B, 接收请求, 其他用户, 单点裁决多服执行
+Details to leave in the prose: 事务性发件箱（Outbox）的异步投递细节、幂等处理、match_id 的具体作用。
+Caption job: 说明跨节点事务采用单点裁决、多服执行的架构：协调服务器维护全局状态并生成唯一结果，应用服务器只代理请求和执行各自参与者的状态更新。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for key results and warnings
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Draw a vertical flow architecture diagram showing how a cross-node transaction uses a single coordinator to generate a unique result, which is then executed by multiple application servers.
+
+Source context from the textbook:
+This figure illustrates the "single-source-of-truth" architecture for cross-server transactions. When a transaction involves users on different servers, no single application server can decide the result independently. Instead, a dedicated coordinator server maintains global state, validates the request, generates a unique result, and distributes it to the relevant application servers for local execution.
+
+Teaching goal:
+Show that the coordinator is the ONLY node that can generate the official result, while application servers only forward requests and update their local users' states.
+
+Beginner misconception to prevent:
+Students may think each application server can decide the result based on its local data. The figure must make clear that all request logic flows to the coordinator, and only execution logic flows back to the application servers.
+
+Diagram type:
+Vertical flow architecture diagram, portrait or square-ish layout.
+
+Required visual structure:
+
+- TOP SECTION: A large rounded rectangle labeled "协调服务器" containing three internal components arranged left-to-right:
+  - LEFT: a table/list icon labeled "全局状态表" with two sample rows: "用户A  节点A  状态X" and "用户B  节点B  状态Y" (use abstract placeholder values, no real numbers)
+  - CENTER: a balance/scale icon labeled "权威裁决" with text "状态比较" below it
+  - RIGHT: two result boxes side by side: a trophy/success icon with "用户A 成功" and a shield/failure icon with "用户B 失败"
+  - TOP-RIGHT corner: a shield/badge icon labeled "唯一权威源"
+
+- MIDDLE ARROWS (request/result flow):
+  - From bottom-left upward: a blue arrow labeled "请求" pointing to the coordinator's left side
+  - From coordinator downward-left: a green arrow labeled "成功结果" pointing to the bottom-left server
+  - From coordinator downward-right: a red arrow labeled "失败结果" pointing to the bottom-center server
+
+- BOTTOM SECTION: Three server boxes arranged horizontally:
+  - LEFT BOX labeled "应用服务器A", containing two internal labels stacked: "本地代理" and "更新状态"
+  - CENTER BOX labeled "应用服务器B", containing two internal labels stacked: "本地代理" and "记录结果"
+  - RIGHT BOX labeled "应用服务器C", containing one internal label: "本地代理"
+
+- BOTTOM CHARACTERS (below each server box):
+  - Below 应用服务器A: a user icon labeled "用户A" with a small label "发起请求" next to it
+  - Below 应用服务器B: a user icon labeled "用户B" with a small label "接收请求" next to it
+  - Below 应用服务器C: three small user icons in a row labeled "其他用户"
+
+- BOTTOM BANNER: A rounded rectangular banner spanning the width of the three servers, containing the text "单点裁决，多服执行" in bold.
+
+Required labels, exact and short:
+- 协调服务器
+- 全局状态表
+- 权威裁决
+- 状态比较
+- 结果事件
+- 用户A 成功
+- 用户B 失败
+- 唯一权威源
+- 请求
+- 成功结果
+- 失败结果
+- 应用服务器A
+- 应用服务器B
+- 应用服务器C
+- 本地代理
+- 更新状态
+- 记录结果
+- 用户A
+- 发起请求
+- 用户B
+- 接收请求
+- 其他用户
+- 单点裁决，多服执行
+
+Quality constraints:
+- the coordinator box must visually dominate the top of the figure
+- arrows must clearly show: request goes UP to coordinator, results come DOWN to servers
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+- no game-specific UI elements, no character portraits, no fantasy frames, no equipment icons, no currency symbols
+
+Avoid:
+- no English text except standard technical terms
+- no PPT-style colored cards
+- no marketing infographic style
+- no watermark, no logo, no invented terms

@@ -1,0 +1,128 @@
+Target image path: figures/sec3/load-pressure-v3.png
+Edit/reference target: figures/sec3/load-pressure-v2.png
+Source TeX: section/sec3.tex
+Figure label: fig:concurrent-load
+Created for imagegen: 2026-08-06
+
+FIGURE CONTRACT
+
+Nearby section: 第三章“从顺序处理到并发组织”——“顺序处理如何放大延迟”
+Why this figure exists: 对比低负载和高负载下同一顺序处理模型的队列状态，说明多类压力进入一条主处理队列后，慢请求会让后续请求排队并推高尾延迟。
+One teaching question: 顺序模型下，规模扩大为什么会把局部等待放大成后续请求的共同延迟？
+Beginner misconception to prevent: 顺序处理并非只是整体慢一点；排在前面的慢请求会阻塞后续请求。本图尚未引入并发执行或并发竞争。
+Diagram role: 左右负载对比图 + 共享时间轴机制图 + 底部队列状态总结条。
+Details to leave in prose: 具体毫秒数、调度器实现、线程与 goroutine、并发执行流、具体游戏场景。
+
+SYSTEM STYLE PROMPT
+
+Create a polished concept figure for a Chinese undergraduate cloud-computing textbook. Use the supplied V2 image only as a style and layout reference; redraw the requested V3 mechanisms cleanly.
+
+Visual style:
+- modern semi-flat textbook teaching illustration, technically serious but approachable
+- light cream-white paper background
+- muted blue and teal, warm gray, and restrained orange only for waiting, backlog, or degradation
+- thin confident dark-gray outlines, consistent stroke width, very subtle paper texture
+- no gradients, glossy icons, heavy shadows, 3D effects, marketing polish, dashboard styling, or decorative clipart
+
+Layout and typography:
+- landscape 16:9, readable at full LaTeX text width
+- two main panels separated by a thin vertical divider; one slim bottom causal-summary strip
+- one clear left-to-right reading path; no crossing arrows
+- clean Chinese sans-serif type similar to Source Han Sans / Noto Sans CJK / PingFang
+- reserve a clear area for every label; no text may touch arrows, icons, borders, or other text
+- keep Chinese labels exact, upright, uncropped, and short
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational / precise redesign
+Asset type: full-width load-pressure teaching figure
+
+LEFT PANEL — low load
+
+- Heading: “双人原型”
+- Subtitle: “顺序处理 · 低负载”
+- Three simple player silhouettes labeled “玩家A”, “玩家B”, “玩家C” feed blue arrows into one short vertical queue labeled “顺序处理”.
+- The queue contains exactly three light-blue envelope tokens and remains visibly short.
+- Place “快速清空” inline beside the queue exit, attached to a small outward arrow.
+- After the exit, show a small steady heartbeat/rhythm icon; place “稳定推进” inline to the right of that icon.
+- Do not use two stacked rounded label boxes. Keep the left panel open and balanced.
+
+RIGHT PANEL — high load
+
+- Heading: “多人同图”
+- Subtitle: “顺序处理 · 高负载”
+- Use three columns: pressure sources, one main queue, and two consequence cards.
+
+Pressure-source column:
+- Arrange four compact teal-outlined source boxes as a balanced 2×2 grid.
+- Top-left “连接规模”: many small connection dots.
+- Top-right “事件密度”: compact event/action symbols.
+- Bottom-left “热点状态访问”: a generic central rounded square labeled “热点状态”, surrounded by 4–6 small request/cursor markers with arrows pointing inward. This means many accesses concentrate on the same state; it does NOT mean concurrent contention. Do not use a database cylinder or treasure chest.
+- Bottom-right “I/O 等待”: a clock plus database cylinder.
+- Give each source box its own short teal arrow converging into the same main queue; arrowheads must point into the queue.
+
+Main-queue column:
+- Draw one tall vertical queue labeled “主处理队列”.
+- Use 8 light-blue envelope tokens; all envelopes must be the same light-blue color.
+- Mark only the lower accumulated portion with a dashed orange outline labeled “队列变长”. Do not recolor the backlog envelopes orange.
+- Draw one orange output arrow from the queue to the consequence cards.
+
+Consequence column:
+- Fill the column vertically with two aligned teaching cards.
+- Top card title “尾延迟”: show a compact latency curve with a restrained orange final spike. Do not place a clock or database icon here.
+- Bottom card title “延迟传播”: use one shared horizontal time axis pointing right, with “时间” at the right end. Stack three request lanes labeled “请求1”, “请求2”, “请求3”.
+- Request 1 arrives first and has a long orange processing bar labeled “慢请求”.
+- Request 2 arrives later: show a small arrival marker, then a gray “排队等待” segment until request 1 finishes, followed by a short orange processing bar.
+- Request 3 arrives later still: show its own arrival marker, then a longer gray waiting segment until request 2 finishes, followed by a short orange processing bar.
+- Orange processing bars must never overlap: request 2 begins only after request 1 ends; request 3 begins only after request 2 ends.
+- The timeline must immediately show that later requests cannot pass the slow request and therefore finish later.
+- No checkmarks, looping arrows, return arrows, braces over finish points, concentric circles, ripple icons, or unexplained envelope chains.
+
+BOTTOM CAUSAL-SUMMARY STRIP
+
+- Use a slim strip titled “队列状态变化”. Do not repeat the “尾延迟” curve or the “延迟传播” timeline.
+- Three horizontally aligned stages connected by thin arrows.
+- Stage 1, blue, title “及时清空”: three evenly spaced envelopes move through a short open queue.
+- Put the transition label “规模扩大” above the arrow from stage 1 to stage 2.
+- Stage 2, warm gray, title “请求持续进入”: three envelope icons enter from the left into a rectangular queue; only one envelope leaves from the right, with the short label “处理中”, showing that processing is slower than arrivals.
+- Stage 3, restrained orange, title “等待逐轮累积”: show closely packed envelopes with short orange waiting bars behind them.
+- Keep this strip visually subordinate to the main comparison.
+
+Required labels, exact and short:
+- 双人原型
+- 多人同图
+- 顺序处理
+- 低负载
+- 高负载
+- 玩家A
+- 玩家B
+- 玩家C
+- 快速清空
+- 稳定推进
+- 连接规模
+- 事件密度
+- 热点状态访问
+- 热点状态
+- I/O 等待
+- 主处理队列
+- 队列变长
+- 尾延迟
+- 延迟传播
+- 请求1
+- 请求2
+- 请求3
+- 慢请求
+- 排队等待
+- 时间
+- 队列状态变化
+- 及时清空
+- 规模扩大
+- 请求持续进入
+- 处理中
+- 等待逐轮累积
+
+Avoid:
+- do not use “共享状态竞争”, “并发竞争”, or “卡顿传染”
+- do not draw threads, goroutines, parallel lanes, schedulers, or a literal game scene
+- do not repeat tail-latency graphs in the bottom strip
+- no long explanatory sentences, malformed Chinese, random English, invented terms, watermark, text overlap, cropped elements, crossed arrows, large empty regions, PPT-style card wall, mascot, or decorative cloud

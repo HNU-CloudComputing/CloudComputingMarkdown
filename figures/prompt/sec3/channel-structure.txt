@@ -1,0 +1,110 @@
+Target image path: figures/sec3/channel-structure.png
+Source TeX: section/sec3.tex
+Figure label: fig:channel-structure
+Created for imagegen: 2026-07-03
+Change request: 删除右上角"不是管道"气泡提示（正文没有讨论 channel 与 pipe 的区别，该提示引入了未讲解的概念）；其余部分保持原图不变。
+
+Figure contract:
+Figure id: fig:channel-structure
+Nearby section: section/sec3.tex, channel 的内部结构
+Why this figure exists: 帮助本科生理解 Go channel 不只是一个数组队列，而是包含缓冲队列、发送者/接收者等待队列、互斥保护和同步点的完整同步原语。
+One teaching question: channel 除了传递消息，还要管理哪些等待和唤醒关系？
+Beginner misconception to prevent: 读者可能以为 channel 只是一个普通的先进先出队列，忽略了它内部的同步、互斥和阻塞唤醒机制。
+Diagram role: Structure diagram（展示 channel 内部组成和外部交互关系）
+Required mechanism: 左侧发送者队列排队等待入队，中间 channel 包含互斥保护、同步点、缓冲队列（容量 N），右侧接收者队列排队等待出队；底部无缓冲配对表示无缓冲 channel 的直接交接；左右两侧等待唤醒路径用虚线标出。
+Required labels: channel, 互斥保护, 同步点, 缓冲队列, 容量 N, 发送者队列, 接收者队列, 发送入队, 接收出队, 等待唤醒, 无缓冲配对
+Details to leave in the prose: CSP 模型、channel 的 Go 源码实现细节不在图中展示。
+Caption job: 说明 channel 的内部结构：缓冲队列传递消息，发送者队列和接收者队列管理等待关系，互斥保护保证并发安全。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- use small gopher-style mascot icons (round head, simple face) for goroutine sender/receiver characters — keep them consistent with the original figure style
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Recreate the channel-structure figure with one key fix — remove the "不是管道" (not a pipe) speech bubble in the upper right corner. The textbook does not discuss the difference between Go channels and OS pipes, so this callout introduces an unexplained concept that confuses readers. Everything else should remain identical to the original figure.
+
+Source context from the textbook:
+This figure appears in the section explaining Go channel internals. The text explains that a channel is not just an array queue — it contains a buffer queue, sender/receiver waiting queues, mutual exclusion protection, and synchronization points. When a sender enters the channel, the runtime checks whether the buffer has space, whether a receiver is already waiting, and whether to suspend the sender. The receiver triggers the same matching, waiting, and wakeup process.
+
+The text also distinguishes unbuffered channels (synchronous handshake where both sides must be ready) from buffered channels (which have queue space for short bursts). The bottom of the figure shows the unbuffered direct handoff path.
+
+Teaching goal:
+Show the complete internal structure of a Go channel: the central buffered queue with capacity N, the sender waiting queue on the left, the receiver waiting queue on the right, the mutual exclusion lock at the top, and the unbuffered direct handoff path at the bottom. Readers should understand that channel is a synchronization primitive, not just a data pipe.
+
+Beginner misconception to prevent:
+Students often think channel is just a FIFO queue. This figure must show that channel also manages goroutine suspension, wakeup, and mutual exclusion — it is a complete synchronization mechanism.
+
+Diagram type:
+Structure diagram, landscape 16:9 textbook diagram.
+
+Required visual structure:
+- CENTER: A large rounded rectangle labeled "channel" at the top.
+  - Inside top: a lock icon with label "互斥保护".
+  - Inside middle: a dashed box labeled "同步点", containing a green zone labeled "缓冲队列" with 5 envelope icons in a row, and below it a bracket with label "容量 N".
+- LEFT SIDE: An orange-labeled box "发送者队列" containing 3 gopher-mascot sender icons stacked vertically, each paired with an envelope icon. A bold blue arrow labeled "发送入队" points from the sender queue rightward into the channel.
+  - Below the sender queue: an orange dashed curved arrow pointing down-left to an orange label "等待唤醒", indicating suspended senders waiting to be woken.
+- RIGHT SIDE: An orange-labeled box "接收者队列" containing 3 gopher-mascot receiver icons stacked vertically, each paired with an envelope icon. A bold blue arrow labeled "接收出队" points from the channel rightward into the receiver queue.
+  - Below the receiver queue: an orange dashed curved arrow pointing down-right to an orange label "等待唤醒", indicating suspended receivers waiting to be woken.
+- BOTTOM CENTER: Two small gopher mascots facing each other with a double-headed arrow between them, inside an orange rounded box labeled "无缓冲配对". Orange dashed lines connect this box back up to the left "等待唤醒" and right "等待唤醒" labels.
+- IMPORTANT: There must be NO "不是管道" bubble or any pipe-related callout anywhere in the figure. This is the key change from the original.
+
+Required labels, exact and short:
+- channel
+- 互斥保护
+- 同步点
+- 缓冲队列
+- 容量 N
+- 发送者队列
+- 接收者队列
+- 发送入队
+- 接收出队
+- 等待唤醒 (appears twice, left and right)
+- 无缓冲配对
+
+Avoid labels longer than 8 Chinese characters.
+
+Quality constraints:
+- The "不是管道" speech bubble MUST NOT appear anywhere in the figure. This is the entire reason for regenerating the figure.
+- The overall layout, color scheme, mascot style, and visual structure must match the original figure.
+- The gopher mascot icons should be simple, round-headed cartoon characters consistent with the original style.
+- Envelope icons represent messages in the queue.
+- Orange is used for waiting/blocking states and labels; blue/teal for active data flow.
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+
+Avoid:
+- no "不是管道" text anywhere
+- no English text anywhere in the figure (except the word "channel" and "N" which are programming terms)
+- no PPT-style colored cards
+- no marketing infographic style
+- no watermark, no logo, no invented terms

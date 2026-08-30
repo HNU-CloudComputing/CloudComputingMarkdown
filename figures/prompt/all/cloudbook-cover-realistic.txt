@@ -1,0 +1,179 @@
+Target image path: figures/all/cloudbook-cover-realistic.png
+Source TeX: main.tex
+Figure id: cloudbook-cover-realistic
+Created for imagegen: 2026-07-12 18:03 CST
+
+FIGURE CONTRACT
+
+Nearby section: Book title page, below the subtitle “从在线游戏后端到云原生基础设施”.
+Why this figure exists: Show, with credible real-world visual language, that the online world experienced by players is supported by an operating physical data center underneath.
+One teaching question: What real infrastructure is running underneath the virtual online game world seen by players?
+Beginner misconception to prevent: Cloud infrastructure is not a toy-like stack of abstract icons, a magical glowing cloud, or a product-logo collection; it ultimately runs on physical servers, network equipment, cables, cooling paths, and storage systems.
+Diagram role: Realistic editorial architectural cutaway for a university textbook cover, not an architecture diagram.
+Required mechanism: A realistic multiplayer game environment occupies the upper part; a realistic operational data center cutaway occupies the lower part; one restrained pair of data paths connects the game world to a central server rack.
+Required labels: None.
+Details to leave in the prose: Kubernetes objects, containers, HPA, sharding, replication, protocols, product names, formulas, and chapter-by-chapter progression.
+Caption job: None; this is unnumbered cover artwork.
+Post-figure sentence: None.
+
+SYSTEM STYLE PROMPT
+
+Create a high-end realistic editorial cutaway image for the cover of a Chinese undergraduate cloud computing textbook.
+The result should resemble a carefully commissioned architectural and technology visualization made for a university press: physically plausible, restrained, clear, and credible. It must not resemble generic AI concept art, a toy diorama, vector clipart, an isometric infographic, a game advertisement, or a cyberpunk poster.
+
+Realism requirements:
+- photorealistic architectural visualization with believable scale, perspective, materials, construction, and lighting
+- realistic game-engine environment in the upper section, with natural terrain textures and human-scale player avatars
+- realistic modern data center in the lower section, including correctly proportioned server racks, perforated rack doors, network switches, storage chassis, cable trays, organized fiber and power cabling, raised-floor or structural support details, ventilation and cooling context
+- physically based material appearance: powder-coated steel, brushed metal, dark perforated mesh, rubber cable jackets, concrete or raised-floor panels, stone, soil, grass, water, fabric clothing
+- natural surface variation and small imperfections; no over-smoothed plastic surfaces
+- operational rather than showroom-perfect: modest variation in rack contents and status lights, cables routed logically, equipment aligned but not duplicated mechanically
+
+Photography and lighting:
+- square 1:1 composition, high-key editorial studio presentation on a pure white background
+- three-quarter architectural sectional viewpoint, roughly equivalent to a 45-60 mm lens
+- neutral soft daylight combined with realistic cool-white data-center lighting
+- broad dynamic range with restrained contrast; clear details in both upper landscape and lower rack interior
+- realistic contact shadows and ambient occlusion, but no dramatic spotlight, bloom, fog, or glowing atmosphere
+- keep the complete scene in readable focus; no extreme shallow depth of field
+
+Composition rules:
+- preserve the conceptual relationship of the previous cover: player game world above, data center operation below
+- rebuild the image from scratch; do not retain the hand-drawn, watercolor, toy-model, pawn, hex-tile, or stacked-icon appearance
+- upper game world occupies about 38-42% of the visible subject; lower data center occupies about 52-57%
+- both halves share the same perspective and align around one central vertical axis
+- one integrated cutaway silhouette with a clean, stable base; avoid many detached floating slabs
+- leave 8-12% pure white breathing room around the central subject
+- no side icons, no flowchart nodes, no repeated mini diagrams, no peripheral control loop
+- use only one subtle paired data connection between the two halves; no thick arrows and no web of lines
+
+Anti-AI visual constraints:
+- avoid perfect mirror symmetry and copy-pasted repetition
+- avoid duplicated rack fronts, repeated identical LEDs, impossible cables, cables ending in empty space, inconsistent perspective, melted geometry, floating equipment, warped human anatomy, extra limbs, malformed hands, or unreadable faces
+- avoid glossy plastic, clay-render, miniature-model, LEGO-like, low-poly, watercolor, sketch outline, vector icon, or 3D infographic aesthetics
+- avoid teal-and-orange cinematic color grading, neon blue glow, holograms, hexagonal UI grids, luminous circuit patterns, lens flares, dramatic sci-fi beams, and excessive rim lighting
+- avoid the typical AI look of overly intricate random detail with no engineering purpose
+
+Text rules:
+- no text, letters, numbers, brand marks, rack labels, warning labels, UI overlays, game HUD, pseudo-Chinese, pseudo-English, logos, or watermark anywhere
+- equipment front panels must use blank physical details only: vents, ports, handles, and small unlabeled indicator lights
+
+USER CONTEXT PROMPT
+
+Use case: photorealistic-natural
+Asset type: realistic central cover image for a Chinese undergraduate cloud computing textbook
+Input images: The current square hand-drawn cover illustration is a concept and composition reference only. Preserve only the idea “game world above, data center below”. Do not preserve its style, pawns, toy modules, arrows, palette treatment, or exact geometry.
+
+Primary request:
+Create one realistic sectional composition showing the virtual online game world above and the physical data center that operates underneath it. The image should immediately communicate that a player's visible online experience is supported by real servers, network paths, storage, power, and cooling infrastructure.
+
+Teaching goal:
+Within two seconds, a reader should understand: “players see the game world above; the real data center below keeps that world running.”
+
+Beginner misconception to prevent:
+Do not portray cloud computing as abstract floating boxes, decorative cloud icons, magical holograms, or a futuristic AI system.
+
+Required upper scene — realistic online game world:
+- a compact but believable multiplayer game environment viewed from an elevated three-quarter angle
+- natural stone plaza and low retaining walls, patches of real grass and soil, several small trees or shrubs, and one shallow water feature
+- two distant human-scale in-game player avatars facing or approaching each other; realistic adult proportions and neutral contemporary outdoor clothing in muted teal and muted navy
+- characters are small enough that faces and hands are not focal details; use natural standing or walking poses, no weapons, armor, fantasy costume, mascot design, or plastic pawn shapes
+- one subtle warm-orange interaction marker on the ground between them, similar to a restrained gameplay targeting or shared-event indicator, without any UI text
+- the game world should look like a polished realistic game-engine environment, not a photograph of real people and not a cartoon
+
+Required lower scene — realistic operating data center:
+- a clean architectural cutaway revealing a modern data center room directly beneath the game world
+- four to six full-height metal server racks arranged in two short rows with a believable service aisle, varied but orderly rack-mounted servers, perforated doors or exposed rack rails, and small irregular green/blue status LEDs
+- visible overhead or side cable trays carrying organized fiber and power cables; cables must connect to plausible switches and rack equipment
+- one central network switch area and one storage section with disk arrays or storage chassis; avoid symbolic database cylinders
+- realistic raised floor or structural floor panels, air vents, containment or cooling cues, and a few power distribution details without brand labels
+- the room should feel actively operating and technically credible, not empty, not a glowing sci-fi corridor, and not a pristine product showroom
+
+Connection between the two scenes:
+- use one restrained pair of narrow semi-transparent fiber-optic data streams aligned with a central server rack: muted teal descending from the game world and muted blue returning upward
+- no large arrowheads; communicate direction with a few small light pulses moving along the fibers
+- the connection is explanatory but secondary; the realistic game world and data center remain the visual subjects
+
+Composition and framing:
+- square 1:1 canvas
+- central architectural cutaway, slightly wider than tall inside the square
+- upper game scene approximately 40% of subject height, lower data center approximately 55%
+- a narrow structural transition between them, not a stack of floating toy platforms
+- coherent perspective across both scenes
+- pure white outer background with soft natural edge falloff; no visible rectangular panel or colored backdrop
+- designed to remain clear at approximately 13 cm square on an A4 textbook cover
+
+Color and mood:
+- realistic neutral materials with restrained color: stone gray, natural green, dark steel, soft white, muted teal, muted navy
+- only a small warm-orange ground marker as the focal accent
+- calm, trustworthy, academic, contemporary
+
+Must omit:
+- plastic pawns, hexagonal board-game tiles, hand-drawn outlines, watercolor paper illustration, rounded toy server boxes, database cylinders, stacks of paper, thick arrows
+- infographic modules, colored cards, peripheral icons, dashboards, control loops, chapter progression, laptop, sandbox terminal
+- generic cloud shapes, Docker or Kubernetes logos, vendor branding, written labels, server-room text
+
+Final quality gate:
+- realistic game environment above and realistic data center below are both immediately recognizable
+- engineering details are plausible and not randomly decorative
+- one clear visual relationship, no information overload
+- no obvious AI artifacts, duplicated geometry, malformed people, impossible cables, or synthetic plastic finish
+- no text or logos of any kind
+- outer background blends seamlessly into the white LaTeX cover
+
+IMAGEGEN REVISION 2 — FINAL EDIT PROMPT
+
+Use case: precise-object-edit
+Input images: Image 1 is the immediately preceding realistic game-world and data-center cutaway; role: edit target.
+Primary request: Change only the paired teal and blue connection running vertically between the upper game world and the central data-center rack. The current connection is too bright and resembles a science-fiction energy beam. Replace it with two very thin, physically restrained fiber-optic data strands, each approximately one quarter of the current visual width, with low-intensity translucent color and only three or four small discrete light pulses along each strand. Reduce bloom and glow by about 70%. The strands should remain visible at textbook-cover scale but must not illuminate the surrounding soil, concrete, racks, or ceiling.
+Constraints: Preserve the realistic upper landscape, both human avatars, orange interaction marker, soil and concrete cutaway, all server racks, rack contents, cable trays, cables, cooling and floor details, perspective, lighting, white background, framing, and every other object exactly as generated. Change only the teal/blue connection. No large arrowheads, no hologram, no neon beam, no new objects, no text, numbers, logos, watermark, restyling, or cropping.
+
+IMAGEGEN REVISION 3 — EXPANDED BATTLE, DATA FLOW, AND DATA CENTER PROMPT
+
+Use case: precise-object-edit
+Input images: Image 1 is the immediately preceding realistic square cover cutaway; role: edit target.
+
+Primary request:
+Keep the realistic “game world above, physical data center below” concept and white-cover presentation, but substantially improve three areas at once: make the upper scene read as an unmistakable realistic multiplayer battle, make bidirectional data transmission visually clear, and expand the lower server room into a visibly larger-scale operating data center.
+
+1. Upper game-world edit — clearer realistic battle:
+- Recompose the two small player avatars into a dynamic, believable player-versus-player encounter in a polished realistic game-engine environment.
+- The muted-teal character is moving forward in a controlled attack, using a short sword or compact staff with a restrained warm-orange skill arc.
+- The muted-navy character is actively side-stepping, blocking, or evading, with a physically natural defensive pose.
+- Use realistic adult anatomy, body weight, foot placement, clothing folds, and contact shadows. Keep both characters far enough from camera that faces and hands are not focal details.
+- Add only modest gameplay feedback: one small impact spark or ground response near the interaction point, a short motion trail, and slight dust disturbed from the stone surface.
+- Preserve the realistic stone arena, grass, shrubs, water feature, and ruined retaining walls, but adjust terrain placement if needed to create a clear combat space.
+- No gore, blood, firearms, giant weapons, fantasy armor, exaggerated magic, monsters, HUD, health bars, labels, or text.
+
+2. Data-transmission edit — visible but physically restrained:
+- Make the bidirectional connection between the battle event and the data center clearly visible at A4 cover scale.
+- Use two separate narrow fiber-optic paths: muted teal for requests descending from the battle event, muted blue for authoritative results returning upward.
+- Each path must show 5-7 small discrete packet pulses with clear spacing and direction; use subtle tapered motion, not large arrowheads.
+- Brightness should be moderate and legible, with minimal bloom. The fibers must not become a sci-fi energy beam or illuminate the entire scene.
+- At the top of the data center, route the pair into a clearly recognizable core network-switch area.
+- Inside the data center, continue the data path along real overhead cable trays and split it into three or four rack groups. Show a few teal and blue pulses moving along physically connected cables so the reader can see traffic entering, being distributed, and returning.
+- No floating packet icons, no dotted infographic arrows, no hex grids, no holograms, no luminous circuit-board pattern.
+
+3. Lower data-center edit — larger operational scale:
+- Expand the lower section so the data center occupies approximately 62-66% of the visible subject height and 88-92% of its width; the game world occupies approximately 31-35% of subject height.
+- Replace the current small five-rack room with a deeper architectural cutaway containing approximately 12-16 full-height server racks arranged in three staggered rows around a clear central cold aisle.
+- Use perspective depth: larger detailed racks in front, slightly smaller rack rows receding behind them. Avoid a flat wall of identical cabinets.
+- Include a central core-network rack or switching bay, several varied compute racks, and a clearly distinct storage row with disk-array chassis.
+- Add realistic overhead cable ladders, logically routed fiber and power bundles, raised-floor panels with perforated cooling tiles, two visible cooling or CRAC units, power-distribution cabinets, and restrained aisle-containment framing.
+- Rack fronts must vary naturally in server density, blanking panels, vents, handles, and irregular green/blue status lights. No copy-pasted repetition or mirror symmetry.
+- Cables must terminate at plausible switches, patch panels, or rack equipment. No cables disappearing into open air, crossing randomly, or melting into structures.
+- The larger room should feel active, maintained, and technically credible, while remaining readable at cover scale.
+
+Composition and invariants:
+- Preserve the square 1:1 canvas, centered architectural cutaway, pure white outer background, high-key university-press editorial presentation, realistic materials, natural neutral lighting, and overall top/bottom relationship.
+- It is acceptable to widen the lower cutaway and slightly reduce the upper landscape height to make the data center scale obvious.
+- Keep one coherent vertical composition rather than two unrelated pictures.
+- Preserve realistic stone, soil, vegetation, concrete, steel, mesh, cable, and raised-floor material behavior.
+- Do not add titles, captions, legends, interface screens, product logos, rack labels, letters, numbers, pseudo-text, or watermark.
+
+Anti-AI quality gate:
+- realistic human anatomy and dynamic action; no extra limbs, malformed hands, fused weapons, floating feet, or impossible poses
+- no duplicated rack fronts, repeating LED patterns, warped cabinets, impossible perspective, random tubing, or melted cable trays
+- no plastic miniature, clay render, glossy toy, low-poly game board, watercolor, line-art, infographic, cyberpunk, or teal-orange cinematic treatment
+- no excessive glow, bloom, dramatic fog, lens flare, or decorative complexity
+- both the battle and the enlarged data center must remain immediately recognizable after scaling to approximately 13 cm square on an A4 cover

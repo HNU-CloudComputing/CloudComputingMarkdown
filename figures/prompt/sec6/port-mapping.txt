@@ -1,0 +1,112 @@
+Target image path: figures/sec6/port-mapping.png
+Source TeX: section/sec6.tex
+Figure label: fig:port-mapping-dnat
+Created for imagegen: 2026-07-04
+Change request: 1) 将"返回改写"模块完全移入宿主机外框内部，目前它在宿主机框下边界外侧，容易误导读者认为返回地址改写发生在宿主机之外。2) 增加从"连接跟踪"到"返回改写"的虚线箭头，表示返回改写也依赖连接跟踪记录（当前只有连接跟踪到 DNAT 改写的虚线，缺少对返回路径的支撑）。
+
+Figure contract:
+Figure id: fig:port-mapping-dnat
+Nearby section: section/sec6.tex, 端口映射：让外部流量进入容器
+Why this figure exists: 帮助本科生理解端口映射的入向 DNAT 改写和返回路径的地址还原过程，以及连接跟踪在两个方向上的作用。
+One teaching question: 外部用户的请求如何通过 DNAT 进入容器，返回包又如何通过连接跟踪还原地址？
+Beginner misconception to prevent: 读者可能以为返回包改写发生在宿主机外部，或以为连接跟踪只在入向起作用。
+Diagram role: 双向路径流程图（入向蓝色路径 + 返回绿色路径）
+Required mechanism: 入向：外部用户 → 宿主机端口 → DNAT 改写（目的地址从宿主机IP:8080改为容器IP:80）→ 容器服务。返回：容器服务 → 返回改写（源地址从容器IP:80还原为宿主机IP:8080，依据连接跟踪记录）→ 外部用户。连接跟踪同时服务入向记录和返回还原。
+Required labels: 外部用户, 外部请求, 宿主机, 宿主机端口, DNAT 改写, 容器, 容器服务, 连接跟踪, 返回改写
+Details to leave in the prose: iptables/nftables 规则细节、NAT 表的具体字段不在图中展示。
+Caption job: 说明端口映射通过 DNAT 改写入向目的地址，并通过连接跟踪在返回路径上还原源地址。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Recreate the port-mapping DNAT figure with two fixes:
+1. Move the "返回改写" module entirely inside the "宿主机" outer border. In the current figure, it sits at or below the host boundary, which misleads readers into thinking return address rewriting happens outside the host. It must be clearly inside the host's network stack.
+2. Add a dashed line from "连接跟踪" to "返回改写", showing that return rewriting also depends on connection tracking records. Currently, only DNAT has a connection to 连接跟踪, but the return path also needs it.
+
+Source context from the textbook:
+This figure appears in the section explaining how external traffic reaches containers through port mapping. The text explains: incoming packets arrive at the host's public port (e.g., 8080), DNAT rewrites the destination address to the container's internal IP and port (e.g., container:80), and the connection tracking table records this mapping. When the container sends a response, the return path uses the connection tracking record to rewrite the source address back to the host's public IP:port before sending it to the external user.
+
+Teaching goal:
+Show both the inbound DNAT path and the return address restoration path, making clear that connection tracking serves both directions.
+
+Diagram type:
+Bidirectional flow path diagram, landscape 16:9 textbook diagram.
+
+Required visual structure:
+- LEFT ZONE: "外部用户" box with user/laptop icons. A small label "外部请求" on the arrow going right.
+
+- CENTER ZONE: A large rounded rectangle labeled "宿主机" containing:
+  - "宿主机端口" box (entry point)
+  - "DNAT 改写" box (orange highlight) — rewrites destination address
+  - "连接跟踪" box (blue dashed outline) — records mapping
+  - "返回改写" box (green/teal) — rewrites source address on return path
+  - IMPORTANT: "返回改写" MUST be fully inside the "宿主机" border. This is key fix #1.
+  - Orange dashed line from "连接跟踪" to "DNAT 改写" (existing)
+  - Orange dashed line from "连接跟踪" to "返回改写" (NEW — key fix #2)
+
+- RIGHT ZONE: "容器" dashed box containing "容器服务" box.
+
+- INBOUND PATH (blue arrows): 外部用户 → 宿主机端口 → DNAT 改写 → 容器服务
+  - Small annotation near DNAT: "Dst: 宿主机IP:8080 → 容器IP:80"
+
+- RETURN PATH (green arrows): 容器服务 → 返回改写 → 外部用户
+  - Small annotation near 返回改写: "Src: 容器IP:80 → 宿主机IP:8080"
+  - The return path goes through "返回改写" INSIDE the host, then exits to external user.
+
+Required labels, exact and short:
+- 外部用户
+- 外部请求
+- 宿主机
+- 宿主机端口
+- DNAT 改写
+- 连接跟踪
+- 返回改写
+- 容器
+- 容器服务
+
+Quality constraints:
+- "返回改写" MUST be completely inside the "宿主机" border — this is fix #1
+- "连接跟踪" must have dashed lines to BOTH "DNAT 改写" AND "返回改写" — this is fix #2
+- Inbound path uses blue arrows; return path uses green arrows
+- Address transformation annotations should be small, near the corresponding module
+- Maintain the same overall visual style as the original figure
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+
+Avoid:
+- "返回改写" must NOT be outside or on the boundary of 宿主机
+- no English text except DNAT, IP (used in address annotations)
+- no PPT-style colored cards
+- no marketing infographic style
+- no watermark, no logo, no invented terms

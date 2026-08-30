@@ -1,0 +1,131 @@
+Target image path: figures/sec1/technology-stack.png
+Source TeX: section/sec1.tex
+Figure label: fig:architecture
+Created for imagegen: 2026-08-03
+
+FIGURE CONTRACT
+
+Figure id: fig:architecture
+Nearby section: 第一章“从逻辑架构到云基础设施”中的“逻辑职责在具体技术中的对应”
+Why this figure exists: 正文已经建立接入层、服务执行层、状态层、控制面和验证面五项逻辑职责，需要用一张图说明这些职责怎样由具体技术承载。
+One teaching question: 验证面如何跨越接入、执行、状态和控制面收集运行证据，而不是成为请求路径中的第五个串行组件？
+Beginner misconception to prevent: 把指标、日志和链路追踪误解为请求必须依次经过的业务组件，或把验证面合并进 Kubernetes 的控制职责。
+Diagram role: 架构边界图，以一条主要请求路径、一个控制面和一条横跨各层的验证面证据带表达职责分工。
+Required mechanism: 实线表示请求与状态访问；青绿色虚线表示 Kubernetes 的部署和治理动作；细点线表示各层向验证面输出运行证据。
+Required labels: 客户端、接入层、WebSocket、服务执行层、Go 服务、Docker 镜像、状态层、Redis、PostgreSQL、控制面、Kubernetes、验证面、运行指标、事件日志、链路记录、请求路径、控制动作、运行证据。
+Details to leave in the prose: 具体指标种类、日志格式、追踪上下文传播方式以及各工具的部署细节。
+Caption job: 说明主要请求路径、控制面和验证面的不同职责，并强调验证面从各层收集证据。
+Post-figure sentence: 验证面不构成请求路径中的串行一跳，而是持续观察各层的运行结果。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange only for the evidence path
+- thin but confident ink-like outlines, consistent stroke width, very subtle paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- match the source image's restrained blue-and-teal technical textbook style while improving its conceptual structure
+
+Layout rules:
+- one clear left-to-right request path with solid blue arrows; no crossing arrows
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label and keep labels away from arrowheads
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, wrong glyphs, cropped text, or wavy baselines
+- use only the exact short labels listed below; do not add Chinese sentences
+- keep English product names spelled exactly
+
+Content rules:
+- preserve the technical meaning from the source image, but regroup Docker image with service execution and keep Kubernetes in a distinct control plane
+- show relationships, boundaries, arrow direction, and the cross-layer verification band
+- no decorative clipart, cute characters, mascots, stock-business people, generic cloud icons, watermark, logo, or invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width concept figure for a Chinese undergraduate cloud computing textbook
+Input images: the first generated candidate is the edit target; the existing technology-stack.png is the original style and content reference.
+Primary request: Refine the candidate online-system technology-stack figure so all five logical responsibilities are represented accurately. Preserve its successful cross-layer verification band and overall visual style, but correct the service-instance topology: the two Go service instances are parallel alternatives, never serial hops.
+
+Source context from the textbook:
+An online request enters through an access layer, is processed by application services, and reads or writes state. Docker images provide standardized delivery and Kubernetes performs deployment, scheduling, and fault replacement. Metrics, logs, and traces are evidence produced across all layers and collected by a verification plane.
+
+Teaching goal:
+Show that access, service execution, and state form the main request path; Kubernetes is the control plane; the verification plane spans every layer and collects operational evidence rather than becoming another serial request hop.
+
+Beginner misconception to prevent:
+Do not place the verification plane as a fifth box in the left-to-right request chain. Do not merge verification into Kubernetes governance.
+
+Diagram type:
+Architecture boundary diagram with one mechanism path and two cross-cutting responsibility areas.
+
+Required visual structure:
+- Wide landscape composition close to the source image's aspect ratio.
+- Left-to-right main path across the upper two-thirds: 客户端 -> 接入层 with WebSocket -> 服务执行层 with two parallel Go 服务 instances -> 状态层 with Redis and PostgreSQL.
+- The solid request arrow from WebSocket must visibly fork to the two Go 服务 instances. Do not draw any solid arrow from one Go 服务 instance to the other.
+- Both Go 服务 instances must independently access the state layer. Use a clean shared state-access bus or two clearly parallel paths; never make only the second instance access Redis and PostgreSQL.
+- Place Docker 镜像 inside or directly above 服务执行层 as the shared delivery artifact. Do not use a solid blue request-path arrow between Docker 镜像 and a Go 服务 instance.
+- Place a distinct 控制面 area at the upper right containing Kubernetes; use teal dashed control arrows from Kubernetes to the Go service instances.
+- Place a wide horizontal 验证面 band across the entire bottom, visibly spanning 接入层、服务执行层、状态层、控制面.
+- Inside 验证面 place three evenly spaced evidence carriers: 运行指标, 事件日志, 链路记录. Use neutral conceptual icons rather than product logos.
+- Use thin warm-gray or muted-orange dotted evidence lines from WebSocket, both Go 服务 instances, Redis/PostgreSQL, and Kubernetes down into the verification band.
+- Kubernetes may use teal dashed control arrows only toward the two Go 服务 instances. Do not draw a teal dashed control arrow from Kubernetes into the verification band; its line into the verification band must be the same dotted evidence style as the other layers.
+- Include a tiny unobtrusive arrow-style legend using the exact labels 请求路径, 控制动作, 运行证据.
+
+Required labels, exact and short:
+- 客户端
+- 接入层
+- WebSocket
+- 服务执行层
+- Go 服务
+- Docker 镜像
+- 状态层
+- Redis
+- PostgreSQL
+- 控制面
+- Kubernetes
+- 验证面
+- 运行指标
+- 事件日志
+- 链路记录
+- 请求路径
+- 控制动作
+- 运行证据
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Constraints:
+- preserve technical accuracy and clear responsibility boundaries
+- solid blue arrows only for request and state access
+- teal dashed arrows only for control actions
+- dotted warm-gray or muted-orange lines only for evidence collection
+- no text overlap, no cropped labels, no watermark
+- remain readable when scaled to full text width in a LaTeX book
+
+Avoid:
+- verification as a serial business hop
+- one Go service calling the other as part of the main request path
+- only one Go service instance accessing the state layer
+- control and evidence arrows sharing the same style
+- PPT-style colored cards, marketing infographic appearance, dashboard layout
+- dense explanatory text, large title, gradients, heavy shadows, decorative icons
+
+FINAL SINGLE-CHANGE REFINEMENT
+
+Treat the latest candidate as the edit target. Preserve every object, box, solid blue request arrow, teal dashed control-action arrow, orange dotted evidence line, verification band, legend, spacing, color, and typography exactly as shown.
+
+Change only the three evidence cards inside the bottom 验证面 band:
+- replace the left card with 运行指标 and use a neutral small line-chart or gauge icon
+- replace the middle card with 事件日志 and use a neutral document-list icon
+- replace the right card with 链路记录 and use a neutral connected-nodes or path icon
+- remove all product-specific logos from these three cards completely
+- do not add any monitoring, logging, or tracing product name or logo
+- keep all other labels, components, arrows, and their positions unchanged

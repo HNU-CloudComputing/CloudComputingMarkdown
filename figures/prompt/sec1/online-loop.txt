@@ -1,0 +1,33 @@
+Target image path: figures/sec1/online-loop.png
+Source TeX: section/sec1.tex
+Figure label: fig:intro-phase2
+Created for imagegen: 2026-07-14 00:04
+
+FIGURE BRIEF
+正文锚点：第一章“原型阶段”。少量玩家先完成一次可信交互，连接管理、规则裁决、状态更新集中在一个服务进程中，关键结果写入持久化存储。
+教学目标：展示单体原型如何形成“请求送达—结果算出—变化同步—关键数据保存”的完整在线闭环，并预告第二章的连接、消息、权威裁决与状态同步。
+读者误区：把“单体”理解为只有一个方框，忽略请求在单体内部仍要经过连续处理步骤。
+图型：横向机制路径图，两个客户端与一个单体服务后端之间形成闭合的请求—响应路径；服务进程内部显示连续处理链，存储位于进程边界之外。
+
+SYSTEM STYLE PROMPT
+Create a polished mechanism figure for a Chinese undergraduate cloud computing textbook. Use a semi-flat educational illustration style on a light cream-white background, with muted blue, teal, and warm gray, thin confident outlines, subtle paper texture, and generous whitespace. It must look like a textbook mechanism diagram, not a PowerPoint slide, marketing infographic, dashboard, or academic monochrome paper figure.
+Use one coherent reading path and technically meaningful boundaries. Avoid three-column layouts, large cards, decorative title banners, footer slogans, orange text, orange conclusion boxes, gradients, heavy shadows, glossy icons, mascots, and unrelated cloud/server decoration. All labels must be short, correct Chinese in a clean sans-serif font. No text overlap, no arrows through labels, no cropped elements, no watermark, no invented terms.
+
+USER CONTEXT PROMPT
+Use case: scientific-educational
+Asset type: full-width chapter roadmap mechanism figure
+Input image: intro-phase2.png is the conceptual edit target. Preserve only the idea of a two-player single-process prototype. Completely replace its three-column PowerPoint layout and remove the bottom orange slogan.
+Primary request: Draw a richer single-process online-game request loop. Place 玩家A and 玩家B as two client devices on the left and right edges. In the center, draw one clear process boundary labeled 单体服务后端. Inside it, arrange a continuous mechanism chain: 接入与连接 → 消息解析 → 权威裁决 → 状态更新 → 结果同步. Use solid arrows from both clients into the process for 操作意图 and return arrows from 结果同步 to both clients. Below the process boundary, place 持久化存储; draw only 关键结果 from 状态更新 into it. Make the distinction between transient in-process state and durable results visually clear. The whole figure should express a closed online interaction loop, not a list of chapter mechanisms.
+Required labels, exact and short:
+- 玩家A
+- 玩家B
+- 操作意图
+- 单体服务后端
+- 接入与连接
+- 消息解析
+- 权威裁决
+- 状态更新
+- 结果同步
+- 关键结果
+- 持久化存储
+Constraints: landscape 2:1; one central process boundary; visible request and return paths; no section called 本章机制; no labels 阶段压力 or 系统形态; no orange footer or slogan; no three-column card template; all Chinese text readable at full LaTeX width.

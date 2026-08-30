@@ -1,0 +1,111 @@
+Target image path: figures/sec4/outbox-delivery.png
+Source TeX: section/sec4.tex
+Figure label: fig:cross_server_challenge_flow
+Redraw with imagegen: 2026-07-29
+Reference image: figures/sec4/outbox-delivery.png
+
+FIGURE CONTRACT
+
+Why this figure exists:
+The figure must show why a local transaction can preserve an official result and two delivery tasks together, while delivery to servers A and B proceeds independently after commit. It must make partial progress, pending state, retry, acknowledgment, and idempotent match checking visible in a consistent time order.
+
+One teaching question:
+After one local transaction commits match M1024 and two pending tasks, how can the system keep completed progress, retry the unconfirmed target, and avoid applying the same result twice?
+
+Beginner misconception to prevent:
+Students must not think the remote servers or Dispatcher participate in the local database transaction. They also must not think that one failed delivery rolls back another server that has already succeeded, or that retry means applying points twice.
+
+Diagram role:
+Three-stage state lifecycle plus mechanism path.
+
+Required mechanism:
+Stage 1: one local transaction commits the official result and two pending outbox tasks.
+Stage 2: Dispatcher sends independently; server A succeeds and confirms, while server B returns no confirmation, so A becomes sent and B remains pending.
+Stage 3: Dispatcher retries B; B checks M1024 before updating, returns confirmation, and both tasks become sent.
+
+SYSTEM STYLE PROMPT
+
+You are redrawing a mechanism figure for a Chinese undergraduate cloud computing textbook.
+Use the supplied image only as a style and subject reference. Preserve its calm semi-flat textbook character, cream-white paper background, muted blue and teal palette, warm gray panels, restrained orange warning accents, thin consistent outlines, clean Chinese sans-serif typography, and wide landscape aspect ratio. Recompose the mechanism completely so its states are technically consistent.
+
+The result must look like a polished textbook illustration, not a PowerPoint slide, marketing infographic, dashboard, comic, or academic black-and-white diagram. Use a single left-to-right reading path with three clearly separated numbered stages. Keep generous whitespace and safe margins. No gradients, glossy icons, heavy shadows, decorative cloud icons, logos, watermarks, or invented modules.
+
+Every Chinese label must be rendered verbatim, with correct glyphs, no extra characters, no cropped text, and no text overlapping arrows or borders. English identifiers must also be exact. Use orange only for the unconfirmed delivery and retry; use green only for confirmed completion.
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width mechanism illustration for a Chinese undergraduate cloud computing textbook
+Input image role: style and subject reference; redraw the layout and state sequence rather than making a small edit
+
+Primary request:
+Redraw the Transactional Outbox delivery mechanism for match M1024 as three consecutive stages. The figure must depict one coherent sequence rather than mixing different time snapshots.
+
+Composition:
+Wide landscape canvas, three stages arranged left to right with large stage numbers and arrows connecting them. Each stage has its own pale panel. Keep the coordinator database and Dispatcher visually distinct from remote application servers so the local transaction boundary is unmistakable.
+
+Stage 1, exact heading: “阶段一：一次提交”
+- Show “协调服务器”.
+- Inside it, show “同一本地数据库”.
+- Use one restrained orange dashed boundary labeled “一次提交”. This boundary contains only the two local tables below; it must not include Dispatcher or either remote server.
+- Table “match_results” contains one compact record: “M1024｜甲胜｜乙负”.
+- Table “outbox” contains exactly two compact records: “A｜待发送” and “B｜待发送”.
+- Visual conclusion: official result and both pending tasks appear together.
+
+Stage 2, exact heading: “阶段二：首次派发”
+- Show “Dispatcher” reading the two pending tasks.
+- Green solid arrow to “服务器 A”, followed by “检查 M1024”, “加积分”, and a green return arrow labeled “处理确认”.
+- Orange dashed arrow to “服务器 B” labeled “未收到确认”. Do not show B as completed in this stage.
+- Show a compact status area with exactly “A｜已发送” in green and “B｜待发送” in orange.
+- This stage must clearly preserve A's success while B remains pending.
+
+Stage 3, exact heading: “阶段三：失败重试”
+- Show “Dispatcher” sending an orange dashed arrow labeled “重试” to “服务器 B”.
+- Inside server B, show “检查 M1024” before “记败场”.
+- Show a green return arrow labeled “处理确认”.
+- Show final compact status area with exactly “A｜已发送” and “B｜已发送”, both green.
+- Add one small short label near the check: “避免重复执行”.
+
+Exact required labels, exhaustive:
+“阶段一：一次提交”
+“阶段二：首次派发”
+“阶段三：失败重试”
+“协调服务器”
+“同一本地数据库”
+“一次提交”
+“match_results”
+“M1024｜甲胜｜乙负”
+“outbox”
+“A｜待发送”
+“B｜待发送”
+“Dispatcher”
+“服务器 A”
+“服务器 B”
+“检查 M1024”
+“加积分”
+“记败场”
+“处理确认”
+“未收到确认”
+“A｜已发送”
+“B｜已发送”
+“重试”
+“避免重复执行”
+
+Technical invariants:
+- The local transaction boundary contains match_results and outbox only.
+- Initial outbox state is A pending and B pending.
+- After first dispatch, A is sent and B is pending.
+- After retry and confirmation, A is sent and B is sent.
+- No remote update happens inside the local transaction boundary.
+- Server B checks M1024 before recording the loss.
+- Arrow directions are unambiguous: send arrows point from Dispatcher to servers; confirmation arrows point from servers back to Dispatcher.
+- Do not show a rollback of server A when B is unconfirmed.
+
+Omit:
+- player portraits and decorative arena cards
+- server C or unrelated users
+- ACID definitions, 2PC, message queues, brokers, consensus, or synchronous distributed transactions
+- long explanatory sentences inside the image
+
+Avoid:
+Mixed time states, contradictory outbox statuses, arrows pointing in both directions without labels, a failed B task labeled sent before confirmation, an A task labeled pending after confirmation, text distortion, wrong Chinese glyphs, crowded tables, overlapping labels, extra modules, large title banners, marketing-card layout, watermark, or logo.

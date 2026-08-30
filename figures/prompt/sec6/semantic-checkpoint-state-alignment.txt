@@ -1,0 +1,98 @@
+Target image path: figures/sec6/semantic-checkpoint-state-alignment.png
+Source TeX: section/sec6.tex
+Figure label: fig:semantic-checkpoint-state-alignment
+Created for imagegen: 2026-07-08 13:55
+
+Figure contract:
+- Nearby section: section/sec6.tex, "状态面：把回滚和分叉放进训练循环".
+- Why this figure exists: The prose explains four state layers, OS-visible side effects, CoW layers, rollback, and branching. Readers need one mechanism view to connect checkpoint granularity with recovery boundaries.
+- One teaching question: How does the state plane choose which state layers to save, then rollback and branch from a consistent boundary?
+- Beginner misconception to prevent: Students may think checkpoint means copying the whole environment after every step, or that external side effects can always be rolled back.
+- Diagram role: Decision boundary plus lifecycle timeline.
+- Required mechanism: Four layers, semantic decision box, CoW write-layer freeze, rollback to checkpoint, new branch, external state as only partially controllable.
+- Details to leave in the prose: Delta dump details, template fork implementation, exact garbage collection policy.
+- Caption job: Explain that semantic-aware checkpoint aligns Agent turn semantics with OS side effects and saves only necessary layers.
+- Post-figure sentence: The state plane avoids heavy snapshots on every step while keeping recoverable branch points.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and small orange for rollback or irreversible boundary
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture
+- no glossy icons, no gradients, no heavy drop shadows
+
+Layout rules:
+- 16:9 landscape textbook figure
+- horizontal timeline across the middle
+- four horizontal state layers stacked vertically
+- clear rollback arrow and branch arrow
+- every label must sit in its own reserved label area
+- no text overlap, no label touching arrows, no cropped labels
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography
+- no distorted Chinese characters, no cropped text
+- prefer short labels of 2-8 Chinese characters
+- do not put long Chinese sentences inside the image
+
+Content rules:
+- preserve the technical meaning from the source text
+- show state layers, side-effect mapping, checkpoint boundary, rollback, and branching
+- no watermark, no logo, no invented terms
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+The text explains that checkpoint is not simply saving a full copy. The state plane must align Agent turn semantics with OS side effects: reading files may skip checkpoint, file edits need a file-system checkpoint, process changes need process state, and external state is hard to roll back. CoW layers can freeze the current write layer and insert a new one, enabling rollback and branching from a checkpoint.
+
+Teaching goal:
+Show semantic-aware checkpoint as a choice of saved layers plus a rollback and branch from a consistent boundary.
+
+Beginner misconception to prevent:
+Do not imply that every step needs a full snapshot. Do not imply external websites, databases, or queues can be reliably rolled back by the platform.
+
+Diagram type:
+Lifecycle decision diagram.
+
+Required visual structure:
+- Four horizontal layers from top to bottom: 任务状态, 文件系统, 进程状态, 外部状态.
+- Draw an execution timeline with steps i-1, i, i+1.
+- At step i place a small decision box "副作用判断" with three short outcomes: 只读跳过, 保存文件, 保存进程.
+- In the 文件系统 layer show CoW write layer boxes: 写层冻结 then 新写层.
+- In the 进程状态 layer show a small saved process marker "进程保存".
+- Draw a dashed orange boundary around 外部状态 labeled "不可完全回滚".
+- Draw a dashed rollback arrow from failure after step i to checkpoint at step i-1, then a solid branch arrow to "新分支".
+- Add small cleanup marker "过期清理" near old checkpoints.
+
+Required labels, exact and short:
+- 任务状态
+- 文件系统
+- 进程状态
+- 外部状态
+- 副作用判断
+- 只读跳过
+- 保存文件
+- 保存进程
+- 写层冻结
+- 新写层
+- 进程保存
+- checkpoint
+- rollback
+- 新分支
+- 过期清理
+- 不可完全回滚
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+按副作用保存
+
+Quality constraints:
+- enough mechanism detail to support the textbook explanation
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width
+- no PPT flowchart look, no decorative icons, no long prose inside image

@@ -1,0 +1,150 @@
+Figure brief
+
+Figure id: fig:2pc
+Nearby section: section/sec4.tex, 两阶段提交：跨分片更新的原子提交路径
+Why this figure exists: 正文先用“用户 A 向用户 B 转移 10 个金币”定义原子性，再说明分片把一个本地事务拆成两个独立提交点。本图要把 2PC 如何重新形成统一提交或统一回滚画清楚。
+One teaching question: 2PC 怎样让分片 1 的扣款和分片 2 的入账共同提交或共同回滚？
+Beginner misconception to prevent: 准备阶段并未提交；两个分片不是各自看到本地成功就立即提交，而是持锁等待协调者的统一决定。
+Diagram role: 具体业务场景驱动的横向时序泳道图。
+Required mechanism: Prepare 请求、两个本地事务形成未提交修改并持锁、Ready 投票、协调者判断全部 Ready、统一 Commit；任一 Abort 或超时则统一 Rollback。
+Details to leave in prose: 协调者单点故障、稳定事务日志、长时间阻塞和两轮网络往返的性能分析。
+Caption job: 说明准备阶段只产生未提交的本地修改，统一决定到达后才共同提交或共同回滚。
+Post-figure sentence: 2PC 的原子性来自所有参与者服从同一个全局决定，它的运行代价也来自等待这个决定的过程。
+Target image path: figures/sec4/two-phase-commit.png
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- one clear left-to-right reading path with arrows; no crossing arrows
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use no in-image title
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the same baseline as the text
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- use only the exact short labels listed below; do not invent additional prose
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, transaction states, message directions, lock interval, and final state changes
+- no decorative clipart, cute characters, mascots, generic cloud icons, watermark, logo, or invented terms
+- do not retain the old diagram's third participant, tangled dotted branches, or central “单点风险” badge
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width LaTeX textbook mechanism figure
+Input image: edit target and visual-style reference only. Rebuild the information architecture completely; preserve only its calm cream background, muted blue/teal/orange palette, restrained line weight, and textbook finish.
+
+Source context from the textbook:
+User A transfers 10 coins to user B. After sharding, the deduction belongs to shard 1 and the credit belongs to shard 2. Each database can keep its own local transaction atomic, but the business operation is correct only if both local transactions commit together or roll back together. 2PC uses a coordinator to collect Ready votes and publish one shared Commit or Rollback decision.
+
+Teaching goal:
+Make a beginner see exactly what each shard has done before Ready, why both shards remain locked and uncommitted, and how the coordinator's shared decision preserves the transfer's atomicity.
+
+Diagram type and composition:
+- wide landscape figure, approximately 16:9, designed to remain legible at full text width
+- one left-to-right timeline divided into two softly tinted vertical regions: “准备阶段” on the left and “决策阶段” on the right
+- three horizontal swimlanes with short fixed labels on the far left:
+  1. “协调者”
+  2. “分片 1｜用户 A”
+  3. “分片 2｜用户 B”
+- use simple database-cylinder symbols for the two shards and a restrained controller symbol for the coordinator
+
+Required success path, left to right:
+1. Show initial values near the shard lanes: “A＝100” and “B＝50”.
+2. Coordinator sends downward messages labeled exactly “Prepare” to both shards.
+3. Shard 1 shows an orange-edged pending card labeled exactly “扣款 −10｜未提交”.
+4. Shard 2 shows an orange-edged pending card labeled exactly “入账 ＋10｜未提交”.
+5. Put a small closed-lock symbol beside each pending card. A single clean bracket spanning this interval is labeled exactly “持锁等待统一决定”.
+6. Both shards send upward messages labeled exactly “Ready”.
+7. Coordinator has one compact decision node labeled exactly “全部 Ready？”.
+8. The main teal path sends downward messages labeled exactly “Commit” to both shards.
+9. At the far right, show unlocked final-state cards: “A＝90” and “B＝60”, with one shared short label “共同提交并解锁”.
+
+Required failure branch:
+- use a small, clearly separated inset below the main decision area; do not overlay it on the success path
+- exact trigger label: “任一 Abort 或超时”
+- one arrow labeled exactly “Rollback”
+- final label: “恢复 A＝100、B＝50”
+- show unlocked icons in the rollback result
+
+Exact phase and mechanism labels allowed in the image:
+- “准备阶段”
+- “决策阶段”
+- “协调者”
+- “分片 1｜用户 A”
+- “分片 2｜用户 B”
+- “A＝100”
+- “B＝50”
+- “Prepare”
+- “扣款 −10｜未提交”
+- “入账 ＋10｜未提交”
+- “持锁等待统一决定”
+- “Ready”
+- “全部 Ready？”
+- “Commit”
+- “A＝90”
+- “B＝60”
+- “共同提交并解锁”
+- “任一 Abort 或超时”
+- “Rollback”
+- “恢复 A＝100、B＝50”
+
+Color semantics:
+- blue for Prepare messages and preparation region
+- orange only for pending uncommitted changes and the lock interval
+- teal for Ready/Commit success path and committed final states
+- warm gray with a small muted red accent for the rollback inset
+
+Strict constraints:
+- exactly two shard participants, no shard C
+- second phase must be labeled “决策阶段”, not “提交阶段”
+- Prepare does not unlock and does not make values final
+- Ready arrows must point from shards to coordinator
+- Commit arrows must point from coordinator to both shards
+- Rollback is a compact alternate branch, never tangled with the success path
+- no “单点风险” label in this figure
+- no long explanatory sentences, no numbered legend at the bottom, no crossing lines, no duplicate arrows, no decorative cloud
+- no text overlap, no cropped labels, no malformed Chinese, no watermark
+
+REVISION REQUEST V2 — rebalance the lower-left whitespace
+
+Edit the current generated figure rather than changing its teaching content.
+
+Keep unchanged:
+- the three swimlanes, two phase regions, all transaction values, all message directions, and the exact success-path mechanism
+- the calm cream background, muted blue/teal/orange palette, typography, icon style, and overall 16:9 landscape format
+- exactly two shards and the labels already present
+
+Required layout refinement:
+- the current lower-left area is visually too empty while the rollback inset is crowded into the lower-right
+- redesign the rollback alternative as one slim horizontal strip spanning most of the lower width beneath the two phase panels
+- align the strip's left edge approximately with the left edge of the preparation panel, so it visually occupies the lower-left whitespace
+- keep one short vertical dashed connector from the “全部 Ready？” decision node down to the rollback strip; no diagonal or crossing arrows
+- inside the strip, arrange one clean left-to-right sequence:
+  “任一 Abort 或超时” → “Rollback” → “A＝100、B＝50” → “恢复原值并解锁”
+- use one compact open-lock symbol near the rollback result, not two large repeated lock icons
+- reduce the strip height and keep generous internal padding, so the lower area feels balanced rather than boxed-in
+- slightly enlarge or vertically center the main three-lane success diagram within the upper area if needed, but do not compress labels
+- keep the preparation and decision panels equal in visual weight
+
+Strict invariants:
+- do not add a legend, explanatory paragraph, decorative icon, third shard, single-point-risk badge, or any new concept
+- do not alter the values A＝100, B＝50, A＝90, B＝60
+- do not move the rollback path into the main success arrows
+- preserve label readability and forbid text overlap or cropped elements

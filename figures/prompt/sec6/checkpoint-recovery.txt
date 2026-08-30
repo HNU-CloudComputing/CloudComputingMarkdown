@@ -1,0 +1,108 @@
+Target image path: figures/sec6/checkpoint-recovery.png
+Source TeX: section/sec6.tex
+Figure label: fig:semantic-checkpoint-state-alignment
+Created for imagegen: 2026-07-08 14:51
+
+Figure contract:
+- Nearby section: section/sec6.tex, "状态面：把回滚和分叉放进训练循环".
+- Why this figure exists: The prose explains semantic-aware checkpoint granularity, four state layers, rollback, branching, and cleanup. The figure must match the four-branch pseudocode and avoid implying full snapshot on every step.
+- One teaching question: How does the state plane decide which layers to save, then roll back to a consistent state and branch?
+- Beginner misconception to prevent: Do not imply checkpoint always saves file system, process, and external state together. Do not imply rollback returns to the decision box.
+- Diagram role: Decision boundary plus lifecycle timeline.
+- Required mechanism: Four state layers, four side-effect decisions including file+process, file checkpoint limited to file-system layer, process checkpoint only when triggered, external state not checkpointed, rollback to saved consistent state, new branch from that state, fixed branch point and cleanup of low-value points.
+- Details to leave in the prose: Incremental dump details, template fork, exact GC policy.
+- Caption job: Explain that semantic-aware checkpoint saves necessary layers and supports rollback/branching at consistency boundaries.
+- Post-figure sentence: Failure resumes from a saved state point, not from the decision logic.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue and teal for timeline and saved states, warm gray for layers, small orange for failure and external-state warning
+- thin confident outlines, consistent stroke width, soft paper texture
+- no glossy icons, no gradients, no heavy shadows
+
+Layout rules:
+- 16:9 landscape textbook figure
+- four horizontal state layers stacked vertically
+- timeline across the top or middle with i-1, i, i' branch, i+1
+- decision box near step i, but rollback arrow must point to saved checkpoint state, not to the decision box
+- every label in a reserved area; no overlaps; no cropped text
+
+Chinese typography rules:
+- clean Chinese sans-serif typography
+- no distorted Chinese characters, no cropped text
+- short labels only; no long explanatory sentences in the image
+
+Content rules:
+- Include all four decisions: 只读跳过, 保存文件, 保存进程, 保存文件+进程.
+- "保存文件+进程" must point to both file-system save and process save.
+- File-system checkpoint arrow stops inside 文件系统 layer. It must not pass through 进程状态 or 外部状态.
+- Process checkpoint arrow appears only from 保存进程 or 保存文件+进程.
+- 外部状态 has a dashed boundary and label "不可完全回滚"; no checkpoint write arrow enters it.
+- Rollback arrow label is Chinese "回滚"; no English "rollback".
+- New branch starts from the recovered consistent state point.
+- Show a "固定分叉点" marker near the saved checkpoint used for branching, and "过期清理" only for low-value old points.
+- No watermark, no logo, no invented terms.
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+The text gives pseudocode for semantic-aware checkpoint: read-only actions skip checkpoint; file changes save the file-system layer; process changes save process state; file-and-process changes save both. The prose also says external state cannot be reliably rolled back. If step i fails, the platform should restore a saved consistency point before step i and start a new branch, rather than going back to the decision logic.
+
+Teaching goal:
+Show checkpoint granularity selection across four state layers and the rollback/branch path from a saved consistent state.
+
+Beginner misconception to prevent:
+Do not show every checkpoint as full environment copy. Do not show external state as checkpointed. Do not show rollback targeting the decision box.
+
+Diagram type:
+Lifecycle decision diagram.
+
+Required visual structure:
+- Four horizontal layers from top to bottom: 任务状态, 文件系统, 进程状态, 外部状态.
+- Timeline labels: i-1, i, i', i+1. Use i' for the new branch after rollback.
+- At step i place a decision box "副作用判断" containing four options: 只读跳过, 保存文件, 保存进程, 保存文件+进程.
+- In 文件系统 layer show "写层冻结" and "新写层"; file checkpoint arrows stay in this layer.
+- In 进程状态 layer show "进程保存"; only process-related decisions point here.
+- Around 外部状态 layer draw a dashed orange boundary with label "不可完全回滚" near the layer title or center of the boundary.
+- Mark a saved consistent state before step i as "checkpoint" and "一致状态".
+- Draw an orange dashed arrow from "i 失败" back to that saved consistent state labeled "回滚".
+- Draw a teal branch arrow from that recovered state to "新分支" or i'.
+- Add "固定分叉点" near the checkpoint used for branching; add "过期清理" near an older low-value checkpoint only.
+
+Required labels, exact and short:
+- 任务状态
+- 文件系统
+- 进程状态
+- 外部状态
+- 副作用判断
+- 只读跳过
+- 保存文件
+- 保存进程
+- 保存文件+进程
+- 写层冻结
+- 新写层
+- 进程保存
+- checkpoint
+- 一致状态
+- i 失败
+- 回滚
+- 新分支
+- 固定分叉点
+- 过期清理
+- 不可完全回滚
+
+Avoid labels longer than 8 Chinese characters except "保存文件+进程" and "不可完全回滚". Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+按副作用保存
+
+Quality constraints:
+- no text overlap, no cropped labels, no arrows through labels
+- final image must remain readable at full text width in a LaTeX book
+- Chinese labels must be legible
+- no PPT flowchart look, no decorative icons, no long prose inside image

@@ -1,0 +1,28 @@
+Target image path: figures/sec2/lockstep-sync.png
+Edit target: figures/sec2/p2p-lockstep-sync-imagegen-v1.png
+Source TeX: section/sec2.tex
+Figure label: fig:p2p-lockstep-sync
+Created for imagegen: 2026-07-15
+Imagegen call ID: exec-87b42157-dba7-4651-8ed9-f9b5c7efe112
+
+Use case: text-localization
+Asset type: scientific-educational diagram for a Chinese undergraduate cloud computing textbook
+
+Primary request:
+Edit only the two top container headers in the supplied image.
+
+Exact text replacements:
+- Replace “对等进程 A” with “对等程序 A”.
+- Replace “对等进程 B” with “对等程序 B”.
+
+Invariants:
+- Preserve the entire canvas size, 2:1 landscape composition, cream-white background, colors, typography style, line weights, spacing, alignment, boxes, arrows, formulas, and all other labels exactly as the source image.
+- Preserve both symmetric peer columns and every arrow meaning.
+- Keep all existing text other than the two requested headers unchanged.
+- Do not move, resize, redraw, translate, add, or remove any module.
+- Do not introduce the words “进程”, “线程”, or “协程” anywhere.
+- Render the two new Chinese headers verbatim, with no malformed, duplicated, or cropped characters.
+- No watermark, logo, title banner, footer card, or extra annotation.
+
+Output:
+High-resolution PNG with the same aspect ratio and visual hierarchy as the edit target.

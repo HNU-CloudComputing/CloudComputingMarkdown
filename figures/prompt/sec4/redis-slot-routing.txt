@@ -1,0 +1,143 @@
+Target image path: figures/sec4/redis-slot-routing.png
+Source TeX: section/sec4.tex
+Figure label: fig:redis-cluster-slot-routing
+Created for imagegen: 2026-07-26
+
+FIGURE CONTRACT
+
+Figure id: fig:redis-cluster-slot-routing
+Nearby section: 缓存层的分布式演进：从单机 Redis 到集群；正文先解释固定哈希槽，再解释扩容时迁移部分槽位。
+Why this figure exists: 让本科生看清 Redis Cluster 并不是用 key 对当前节点数量直接取模，而是在 key 与物理节点之间加入固定哈希槽和槽位表。
+One teaching question: 一个缓存 key 如何经过固定哈希槽定位到 Redis 节点，扩容时为什么只需迁移部分槽位？
+Beginner misconception to prevent: 把 Redis Cluster 误解为 hash(key) % nodeCount，或者误以为新增节点会改变所有 key 的槽位编号。
+Diagram role: 单一机制路径图，附带一个紧凑的扩容前后状态变化。
+Required mechanism: key 先通过 CRC16(key) mod 16384 得到固定槽位；槽位表再把该槽位映射到 Redis 节点；扩容时槽位编号不变，只迁移部分槽位及其中的数据并更新槽位表。
+Required labels: 缓存请求；key = user:1001:pos；计算槽位；CRC16(key) mod 16384；固定槽位 0–16383；槽位表；Redis A；Redis B；Redis C；Redis D；扩容前；迁移部分槽位；扩容后；槽位编号不变；更新槽位表。
+Details to leave in the prose: 哈希标签、多 key 操作、CROSSSLOT、客户端收到重定向后的重试过程。
+Caption job: 说明 key 到槽位的计算不受节点数量变化影响，节点扩缩容通过迁移部分槽位和更新槽位表完成。
+Post-figure sentence: 固定槽位把 key 的计算结果与当前节点数量解耦，使扩缩容可以按槽位分批迁移，而不必重新计算全部 key 的归属。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration on a light cream-white paper background
+- muted blue and teal as the main colors, warm gray for secondary structure, and a small amount of orange only for migrated slots
+- thin but confident dark-gray outlines, consistent stroke width, subtle paper warmth, no gradients, no glossy icons, no heavy shadows
+- calm, compact, readable, technically serious, and visually consistent with the provided same-chapter style reference
+
+Layout rules:
+- wide landscape composition, approximately 16:9, suitable for full-width placement in a LaTeX textbook
+- one dominant left-to-right mechanism path across the upper two thirds
+- one compact aligned before/after slot-band comparison across the lower third
+- use alignment, proximity, and a shared baseline to make the reading order obvious
+- no large card grid, no three disconnected panels, no scattered icons, and no excessive empty areas
+- arrows must not cross; each arrow has one stable meaning
+- every label has reserved space and generous padding
+- keep all important elements inside wide safe margins
+
+Chinese typography rules:
+- clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- render every required label exactly once unless a node label must appear in both before/after states
+- no distorted Chinese, no extra words, no cropped labels, no wavy baselines, no floating punctuation
+- keep Chinese labels short; keep the formula exactly as written
+
+Content rules:
+- preserve the exact Redis Cluster mechanism described below
+- do not show PostgreSQL, database sharding, leaderboards, game servers, players, or cross-shard queries
+- do not use a consistent-hashing ring
+- do not imply that the fixed slot number changes during expansion
+- no watermark, logo, decorative people, random English, or invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: mechanism figure for a Chinese undergraduate cloud computing textbook
+Input images: Image 1 is a style reference only. Match its restrained semi-flat textbook palette, stroke weight, typography scale, and clean technical feeling; do not copy its two-column composition or content.
+
+Primary request:
+Create a new Redis Cluster hash-slot routing diagram. The image must teach one mechanism: a cache key first maps to one of 16384 fixed hash slots, then a slot table maps that slot to a Redis node; when a new node is added, only selected slots and their data move, while every key's slot number remains unchanged.
+
+Teaching goal:
+Students should be able to trace the complete path from one cache key to its Redis node and explain why fixed slots make incremental rebalancing possible.
+
+Beginner misconception to prevent:
+Redis Cluster does not route by directly computing hash(key) modulo the current node count, and expansion does not recompute every key's slot number.
+
+Diagram type:
+Mechanism path with a compact before/after state comparison.
+
+Required visual structure:
+1. Upper main path, aligned on one horizontal baseline:
+   - a small request document or terminal symbol labeled "缓存请求"
+   - directly below or inside it, the exact example "key = user:1001:pos"
+   - a right-pointing arrow to a compact calculation step labeled "计算槽位"
+   - show the exact formula "CRC16(key) mod 16384" in a small reserved formula strip
+   - a right-pointing arrow to one continuous horizontal slot band labeled "固定槽位 0–16383"
+   - divide the band into many small cells; highlight one selected slot in blue
+   - a right-pointing arrow to a compact "槽位表" mapping strip that uses three colors to associate slot ranges with "Redis A", "Redis B", and "Redis C"
+   - from the selected mapping, one clear arrow reaches "Redis B"; keep Redis A and Redis C visible as peer nodes but visually secondary
+
+2. Lower compact expansion comparison, aligned and substantially smaller than the main path:
+   - left label "扩容前" above one continuous slot band split among Redis A, Redis B, Redis C
+   - right label "扩容后" above the same-length slot band split among Redis A, Redis B, Redis C, Redis D
+   - orange highlights mark only the slot segments moved to Redis D
+   - one orange arrow between the two bands labeled "迁移部分槽位"
+   - two short callouts near the after-state: "槽位编号不变" and "更新槽位表"
+   - preserve the same slot-band length and numbering before and after expansion
+
+Required labels, exact and short:
+- 缓存请求
+- key = user:1001:pos
+- 计算槽位
+- CRC16(key) mod 16384
+- 固定槽位 0–16383
+- 槽位表
+- Redis A
+- Redis B
+- Redis C
+- Redis D
+- 扩容前
+- 迁移部分槽位
+- 扩容后
+- 槽位编号不变
+- 更新槽位表
+
+Composition and hierarchy:
+- make the upper key-to-node route the unmistakable visual focus
+- make the lower expansion comparison compact but still readable at full textbook width
+- use a continuous slot band, not isolated floating cache icons
+- use blue for the key-routing path, teal for stable slot ownership, and orange only for migrated slots
+- reserve generous whitespace around labels, but keep related objects close together
+
+Quality constraints:
+- all labels remain readable when scaled to one LaTeX text width
+- no text overlap, no arrow crossing, no cropped elements, no decorative title banner
+- technical accuracy takes priority over decoration
+- no PostgreSQL content and no Redis brand logo; use neutral server/cache-node icons
+- no extra Chinese sentences beyond the listed labels
+- no watermark
+
+Avoid:
+- the previous figure's three disconnected panels
+- large empty boxes with isolated icons
+- PPT-style cards, dashboard tiles, marketing infographic layout
+- scattered symbols, decorative clipart, gradients, shadows, glossy 3D
+- long explanatory text inside the image
+
+REVISION 2 — TARGETED QA CORRECTION
+
+Use the previously generated candidate as the edit target. Preserve its overall wide composition, cream-white background, palette, typography, main upper route, continuous slot bands, and compact lower comparison. Change only the routing clarity and expansion ranges described below.
+
+1. Remove the duplicate Redis B server drawn below the upper slot-table row. The upper route must contain exactly one Redis A, one Redis B, and one Redis C. The selected blue slot maps through the blue middle range of the slot table to that single Redis B. Remove the long looping/backward blue arrow under the slot band; use only short forward or downward arrows.
+
+2. Make the lower expansion comparison show a true partial slot migration without recomputing all old boundaries:
+   - 扩容前：Redis A owns 0–5460; Redis B owns 5461–10922; Redis C owns 10923–16383.
+   - 扩容后：Redis A still owns 0–5460; Redis B still owns 5461–10922; Redis C owns 10923–13652; new Redis D owns 13653–16383.
+   - Highlight only 13653–16383 in orange as the range moved from Redis C to Redis D.
+   - Keep the full slot band numbered 0 through 16383 before and after.
+   - Keep the callouts "槽位编号不变" and "更新槽位表".
+
+Do not add any new labels, icons, panels, formulas, or explanatory sentences. No duplicate nodes, no crossed arrows, no changed overall style.

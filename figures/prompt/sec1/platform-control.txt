@@ -1,0 +1,39 @@
+Target image path: figures/sec1/platform-control.png
+Source TeX: section/sec1.tex
+Figure label: fig:intro-phase5
+Created for imagegen: 2026-07-14 00:04
+
+FIGURE BRIEF
+正文锚点：第一章“云原生阶段”。服务和实例增多后，应用被封装成标准化运行单元；平台持续观察实际状态，依据版本、数量和资源需求完成调度、故障重建与弹性伸缩。
+教学目标：展示“声明目标—观察状态—纠正偏差—再次观察”的调和循环，并预告第五章的容器、编排、服务发现、故障恢复和弹性伸缩。
+读者误区：把云原生理解为一次性的容器启动命令，或者误以为控制面直接承载业务流量。
+图型：控制面调和闭环 + 集群执行视图。控制路径与业务流量路径分开，不做机制清单。
+
+SYSTEM STYLE PROMPT
+Create a polished cloud-native control-loop figure for a Chinese undergraduate cloud computing textbook. Use a semi-flat educational illustration style on a light cream-white background, muted blue, teal, and warm gray, thin confident outlines, subtle paper texture, and generous whitespace. It must look like a textbook control-loop diagram with concrete execution detail, not a PowerPoint slide, marketing infographic, dashboard, or academic monochrome paper figure.
+Separate control flow from user traffic with distinct but restrained arrow styles. Use one clear feedback loop. Avoid three-column layouts, large isolated cards, decorative title banners, footer slogans, orange text, orange conclusion boxes, gradients, heavy shadows, glossy icons, mascots, and decorative cloud shapes. All labels must be short and correct. No text overlap, no crossing arrows, no cropped elements, no watermark, no invented terms.
+
+USER CONTEXT PROMPT
+Use case: scientific-educational
+Asset type: full-width chapter roadmap control-loop figure
+Input image: intro-phase5.png is the conceptual edit target. Preserve only the idea of containerized replicas managed by Kubernetes. Completely replace its three-column PowerPoint layout and remove the bottom orange slogan.
+Primary request: Draw a richer cloud-native reconciliation loop. On the upper-left, show 应用声明 containing 版本, 副本数, and 资源需求, plus a nearby 镜像 repository. In the center, draw a clear 控制面 loop with 读取期望 → 观察状态 → 计算差异 → 调度执行 → 再次观察. On the right and lower area, show a 集群 with three nodes and several 容器实例. Separate a 服务入口 and its business traffic path from the control arrows. Depict one failed container, a new replacement being created, and an additional replica being added when load rises. Label these concrete outcomes 故障重建 and 弹性伸缩. The figure must show that the platform maintains desired state continuously rather than running a one-time deployment command.
+Required labels, exact and short:
+- 应用声明
+- 版本
+- 副本数
+- 资源需求
+- 镜像
+- 控制面
+- 读取期望
+- 观察状态
+- 计算差异
+- 调度执行
+- 再次观察
+- 集群
+- 节点
+- 容器实例
+- 服务入口
+- 故障重建
+- 弹性伸缩
+Constraints: landscape 2:1; one visible reconciliation loop; business traffic must bypass the control loop and reach 服务入口; no 本章机制, 阶段压力, 系统形态; no orange footer or slogan; no three-column card template; readable Chinese at full LaTeX width.

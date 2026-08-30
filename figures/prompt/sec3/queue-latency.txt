@@ -1,0 +1,110 @@
+Target image path: figures/sec3/queue-latency.png
+Source TeX: section/sec3.tex
+Figure label: fig:queue-tail-latency
+Created for imagegen: 2026-07-03
+Change request: 右侧曲线图横轴缺标签，需补"系统利用率"；其余部分保持原图不变。
+
+Figure contract:
+Figure id: fig:queue-tail-latency
+Nearby section: section/sec3.tex, 排队效应与尾延迟
+Why this figure exists: 帮助本科生理解系统利用率接近上限时，少量慢请求通过排队效应把尾延迟非线性放大的机制。
+One teaching question: 为什么系统利用率接近满载时，尾延迟会比平均延迟更早、更剧烈地失守？
+Beginner misconception to prevent: 读者可能以为延迟随负载是线性增长的，或者以为平均延迟和尾延迟的增速相同。
+Diagram role: Mechanism + quantitative intuition（左侧排队机制 + 右侧延迟曲线）
+Required mechanism: 左侧展示主处理队列中一个慢请求占住队头导致后续请求排队等待；右侧展示两条曲线随系统利用率升高的非线性分叉。
+Required labels: 排队效应如何放大尾延迟, 当利用率接近上限少数慢请求会把后续请求挡在队列里, 主处理队列, 请求到达速度接近处理速度, 快, 慢点, 等, 慢请求占住队头, 后续请求一起变慢, 延迟, 系统利用率, 尾延迟, 平均延迟, 接近满载时尾延迟会比平均延迟更早更剧烈地失守
+Details to leave in the prose: Little 定律公式、锁竞争和缓存抖动的细节不在图中展示。
+Caption job: 说明利用率接近上限后，少量到达率抖动会被队列放大为尾延迟的非线性恶化。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Recreate the queue-tail-latency figure with one key fix — add the missing X-axis label "系统利用率" to the right-side curve chart. Everything else should remain identical to the original figure.
+
+Source context from the textbook:
+This figure appears in the section about queuing effects and tail latency. The text explains that when request arrival rate approaches processing rate, a single slow request blocks the head of the queue and forces all subsequent requests to wait. The key insight is that average latency rises gradually, but tail latency (P99) diverges much earlier and more sharply. The text references Little's law (L = λW) to explain how queue buildup amplifies latency.
+
+Teaching goal:
+Show two linked ideas: (1) the left-side queue mechanism where a slow request blocks subsequent fast requests, and (2) the right-side curve chart showing how tail latency diverges from average latency as system utilization increases toward capacity.
+
+Beginner misconception to prevent:
+Students often assume latency grows linearly with load. This figure must make the nonlinear divergence between average and tail latency visually obvious. The X-axis label "系统利用率" is critical — without it, readers cannot interpret what the curves represent.
+
+Diagram type:
+Dual-panel mechanism + curve chart, landscape 16:9 textbook diagram.
+
+Required visual structure:
+- LEFT PANEL: A rounded box labeled "主处理队列" with subtitle "请求到达速度接近处理速度".
+  - First row: three request blocks — two teal labeled "快" and one orange labeled "慢点".
+  - Second row: three blue request blocks all labeled "等".
+  - Below the queue: a right-pointing arrow and text "慢请求占住队头" and "后续请求一起变慢".
+- RIGHT PANEL: A standard X-Y coordinate chart.
+  - Y-axis (vertical) labeled "延迟" with upward arrow.
+  - X-axis (horizontal) labeled "系统利用率" with rightward arrow. THIS IS THE KEY FIX — the original figure is missing this label.
+  - Two curves starting low on the left:
+    - Blue curve labeled "平均延迟" — rises gradually and smoothly.
+    - Orange curve labeled "尾延迟" — rises slowly at first, then curves sharply upward near the right side, diverging dramatically from the blue curve.
+  - The curves must clearly show nonlinear divergence on the right side.
+- TOP: Small title "排队效应如何放大尾延迟" and subtitle "当利用率接近上限，少数慢请求会把后续请求挡在队列里".
+- BOTTOM: A warm-toned summary strip with key takeaway: "关键点：接近满载时，尾延迟会比平均延迟更早、更剧烈地失守。"
+
+Required labels, exact and short:
+- 排队效应如何放大尾延迟
+- 主处理队列
+- 请求到达速度接近处理速度
+- 快
+- 慢点
+- 等
+- 慢请求占住队头
+- 后续请求一起变慢
+- 延迟
+- 系统利用率
+- 尾延迟
+- 平均延迟
+
+Avoid labels longer than 10 Chinese characters except for the title and bottom summary strip.
+
+Quality constraints:
+- The X-axis of the right-side curve chart MUST have the label "系统利用率". This is the entire reason for regenerating the figure.
+- The orange tail-latency curve must visually diverge sharply from the blue average-latency curve near the right side.
+- Maintain the same overall layout and visual style as the original figure.
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+
+Avoid:
+- no English text anywhere in the figure
+- no PPT-style colored cards
+- no marketing infographic style
+- no cute mascot, no stock business people
+- no watermark, no logo, no invented terms

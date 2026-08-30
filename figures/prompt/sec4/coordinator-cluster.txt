@@ -1,0 +1,121 @@
+Target image path: figures/sec4/coordinator-cluster.png
+Source TeX: section/sec4.tex
+Figure label: fig:coordinator_cluster_arch
+Created for imagegen: 2026-07-03
+Change request: 协调服务器集群中部从 1 Leader + 3 Follower 改为 1 Leader + 2 Follower（标准3节点集群），与正文"两个 Follower 节点"一致；右侧故障恢复区保持对应的3节点设定。同时修正原图中第3个 Follower 的 Raft 同步线条歪斜问题。
+Input image: Image 1 is the existing figure at figures/sec4/coordinator-cluster.png, used as the composition and style reference. Recreate it rather than making a pixel-local edit, while preserving the overall reading path.
+
+Figure contract:
+Figure id: fig:coordinator_cluster_arch
+Nearby section: section/sec4.tex, Raft 共识与协调服务器集群
+Why this figure exists: 帮助本科生理解引入 Raft 后协调服务器集群的整体结构：写请求如何经 Leader 进入、日志如何同步到 Follower、裁决结果如何写入本地数据库并派发、Leader 崩溃后如何自动选出新 Leader。
+One teaching question: 协调服务器集群如何通过 Raft 保证写请求的一致性，并在 Leader 崩溃后自动恢复？
+Beginner misconception to prevent: 读者可能误以为集群中的数据库是所有节点共享的单点数据库，或误以为 Follower 数量与正文描述不一致。
+Diagram role: Architecture overview（左侧应用服务器 → 中部协调集群 → 下部写入和派发 → 右侧故障恢复）
+Required mechanism: 应用服务器发送挑战请求 → Leader 唯一写入口 → Raft 日志同步到 2 个 Follower → 裁决写入本地数据库（match_results + outbox） → Dispatcher 轮询 outbox → 异步投递结果给应用服务器。右侧展示 Leader 崩溃后 2 个 Follower 重新选主产生新 Leader。
+Required labels: 应用服务器, 应用服A, 应用服B, 应用服C, 挑战请求, 协调服务器集群, 唯一写入口, Leader, Follower, Raft同步, 裁决写入, 本地数据库, outbox, 轮询, Dispatcher, 结果派发, 应用服务器, Leader崩溃后, 旧Leader, 离线, 重新选主, 新Leader
+Details to leave in the prose: Raft 的选举超时、任期编号、日志索引、心跳机制等细节不在图中展示。
+Caption job: 说明协调服务器集群通过 Leader 接收写请求，并用 Raft 复制日志来维持多节点一致性。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Recreate the coordinator cluster architecture figure with the key fix: change the middle "协调服务器集群" section from 1 Leader + 3 Followers to 1 Leader + 2 Followers, matching the textbook's description of a standard 3-node Raft cluster. The right-side failure recovery section should also match (1 offline old Leader + 2 Followers electing a new Leader). Fix the crooked Raft sync arrow that existed in the original.
+
+Source context from the textbook:
+This figure appears after introducing the Raft consensus algorithm. The text explains that game servers send challenge requests to the coordinator cluster through a single write entry point (Leader). The Leader uses Raft to replicate operation logs to TWO Follower nodes and waits for majority confirmation. After confirmation, it writes results atomically to the local database (match_results and outbox). A Dispatcher component polls the outbox and asynchronously delivers results back to the relevant game servers. When the Leader crashes, the remaining Followers elect a new Leader.
+
+The text explicitly says "Leader 先通过 Raft 协议将操作日志同步到两个 Follower 节点" (two Follower nodes). The original figure incorrectly drew 3 Followers.
+
+Teaching goal:
+Show the complete architecture of a Raft-based coordinator cluster: request flow from game servers through the Leader, Raft log replication to Followers, result write-path through local database and outbox to Dispatcher, and automatic Leader re-election after failure.
+
+Beginner misconception to prevent:
+Students may think the database shown is a shared central database. The figure should make clear it is a local database per node (part of each node's state machine). Also, the cluster must show exactly 3 nodes total (1 Leader + 2 Followers) to match Raft majority semantics discussed in the text.
+
+Diagram type:
+Architecture overview, landscape 16:9 textbook diagram.
+
+Required visual structure:
+- LEFT ZONE: A dashed group labeled "应用服务器" containing three server icons stacked vertically, labeled "应用服A", "应用服B", "应用服C". Blue arrows labeled "挑战请求" point rightward from this group toward the Leader.
+
+- CENTER ZONE: A large rounded rectangle labeled "协调服务器集群" containing:
+  - A prominent Leader server icon (golden/orange highlight) with a small label "唯一写入口" above it and "Leader" below it.
+  - EXACTLY TWO Follower server icons (gray), one above-right and one below-right of the Leader. Each labeled "Follower".
+  - Teal dashed arrows from Leader to each Follower, labeled "Raft同步". These arrows must be clean and straight — no crooked or misaligned lines.
+  - IMPORTANT: There must be exactly 2 Followers, NOT 3. This is the key fix.
+  - Below the Leader: a golden arrow labeled "裁决写入" pointing down to a database icon labeled "本地数据库" and an outbox icon labeled "outbox".
+  - From outbox: a teal arrow labeled "轮询" to a gear icon labeled "Dispatcher".
+  - From Dispatcher: a teal arrow labeled "结果派发" pointing right to a server icon labeled "应用服务器".
+
+- RIGHT ZONE: A dashed rectangle labeled "Leader崩溃后" showing:
+  - Top: a grayed-out server icon with dashed outline, labeled "旧Leader" with text "离线".
+  - Below: exactly 2 Follower server icons with a curved arrow between them labeled "重新选主".
+  - Below the arrow: one server icon highlighted (teal/green) labeled "新Leader".
+
+Required labels, exact and short:
+- 应用服务器
+- 应用服A, 应用服B, 应用服C
+- 挑战请求
+- 协调服务器集群
+- 唯一写入口
+- Leader
+- Follower (appears exactly twice in center zone)
+- Raft同步 (appears exactly twice, one per Follower)
+- 裁决写入
+- 本地数据库
+- outbox
+- 轮询
+- Dispatcher
+- 结果派发
+- Leader崩溃后
+- 旧Leader
+- 离线
+- 重新选主
+- 新Leader
+
+Quality constraints:
+- The center zone MUST contain exactly 2 Followers, NOT 3. This is the entire reason for regenerating the figure.
+- All Raft sync arrows must be clean, straight or smoothly curved — no crooked lines.
+- The right-side failure recovery must show exactly 3 nodes total (1 offline + 2 active).
+- Maintain the same overall visual style as the original figure.
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+
+Avoid:
+- no English text except "Leader", "Follower", "Raft", "outbox", "Dispatcher" (these are standard terms)
+- no PPT-style colored cards
+- no marketing infographic style
+- no watermark, no logo, no invented terms
+- no extra Follower nodes beyond the 2 specified

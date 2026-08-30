@@ -1,0 +1,25 @@
+Use case: scientific-educational
+Asset type: full-width mechanism diagram for a Chinese undergraduate textbook
+Edit target: the most recently generated leaderboard aggregation diagram
+
+Primary request:
+Preserve the current warm cream background, three top-tab groups, thin blue/teal/orange outlines, database cylinders, numbered aggregation steps, Redis ranking table, and light game leaderboard panel. Correct only the update-path arrows and tighten the composition slightly.
+
+Required technical correction:
+- The three local Top100 result lines from “分片 1”, “分片 2”, and “分片 3” must first join a single slim vertical blue collection bus at the right edge of the “权威数据” group.
+- From that collection bus, draw exactly one blue arrow into step 1 “接收榜单”.
+- Remove the current incorrect arrows from “分片 2” directly into step 2 “合并排序” and from “分片 3” directly into step 3 “写入缓存”.
+- Keep the internal blue arrows strictly vertical: step 1 “接收榜单” → step 2 “合并排序” → step 3 “写入缓存”.
+- Keep one blue arrow from step 3 “写入缓存” into the Redis ranking table.
+- Keep the teal player query arrow entering only the Redis ranking table.
+
+Composition correction:
+- Make the three main groups slightly more compact and evenly spaced.
+- Reduce unnecessary blank space in the lower-right area without enlarging the game leaderboard panel.
+- Keep the light game UI visually subordinate to the technical mechanism.
+
+Invariants:
+- Preserve every existing exact label: “权威数据”, “分片 1”, “分片 2”, “分片 3”, “局部 Top100”, “排行榜汇总”, “接收榜单”, “合并排序”, “写入缓存”, “Redis 榜单”, “玩家查询”, “全服 Top100”.
+- Preserve legible Chinese glyphs and all ranking numbers.
+- No funnel, no gears, no dark fantasy frame, no character illustration, no new labels, no watermark.
+- Do not redesign the overall illustration style; this is a targeted technical correction.

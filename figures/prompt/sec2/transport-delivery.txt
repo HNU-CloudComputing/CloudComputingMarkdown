@@ -1,0 +1,91 @@
+Target image path: figures/sec2/transport-delivery.png
+Source TeX: section/sec2.tex
+Figure label: fig:tcp-udp-realtime
+Created for imagegen: 2026-07-13
+
+FIGURE CONTRACT
+
+Nearby section:
+TCP 队头阻塞与消息语义：为什么需要 UDP。
+
+Why this figure exists:
+用同一次 A 丢失对比 TCP 和 UDP 对后续状态更新 B、C 的交付方式，再把传输差异落到客户端画面是否能继续更新。
+
+One teaching question:
+A 丢失后，为什么 UDP 能在 t4 已经用 C 更新画面，而 TCP 到 t4 才完成 A、B、C 的按序交付？
+
+Beginner misconception to prevent:
+- UDP 的 t4 不是“什么都没发生”，而是应用已经可以使用 C 更新画面。
+- UDP 不会自动重传 A；高频状态可以由新状态覆盖。
+- A、B、C 是应用层游戏状态更新，不是 TCP 包名。
+
+Diagram role:
+上下两条对齐的事件时间线对比图。
+
+Required mechanism:
+- 保留 v3 中 TCP 的 t1–t4 机制、UDP 的 t1–t3 机制和右侧“应用层取舍”区域。
+- 只补足 UDP 的 t4：从 t3 的 C 向右延伸一条青绿色箭头，指向一个简洁的客户端画面框。画面框内只放一个清晰的 C 状态标记，下方标注“画面更新到 C”。
+- 这个 t4 元素表示客户端不等待 A，已经使用更新的 C 状态更新画面。
+- 不要在 UDP t4 增加重传 A、等待、新数据 D 或额外术语。
+
+Details to leave in prose:
+TCP 字节序号、RTO、拥塞控制、幂等处理、持久化。
+
+Caption job:
+说明 TCP 等待 A 重传时，UDP 已经可以用 C 更新客户端画面。
+
+Post-figure sentence:
+由队头阻塞推进到消息语义：高频状态可以使用新更新覆盖旧状态。
+
+SYSTEM STYLE PROMPT
+
+You are editing a mechanism figure for a Chinese undergraduate cloud computing textbook. Preserve the existing restrained semi-flat textbook visual language: light cream-white paper background, muted blue TCP panel, muted teal UDP panel, warm gray shared structure, and orange only for loss and blocking. Keep thin consistent outlines, subtle paper texture, clear arrows, generous whitespace, and clean Chinese sans-serif typography similar to Source Han Sans / Noto Sans CJK / PingFang.
+
+The canvas must remain a wide landscape full-width LaTeX figure with exactly two aligned horizontal timeline panels and the application decision area on the far right. Preserve the existing composition, proportions, labels, colors, borders, t1–t4 columns, and mechanism relationships unless the edit below explicitly changes them. No PPT styling, no marketing infographic styling, no gradients, no glossy icons, no heavy shadows, no watermark.
+
+Every Chinese label must be rendered verbatim, with no malformed characters, no invented text, no overlap, no cropped labels, and no floating punctuation. Keep labels short and readable at 0.98 linewidth.
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: precise edit to a full-width LaTeX textbook mechanism figure
+Input image: Image 1 is the edit target. It is the accepted v3 structure. Preserve everything except the empty UDP t4 cell.
+
+Primary request:
+Fill only the empty UDP t4 cell with the application-visible consequence of independent delivery. Extend a muted teal arrow from the UDP t3 state C into t4. At t4, add one simple client-screen frame containing a clear C state marker, with the exact label “画面更新到 C” below it. This shows that the client can already render the newest received state without waiting for lost A.
+
+Required labels, exact and short:
+- TCP
+- UDP
+- 游戏状态更新
+- t1
+- t2
+- t3
+- t4
+- A
+- B
+- C
+- A 丢失
+- 重传 A
+- 接收缓冲区
+- 队头阻塞
+- 按序交付
+- 独立交付
+- 画面更新到 C
+- 应用层取舍
+- 高频状态
+- 新状态覆盖
+- 关键事件
+- 确认与重传
+- 请求编号
+- 语义决定取舍
+
+Hard invariants:
+- Change only the UDP t4 cell and the short teal arrow entering it.
+- Preserve the TCP panel exactly: A lost at t1, B buffered at t2, C buffered at t3, retransmitted A and one A B C ordered delivery at t4.
+- Preserve UDP t1 A lost, t2 B independently delivered, and t3 C independently delivered.
+- Preserve the right-side application decision area exactly.
+- Do not add retransmitted A, waiting, D, a second C packet, or any new technical term in UDP t4.
+- Do not move, delete, rename, or duplicate existing labels.
+- No label “ACK重传”, “尾延迟”, “重传阻塞延迟”, or “物理时间”.
+- No extra sentence, no overlapping text, no cropped content, no watermark.

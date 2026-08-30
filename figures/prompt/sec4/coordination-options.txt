@@ -1,0 +1,147 @@
+Target image path: figures/sec4/coordination-options.png
+Source TeX: section/sec4.tex
+Figure label: fig:cross-server-interaction-ladder
+Revised for imagegen: 2026-07-28
+Built-in imagegen output (final): 019fa5cb-75de-7373-ab12-f84c4aae43d2/exec-6e553da5-747f-40d1-b5c4-7954ff080138.png
+
+FIGURE CONTRACT
+
+Figure id: fig:cross-server-interaction-ladder
+Nearby section: 第四章 4.3.1，跨服交互的三类场景与约束
+Why this figure exists: 把通知、查询和事务三类跨服交互放在同一判断框架中，帮助读者从业务可以容忍的状态差异推导协同目标，再选择对应机制。
+One teaching question: 同样需要跨服务器交换信息，为什么通知传播、全局查询和跨节点写入不能使用同一种协同机制？
+Beginner misconception to prevent: 不能把所有通知都理解为必须最终送达；不能把原子提交和权威协调理解为前后相接的两个步骤；三类场景的横向排列是典型业务约束的比较，不是形式化的一致性等级。
+Diagram role: 三列并排的机制比较图，每列用稳定的自上而下结构表达场景、状态来源、可容忍差异、协同目标和机制选择。
+Required mechanism:
+- 通知类必须区分即时提示和关键事件：即时提示允许偶尔遗漏，可用 Pub/Sub 或 Gossip 尽快扩散；关键事件若影响后续业务，需要持久化、确认和重放。
+- 查询类必须显示多个服务器的局部状态经过聚合形成全局视图；视图允许短期陈旧，但必须在限定时间内收敛。
+- 事务类必须显示多个节点共同形成业务结果；原子提交和权威协调是两种备选机制，不是连续步骤。
+Required labels: 通知类、事件源、应用服务器、即时提示、允许遗漏、Pub/Sub、Gossip、关键事件、确认重放、持久化消息、查询类、局部状态、聚合组件、全局视图、允许短期陈旧、有界收敛、事务类、节点 A、节点 B、不允许冲突、确定结果、机制选择、原子提交、权威协调、可容忍差异较多、协同约束增强、可容忍差异较少。
+Details to leave in prose: Redis Pub/Sub 的连接语义、Gossip 的扇出与停止条件、缓存刷新周期、2PC 与协调服务器的具体执行过程。
+Caption job: 概括三类场景如何从业务容差推导协同目标和机制，同时说明横向比较只描述典型业务假设。
+Post-figure sentence: 后续分别沿通知传播、查询聚合和事务协同三条路径展开，并比较各自的适用条件与代价。
+
+SYSTEM STYLE PROMPT
+
+You are editing a concept figure for a Chinese undergraduate cloud-computing textbook.
+Use Image 1 as the edit target and preserve its successful overall composition: one wide landscape canvas, three equal vertical groups, warm cream-white background, muted navy blue for notification, teal for query, orange for transaction, thin consistent outlines, compact technical illustrations, and a bottom left-to-right comparison axis.
+
+The revised figure must feel like a polished modern textbook illustration, not a PowerPoint slide, marketing infographic, dashboard, or academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration with a light paper texture
+- muted navy blue, teal, warm gray, and a small amount of orange
+- thin but confident ink-like outlines with consistent stroke width
+- no glossy 3D icons, no gradients, no heavy drop shadows
+- preserve the information richness of the reference image; do not simplify it into three empty cards
+- use small technical server, event, table, cache, document, and coordinator symbols only when they explain the mechanism
+- keep all important content inside a wide safe area with generous outer margins
+
+Layout rules:
+- preserve three clearly separated columns titled notification, query, and transaction
+- every column must have a clear top-to-bottom reading path
+- connectors inside a column must have one stable meaning and must not cross
+- every text label must have a reserved label area and adequate padding
+- no text may overlap icons, arrows, borders, or other text
+- keep labels readable after scaling to full LaTeX text width
+- do not use a large decorative title banner
+
+Chinese typography rules:
+- use a clean Chinese sans-serif style similar to Source Han Sans, Noto Sans CJK, or PingFang
+- render every required Chinese label exactly as written
+- no distorted characters, wrong glyphs, cropped text, floating punctuation, or wavy baselines
+- do not invent extra Chinese sentences
+- prefer 2 to 8 Chinese characters per label
+
+Technical accuracy rules:
+- do not claim that every notification is eventually delivered
+- distinguish best-effort immediate notifications from important durable events
+- show atomic commit and authoritative coordination as alternatives, never as sequential stages
+- the bottom arrow is a qualitative comparison under typical business assumptions, not a formal mathematical consistency scale
+- no game-specific UI, no character portraits, no fantasy frame, no product logos, no watermark
+
+USER CONTEXT PROMPT
+
+Use case: precise-object-edit
+Asset type: full-width mechanism comparison figure for a Chinese undergraduate cloud-computing textbook
+Input images: Image 1 is the edit target. Preserve its overall three-column layout, palette, density, and textbook illustration style, but redraw the internal teaching logic as specified below.
+
+Primary request:
+Redraw the figure so that each column answers the same question: what state is distributed, what temporary difference the business can tolerate, what coordination goal follows, and which mechanisms fit that goal.
+
+COMPOSITION
+
+Keep one wide landscape canvas with three equal vertical groups. Each group should have a short title tab at the top and a clear mechanism chain below it. The three groups must look like one coherent textbook plate, not three unrelated posters.
+
+GROUP 1 — notification, navy blue
+- top tab exact text: "通知类"
+- show one server labeled "事件源" spreading an already-determined event to several small servers labeled collectively "应用服务器"
+- beneath the fan-out, split into two clearly parallel branches
+- branch A exact labels: "即时提示" -> "允许遗漏" -> two sibling mechanism boxes "Pub/Sub" and "Gossip"
+- branch B exact labels: "关键事件" -> "确认重放" -> one mechanism box "持久化消息"
+- the two branches are alternatives based on event importance; neither branch flows into the other
+- do not include the old label "最终送达"
+- visual takeaway: receiving time may differ, but delivery guarantees depend on whether omission affects later business
+
+GROUP 2 — query, teal
+- top tab exact text: "查询类"
+- show several small application servers, each holding a piece of "局部状态"
+- arrows from those servers converge into one component labeled "聚合组件"
+- the aggregation component produces a simple table or list labeled "全局视图"
+- below it, use the reasoning chain "允许短期陈旧" -> "有界收敛"
+- the visual must make clear that a global view is assembled from several local states and may briefly lag behind them
+
+GROUP 3 — transaction, orange
+- top tab exact text: "事务类"
+- show "节点 A" and "节点 B" participating in one cross-node update
+- place the constraint chain below them: "不允许冲突" -> "确定结果"
+- after "确定结果", show a small fork labeled "机制选择"
+- the fork must lead to two equal sibling boxes: "原子提交" and "权威协调"
+- these two boxes are alternatives; do not draw an arrow from one to the other
+- visual takeaway: the system must prevent incompatible final records, either by making updates commit together or by accepting one authoritative decision
+
+BOTTOM COMPARISON AXIS
+- preserve one horizontal arrow running left to right beneath all three groups
+- left endpoint exact text: "可容忍差异较多"
+- centered exact text: "协同约束增强"
+- right endpoint exact text: "可容忍差异较少"
+- keep the axis visually secondary to the three vertical reasoning chains
+
+Required labels, exact and short:
+- 通知类
+- 事件源
+- 应用服务器
+- 即时提示
+- 允许遗漏
+- Pub/Sub
+- Gossip
+- 关键事件
+- 确认重放
+- 持久化消息
+- 查询类
+- 局部状态
+- 聚合组件
+- 全局视图
+- 允许短期陈旧
+- 有界收敛
+- 事务类
+- 节点 A
+- 节点 B
+- 不允许冲突
+- 确定结果
+- 机制选择
+- 原子提交
+- 权威协调
+- 可容忍差异较多
+- 协同约束增强
+- 可容忍差异较少
+
+Do not add any other labels. Do not retain "最终送达", "缓存聚合组件", "跨节点事务", "操作确认", or long status sentences from Image 1.
+
+Quality constraints:
+- preserve enough concrete mechanism detail to support a multi-paragraph textbook explanation
+- meaningful content should fill about 88 percent of the canvas without crowding
+- no empty decorative cards, no crossed arrows, no ambiguous sequential relationship
+- no text overlap, no cropped labels, no watermark
+- all Chinese labels must be readable and correctly rendered
+- final image must remain readable when inserted at width=1\linewidth in LaTeX

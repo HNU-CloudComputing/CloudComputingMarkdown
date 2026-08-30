@@ -1,0 +1,102 @@
+Target image path: figures/sec6/failure-trajectory-recovery-sample.png
+Source TeX: section/sec6.tex
+Figure label: fig:failure-trajectory-recovery-sample
+Created for imagegen: 2026-07-08 13:55
+
+Figure contract:
+- Nearby section: section/sec6.tex, "验证面：让轨迹能被复现、筛选和归因".
+- Why this figure exists: The prose explains that failure trajectories can be attributed, rolled back, branched, reverified, and converted into recovery samples. Readers need a sequence/dataflow view to see why logs are data assets.
+- One teaching question: How does a failed trajectory become a traceable recovery sample rather than discarded logs?
+- Beginner misconception to prevent: Students may think failed trajectories are only useless logs, or that a recovery sample can be used without parent trajectory and checkpoint provenance.
+- Diagram role: Sequence dataflow.
+- Required mechanism: Failure at step n, critical step i attribution, rollback to checkpoint i-1, new branch exploration, verification pass, recovery sample, and provenance fields.
+- Details to leave in the prose: Specific verifier algorithms, reward computation, storage format details.
+- Caption job: Explain that failure trajectories can derive recovery samples when attribution, checkpoint rollback, and provenance records are connected.
+- Post-figure sentence: These fields make a failure reproducible, filterable, and reusable for training.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and small orange for failure or attribution point
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture
+- no glossy icons, no gradients, no heavy drop shadows
+
+Layout rules:
+- 16:9 landscape textbook figure
+- sequence/dataflow layout from left to right
+- participants shown as vertical or grouped lanes
+- failure path and recovery branch must be visually distinct
+- every label must sit in reserved space
+- no text overlap, no label touching arrows, no cropped labels
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography
+- no distorted Chinese characters, no cropped text
+- prefer short labels of 2-8 Chinese characters
+- do not put long Chinese sentences inside the image
+
+Content rules:
+- preserve the technical meaning from the source text
+- show provenance fields as a compact side record, not a long code block
+- no watermark, no logo, no invented terms
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+The text explains that a failed Agent trajectory may contain mostly useful steps and one critical wrong step. If the verifier can locate the likely error at step i and the state plane has checkpoint i-1, the platform can roll back the sandbox, guide the model along a new branch, verify the branch, and write a recovery sample with provenance fields.
+
+Teaching goal:
+Show the closed loop from failed trajectory to attributed error, rollback, new branch, verification, and recovery sample with source records.
+
+Beginner misconception to prevent:
+Do not show failed trajectories as disposable logs. Do not omit parent trajectory, checkpoint id, verifier version, image digest, or model version.
+
+Diagram type:
+Sequence dataflow diagram.
+
+Required visual structure:
+- Use five participant lanes or grouped boxes: 轨迹库, 验证器, 状态面, Agent 服务, Sandbox.
+- Left side: "失败轨迹" timeline with steps 1, i-1, i, n. Mark step i with orange "关键错误".
+- Arrow from 轨迹库 to 验证器 labeled "错误归因".
+- Arrow from 验证器 to 状态面 labeled "定位 i".
+- Thick dashed arrow from 状态面 to Sandbox labeled "回滚 i-1".
+- Solid branch arrow from Agent 服务 to Sandbox labeled "重新探索".
+- Arrow to 验证器 labeled "重新验证"; if passed, write "恢复样本" back to 轨迹库.
+- Add a compact side panel titled "来源字段" with short field labels.
+
+Required labels, exact and short:
+- 轨迹库
+- 验证器
+- 状态面
+- Agent 服务
+- Sandbox
+- 失败轨迹
+- 关键错误
+- 错误归因
+- 定位 i
+- 回滚 i-1
+- 重新探索
+- 重新验证
+- 恢复样本
+- 来源字段
+- parentId
+- checkpointId
+- verifierVer
+- failureType
+- imageDigest
+- modelVersion
+
+Avoid labels longer than 8 Chinese characters except the listed field names. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+失败可再加工
+
+Quality constraints:
+- enough mechanism detail to support the textbook explanation
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width
+- no PPT card deck, no marketing style, no decorative people

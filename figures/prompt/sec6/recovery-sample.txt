@@ -1,0 +1,109 @@
+Target image path: figures/sec6/recovery-sample.png
+Source TeX: section/sec6.tex
+Figure label: fig:failure-trajectory-recovery-sample
+Created for imagegen: 2026-07-08 14:51
+
+Figure contract:
+- Nearby section: section/sec6.tex, "验证面：让轨迹能被复现、筛选和归因".
+- Why this figure exists: The prose explains that a failed trajectory can be attributed, rolled back, re-explored, reverified, and stored as a recovery sample. The figure must clarify verifier responsibility and provenance fields.
+- One teaching question: How does a failed trajectory become a verified, traceable recovery sample?
+- Beginner misconception to prevent: Do not imply Sandbox decides verification success. Do not let provenance fields float away from the recovery sample.
+- Diagram role: Sequence dataflow.
+- Required mechanism: Failed trajectory with critical step i, verifier attribution, state-plane rollback to checkpoint i-1, Agent Service re-exploration, Sandbox execution result, verifier revalidation, provenance attached, recovery sample written to trajectory store.
+- Details to leave in the prose: Verifier algorithm, reward formula, storage schema.
+- Caption job: Explain that failure trajectories become recovery samples only after attribution, rollback, Agent re-exploration, verifier revalidation, and provenance recording.
+- Post-figure sentence: Provenance fields explain where the sample comes from and why it can be reused.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue and teal for normal dataflow, warm gray for stores, small orange for critical error and rollback
+- thin confident outlines, consistent stroke width, soft paper texture
+- no glossy icons, no gradients, no heavy shadows
+
+Layout rules:
+- 16:9 landscape textbook figure
+- left-to-right sequence/dataflow layout with participant lanes
+- failure path and recovery branch visually distinct
+- provenance fields attached to recovery sample path, not floating
+- every label in reserved space; no overlaps; no cropped text
+
+Chinese typography rules:
+- clean Chinese sans-serif typography
+- no distorted Chinese characters, no cropped text
+- short labels only; no long sentences in the image
+
+Content rules:
+- Sandbox lane must only show "新分支执行" and "执行结果"; it must not contain "验证通过".
+- 验证器 lane contains "重新验证" and "验证通过".
+- Recovery sample is written to 轨迹库 by the verifier or after verifier validation.
+- Source fields are part of the recovery sample record, connected to "附加来源".
+- Keep source fields to four core labels: parentId, checkpointId, verifierVer, failureType.
+- No independent floating fields for imageDigest or modelVersion in this figure.
+- No watermark, no logo, no invented terms.
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+The text explains that a failed trajectory may fail at step n because a critical decision at step i went wrong. The verifier can attribute the likely error, the state plane can roll the sandbox back to checkpoint i-1, Agent Service can explore a new branch, and the verifier must revalidate the new result. Only a validated branch with provenance fields becomes a recovery sample in the trajectory store.
+
+Teaching goal:
+Show the recovery-sample derivation process with clear responsibility boundaries: verifier attributes and revalidates, state plane rolls back, Agent Service explores, Sandbox executes, and the trajectory store records the final sample with provenance.
+
+Beginner misconception to prevent:
+Do not show failed trajectories as disposable logs. Do not show Sandbox deciding success. Do not omit parent trajectory and checkpoint provenance.
+
+Diagram type:
+Sequence dataflow diagram.
+
+Required visual structure:
+- Five participant lanes or grouped columns: 轨迹库, 验证器, 状态面, Agent 服务, Sandbox.
+- Left side in 轨迹库: "失败轨迹" timeline with steps 1, i-1, i, n; mark step i with orange "关键错误".
+- Arrow from 轨迹库 to 验证器 labeled "错误归因".
+- Arrow from 验证器 to 状态面 labeled "定位 i".
+- Thick dashed orange arrow from 状态面 to Sandbox labeled "回滚 i-1".
+- Arrow from Agent 服务 to Sandbox labeled "重新探索".
+- Sandbox sends "执行结果" to 验证器.
+- 验证器 node "重新验证" then "验证通过".
+- From 验证器 to a small node "附加来源"; connect that node to a compact source-fields panel.
+- From "附加来源" write "恢复样本" back to 轨迹库.
+- Source-fields panel should look like part of the recovery sample record, not a separate unrelated sidebar.
+
+Required labels, exact and short:
+- 轨迹库
+- 验证器
+- 状态面
+- Agent 服务
+- Sandbox
+- 失败轨迹
+- 关键错误
+- 错误归因
+- 定位 i
+- 回滚 i-1
+- 重新探索
+- 新分支执行
+- 执行结果
+- 重新验证
+- 验证通过
+- 附加来源
+- 恢复样本
+- 来源字段
+- parentId
+- checkpointId
+- verifierVer
+- failureType
+
+Avoid labels longer than 8 Chinese characters except the listed field names. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+失败可再加工
+
+Quality constraints:
+- no text overlap, no cropped labels, no arrows through labels
+- final image must remain readable at full text width in a LaTeX book
+- keep verifier responsibility clear
+- no PPT card deck, no marketing style, no decorative people

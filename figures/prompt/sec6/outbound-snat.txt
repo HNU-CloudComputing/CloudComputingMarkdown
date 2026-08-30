@@ -1,0 +1,105 @@
+Target image path: figures/sec6/outbound-snat.png
+Source TeX: section/sec6.tex
+Figure label: fig:container-flow-path
+Created for imagegen: 2026-07-05 23:26 CST
+
+Figure contract:
+- Nearby section: section/sec6.tex, "容器访问外网：默认网关、SNAT 与连接跟踪".
+- Why this figure exists: The prose has explained that routing can move a container packet toward the host external interface, but the container private address cannot be routed back from the outside. The figure shows where SNAT changes the source address and how conntrack makes the return path possible.
+- One teaching question: How does a container with a private IP reach an external service and receive the return packet?
+- Beginner misconception to prevent: Students may think route forwarding alone is enough, or that SNAT only changes one outgoing packet without recording state for the reply.
+- Diagram role: Mechanism path with address transformation.
+- Required mechanism: Container eth0 -> docker0 bridge -> host network stack -> iptables MASQUERADE / SNAT -> physical NIC -> external service; return path uses conntrack restore and goes back through bridge and veth to the container.
+- Details to leave in the prose: Five-tuple details, exact port allocation rules, and pseudo-code conditions.
+- Caption job: Explain that SNAT rewrites the outgoing source address and conntrack restores the returning destination address.
+- Post-figure sentence: This mechanism explains why containers can usually initiate outbound access but cannot be reached from outside without an explicit inbound rule.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- one clear reading path with arrows; no crossing arrows unless unavoidable
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the same baseline as the text
+- no floating comma, no raised comma, no Latin comma inside Chinese sentences
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if a sentence would be long, replace it with a short label or leave the detailed explanation to the caption
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- avoid decorative clipart, cute characters, mascots, stock-business people, and generic cloud icons unless they explain the mechanism
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+The text explains that a container sends packets from eth0 through veth and docker0 bridge into the host network stack. Routing can forward the packet to the physical NIC, but the container's private IP address is not reachable from the external network. SNAT, usually implemented by iptables MASQUERADE or nftables rules, rewrites the outgoing source address to the host external address and records the mapping in conntrack. The return packet is then restored and sent back to the original container.
+
+Teaching goal:
+Show the outbound SNAT path and the return conntrack restore path as one bidirectional mechanism.
+
+Beginner misconception to prevent:
+Do not imply that SNAT is only stateless rewriting. The return path must depend on conntrack state.
+
+Diagram type:
+Mechanism path with address transformation.
+
+Required visual structure:
+- 16:9 landscape textbook figure.
+- Left: a teal container box labeled "容器" with "eth0" and "172.17.0.2".
+- Middle: a large host box labeled "宿主机". Inside it, place three left-to-right modules: "docker0 bridge", "MASQUERADE", and "物理网卡".
+- The "MASQUERADE" module should be orange and should visually indicate "SNAT 改写".
+- Below MASQUERADE, place a dashed box labeled "conntrack" with a simple two-row mapping table icon.
+- Right: an external network area labeled "外部网络" with a small server labeled "外部服务".
+- Outbound path: thick dark-blue solid arrow from container eth0 -> docker0 bridge -> MASQUERADE -> physical NIC -> external service. Put one small address-change label above the SNAT module: "源地址改写".
+- Return path: teal dashed arrow from external service -> physical NIC -> conntrack -> docker0 bridge -> container eth0. Put one small label near conntrack: "回包还原".
+- Use orange dashed arrow from MASQUERADE to conntrack, labeled "记录映射".
+- Avoid long address sentences. Use compact address badges instead of full prose.
+
+Required labels, exact and short:
+- 容器
+- eth0
+- 172.17.0.2
+- 宿主机
+- docker0 bridge
+- MASQUERADE
+- SNAT 改写
+- 源地址改写
+- 物理网卡
+- 公网 IP
+- 外部网络
+- 外部服务
+- conntrack
+- 记录映射
+- 回包还原
+- 私网 IP
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+改写后可返回
+
+Quality constraints:
+- the figure should contain enough concrete mechanism detail to support the textbook explanation
+- no text overlap, no label touching arrows, no cropped elements
+- Chinese punctuation baseline must be normal; if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+- final image must remain readable after being scaled to full text width in a LaTeX book
+- no SVG style, no vector wireframe placeholder, no watermark

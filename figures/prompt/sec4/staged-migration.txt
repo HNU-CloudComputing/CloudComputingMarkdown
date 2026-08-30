@@ -1,0 +1,184 @@
+Target image path: figures/sec4/staged-migration.png
+Source TeX: section/sec4.tex
+Figure label: fig:migration_wave
+Created for imagegen redraw: 2026-07-22
+Reference image: figures/sec4/staged-migration.png
+Reference image role: preserve chapter illustration style, canvas ratio, palette, line quality, and source/target server visual continuity; redesign the mechanism and timeline
+Accepted V4 imagegen source: /Users/lin/.codex/generated_images/019f9893-99b3-7f83-8012-143b10924d8a/exec-7c8c258e-8567-44f8-8d6b-ed57c8970787.png
+
+Figure contract
+
+Why this figure exists:
+The figure explains how a stateful online service migrates a session without creating two simultaneous writers. It must show that transferring critical state is not enough: the source first freezes new writes and drains in-flight work, the target prepares without serving, and only an epoch-protected ownership transfer allows the target to activate.
+
+One teaching question:
+How can a session move from a source server to a target server while preserving one authoritative writer, then fill non-authoritative state in the background?
+
+Beginner misconception to prevent:
+Students must not think that receiving the first state wave immediately authorizes the target to serve. Prepare and Activate are separate states, and Activate occurs only after ownership transfer. Students must also not think that authoritative gameplay state may be postponed to later background waves.
+
+Diagram role:
+Five-stage timeline plus state-ownership lifecycle.
+
+Required mechanism:
+1. Prewarm the target with static resources while the source remains active.
+2. Begin handoff on the source: stop new writes, drain in-flight requests, and create epoch n.
+3. Transfer all authoritative state to the target. The target enters Prepare(epoch n), reports ready, but remains unable to serve.
+4. Transfer the lease or routing ownership to the target with epoch n. The target executes Activate(epoch n), the source rejects the old epoch, and client service resumes only here.
+5. Fill only derived views and rebuildable caches in the background.
+
+Required labels, exact and short:
+- ① 预热
+- ② 交接准备
+- ③ 关键状态传输
+- ④ 所有权切换
+- ⑤ 后台补齐
+- 客户端
+- 源服务器
+- 目标服务器
+- 控制面
+- 加载静态资源
+- 停止新写入
+- 排空在途请求
+- 生成 epoch n
+- 权威状态
+- Prepare(epoch n)
+- 准备完成
+- 暂不服务
+- 租约 / 路由
+- Transfer(epoch n)
+- Activate(epoch n)
+- 拒绝旧 epoch
+- 恢复服务
+- 派生视图
+- 可重建缓存
+
+Details to leave in the prose:
+- no fixed millisecond duration
+- no detailed session fields such as position, health, skill cooldown, teammates, monsters, or effects
+- no implementation pseudocode
+- no claims of zero interruption or imperceptible migration
+
+Caption job:
+Explain that authoritative state is prepared first, unique write ownership is transferred under an epoch, service resumes only after activation, and non-authoritative state is filled later.
+
+Post-figure sentence:
+The key correctness condition is one active writer at any moment; background waves may contain only state that is rebuildable or temporarily stale.
+
+SYSTEM STYLE PROMPT
+
+You are redrawing a mechanism figure for a Chinese undergraduate cloud computing textbook.
+Use the supplied staged-migration image only as the chapter style reference and edit target. Preserve its wide 1774x887 landscape proportion, cream-white paper background, semi-flat technical teaching illustration, muted blue and teal palette, restrained orange warning accents, thin consistent outlines, clean Chinese sans-serif typography, generous spacing, and source-server/target-server visual continuity.
+
+This must be a polished textbook mechanism diagram, not a PowerPoint slide, marketing infographic, dashboard, academic black-and-white sketch, or decorative game poster.
+
+Layout rules:
+- create one continuous left-to-right five-stage timeline across the top
+- use four aligned horizontal lanes: client, source server, control plane, target server
+- keep stage boundaries vertically aligned across all lanes
+- every arrow has a visible arrowhead and one stable meaning
+- teal solid arrows represent state transfer
+- blue solid arrows represent client routing or service flow
+- orange represents write freeze, ownership handoff, and stale-epoch rejection
+- do not cross arrows
+- reserve a clear text area for every label; no label may overlap arrows, borders, icons, or another label
+- keep all content inside wide safe margins and readable at full LaTeX text width
+
+Chinese typography rules:
+- use clean Chinese sans-serif typography similar to Source Han Sans, Noto Sans CJK, or PingFang
+- render every required Chinese label exactly, with no wrong glyphs, missing strokes, malformed punctuation, or wavy baseline
+- keep labels short; do not add explanatory sentences inside the image
+- preserve English identifiers exactly: epoch n, Prepare(epoch n), Transfer(epoch n), Activate(epoch n)
+
+Content rules:
+- visually distinguish Prepare from Activate
+- while in Prepare, the target must visibly remain “暂不服务”
+- “恢复服务” must appear only after Transfer and Activate
+- show the control-plane lease or route moving from source ownership to target ownership
+- show the source rejecting requests with an old epoch after transfer
+- all authoritative state must be in the critical-state transfer before activation
+- only derived views and rebuildable caches may appear in the background-fill stage
+- do not show any fixed latency number
+- do not claim “玩家无感”, “立即可玩”, “体验无中断”, “零停机”, or equivalent
+- no watermark, logo, random text, invented modules, gradients, heavy shadows, or decorative characters
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width mechanism timeline for a Chinese undergraduate cloud computing textbook
+Input image:
+- Image 1, figures/sec4/staged-migration.png: edit target and visual-style reference; replace its obsolete four-stage mechanism with the five-stage mechanism below
+
+Primary request:
+Redraw the supplied migration figure as a technically precise five-stage state-handoff timeline. Preserve the original chapter illustration style, palette, line quality, landscape proportion, and server visual language, but replace the old four-stage content completely.
+
+Composition:
+- Across the top, show one continuous timeline with five equal or clearly separated stages: “① 预热”, “② 交接准备”, “③ 关键状态传输”, “④ 所有权切换”, “⑤ 后台补齐”.
+- Below it, use four aligned lanes labeled “客户端”, “源服务器”, “控制面”, and “目标服务器”.
+- Stage 1: source still serves; target performs “加载静态资源”.
+- Stage 2: source performs “停止新写入”, then “排空在途请求”, then “生成 epoch n”. Use a restrained orange lock or gate motif.
+- Stage 3: a teal arrow labeled “权威状态” moves from source to target. Target enters “Prepare(epoch n)” and displays two short status labels: “准备完成” and “暂不服务”. There must be no client traffic to the target yet.
+- Stage 4: control-plane box “租约 / 路由” performs “Transfer(epoch n)” from source ownership to target ownership. After that, target performs “Activate(epoch n)”; source displays “拒绝旧 epoch”; a blue client-routing arrow reaches the target and is labeled “恢复服务”.
+- Stage 5: background teal arrows deliver only “派生视图” and “可重建缓存” to the active target.
+
+Teaching goal:
+Make it visually unavoidable that receiving authoritative state does not yet authorize service. The target may serve only after the unique ownership transfer and Activate; later waves contain only non-authoritative state.
+
+Avoid:
+The old four-stage labels, “触发迁移”, “恢复第一帧”, any “<25ms” or other latency number, “玩家无感”, “立即可玩”, “体验无中断”, detailed game-state fields, second-wave authoritative objects, long sentences, text overlap, cropped labels, ambiguous arrows, duplicate active writers, direct service during Prepare, decorative game screenshots, gradients, watermark, or invented text.
+
+Output constraints:
+- preserve the 1774x887 image dimensions and wide composition
+- all required labels must remain readable after scaling to one LaTeX text width
+- no text or arrow may be cropped
+- do not add a large title banner or bottom slogan
+
+REVISION V2 — semantic corrections after visual QA
+
+Use the first five-stage generated candidate as the edit target. Preserve its overall four-lane layout, five top stage labels, typography, palette, source/target server icons, Prepare box, ownership-transfer box, and Activate box. Make only these structural corrections:
+
+1. Move “拒绝旧 epoch” into stage 4 after the ownership transfer. It must be in the source-server lane and receive an orange control arrow from the “租约 / 路由” ownership-transfer box. Do not connect it from the stage-3 “权威状态” transfer.
+2. Separate the blue client service path from the teal background-fill path. The blue client path must terminate at the active target immediately after “Activate(epoch n)” and be labeled “恢复服务”. It must not branch into “派生视图” or “可重建缓存”.
+3. In stage 5, create a separate teal background-state path labeled “非权威状态” that feeds “派生视图” and “可重建缓存” inside the target-server lane. This teal path must not touch the client lane or the blue service path.
+4. Preserve the exact label “拒绝旧 epoch”, including the final h in epoch.
+5. Preserve every other correct element from the first candidate. Do not reintroduce any latency number, zero-interruption claim, game screenshot, detailed gameplay field, or old four-stage label.
+
+REVISION V3 — make ownership transfer gate Activate
+
+Use the second generated candidate as the edit target. Preserve its entire composition and all correct labels. Make one mechanism correction:
+
+- Add a clear orange control arrow from the completed target-ownership side of the “租约 / 路由” box, after “Transfer(epoch n)”, down to “Activate(epoch n)”.
+- Keep the teal readiness arrow from “Prepare(epoch n)” to “Activate(epoch n)”. The two incoming arrows must visibly show that Activate requires both conditions: target preparation is complete and unique ownership has transferred.
+- Do not allow the drawing to imply that Prepare alone triggers Activate.
+- Preserve “拒绝旧 epoch” after Transfer, the independent blue “恢复服务” path, and the separate teal “非权威状态” background path.
+- Change nothing else. Preserve dimensions, five stages, four lanes, all exact text, colors, spacing, and the absence of hard latency promises.
+
+REVISION V4 — complete target acknowledgement and source cleanup
+
+Use the current five-stage staged-migration image as the edit target. Preserve the entire accepted composition, including the five top stages, four lanes, Prepare and Activate separation, ownership-transfer gate, blue restored-service path, and independent teal background-fill path. Make only the following teaching correction:
+
+Teaching goal:
+Make the end of ownership handoff explicit. The target must confirm that activation succeeded before the source removes the old session state. Rejecting an old epoch prevents stale writes, but it is not the same action as cleaning the old copy.
+
+Required mechanism correction:
+1. Immediately after “Activate(epoch n)” succeeds, add a compact target-side acknowledgement labeled exactly “接管确认”.
+2. Draw a short orange control arrow from “接管确认” back to a source-side cleanup box labeled exactly “清理旧状态”.
+3. “清理旧状态” must occur after “接管确认”, never before ownership transfer or activation.
+4. Keep “拒绝旧 epoch” as the stale-request protection after Transfer. Do not replace it with cleanup; both labels must remain and must represent different actions.
+5. Keep the blue “恢复服务” path beginning only after Activate. Keep the teal “非权威状态” path feeding only “派生视图” and “可重建缓存”. Neither path may be used as the cleanup acknowledgement arrow.
+
+Layout guidance:
+- Place “接管确认” near the right side of “Activate(epoch n)” in the target-server lane.
+- Place “清理旧状态” in the source-server lane near the beginning of stage 5.
+- Route the acknowledgement/cleanup control arrow along reserved whitespace so it does not cross the client-service line, the ownership-transfer arrow, or the background-state path.
+- If space is tight, slightly reduce decorative padding rather than shrinking text.
+
+Additional required labels, exact and short:
+- 接管确认
+- 清理旧状态
+
+Invariants:
+- preserve all existing correct Chinese and English labels exactly
+- preserve the 1774x887 wide textbook composition and restrained blue, teal, orange palette
+- no new long sentence, no new module, no duplicated writer, no hard latency promise
+- no text overlap, cropped label, crossing arrow, watermark, or invented term

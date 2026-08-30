@@ -1,0 +1,174 @@
+Target image path: figures/sec3/load-pressure.png
+Edit target: figures/sec3/load-pressure.png
+Source TeX: section/sec3.tex
+Figure label: fig:concurrent-load
+Created for imagegen: 2026-08-06
+
+FIGURE CONTRACT
+
+Figure id: fig:concurrent-load
+Nearby section: 第三章"从顺序处理到并发组织" — "顺序处理如何放大延迟"
+Why this figure exists: 帮助初学者直观理解：为什么连接规模从少量扩大到多人同图后，顺序主处理模型会撑不住。左侧展示低负载下顺序处理是稳定的；右侧展示规模扩大后四类压力汇入同一条主处理队列，队列被拉长，尾延迟恶化。
+One teaching question: 顺序模型下，规模扩大为什么会把延迟从局部变成全局问题？
+Beginner misconception to prevent: 以为顺序处理只是"慢一点"，不理解队列会放大尾延迟；把"热点状态访问"误认为"并发竞争"（这张图还在顺序模型阶段，尚未引入并发）。
+Diagram role: 左右对比图（双人原型 vs 多人同图），底部一条对比条总结结论。
+Required mechanism: 左侧 2-3 个玩家汇入顺序队列，队列短，稳定推进；右侧四个压力源（连接规模、事件密度、I/O 等待、热点状态访问）汇入主处理队列，队列明显变长，尾延迟上升，产生延迟传播。
+Required labels: 双人原型，多人同图，顺序处理，主处理队列，连接规模，事件密度，I/O 等待，热点状态访问，队列变长，尾延迟，延迟传播，稳定推进。
+Details to leave in prose: 不画具体毫秒数、不画调度器内部、不画并发执行流（这张图还在顺序模型阶段）、不画具体游戏场景画面。
+Caption job: 从双人原型到多人同图，四类压力共同汇入主处理队列，队列变长后放大尾延迟并加剧延迟传播。
+Post-figure sentence: 四类压力进入主处理路径后，会分别在连接维护、事件处理、外部等待和热点状态修改上形成瓶颈。
+
+SYSTEM STYLE PROMPT
+
+You are designing a concept figure for a Chinese undergraduate cloud computing textbook.
+The result must be a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching style
+- light cream-white paper background, muted blue and teal, warm gray, small orange accents for pressure / delay
+- thin confident outlines, consistent stroke width, no gradients, no glossy icons, no heavy shadows
+- calm, readable, technically serious
+
+Layout rules:
+- landscape 16:9, two balanced panels side by side
+- left panel "双人原型", right panel "多人同图"
+- both panels share the same visual language (envelope = message/event, arrow = flow)
+- a thin vertical divider separates the two panels
+- below both panels, a horizontal comparison bar runs full width
+- no arrows crossing labels, no cropped text, generous safe margins
+
+Chinese typography rules:
+- clean Chinese sans-serif typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- labels must be short, exact, and readable after LaTeX scaling
+- no malformed Chinese, no random English text, no watermark
+
+USER CONTEXT PROMPT
+
+Use case: precise-object-edit / redesign
+Asset type: full-width load-pressure teaching figure
+Input image: the supplied load-pressure.png is the edit target and style reference.
+
+Primary request:
+Redesign the layout while preserving the source palette and textbook feel. The left panel was too empty and needs more structure to match the right panel's information density. The label "共享状态竞争" must change to "热点状态访问" (this figure is still in the sequential processing stage; concurrent contention comes later in the chapter). The label "卡顿传染" must change to "延迟传播" to match the body text. Remove the bottom lone "稳定推进 → 卡顿传染" arrow bar; replace it with a comparison strip that summarizes both sides.
+
+Left panel — "双人原型" (顺序处理 · 低负载):
+- title label "双人原型"
+- subtitle label "顺序处理 · 低负载"
+- draw 3 player icons on the left (labeled 玩家A, 玩家B, 玩家C; simple person silhouette icons)
+- arrows from all 3 players point to a vertical "顺序处理队列" in the middle of the panel
+- the queue has only 2-3 envelope icons inside, visibly short
+- a small arrow or checkmark next to the queue with label "快速清空"
+- the queue output points to a "稳定推进" indicator on the right side of the panel (icon: flat heartbeat line with steady rhythm, or a metronome)
+- below the main diagram inside the panel, add 2 short bullet lines in smaller text:
+  · 每轮事件少，处理节奏稳定
+  · 没有明显等待积累
+- use blue / teal tones for this panel to convey "stable / normal"
+
+Right panel — "多人同图" (顺序处理 · 高负载):
+- title label "多人同图"
+- subtitle label "顺序处理 · 高负载"
+- keep the four pressure-source boxes, but rename and relayout as follows:
+  - top-left box: "连接规模" — many small dot icons representing connections
+  - top-right box: "事件密度" — many small action/event icons (sword, flag, run, etc.)
+  - bottom-left box: "热点状态访问" — a treasure chest or shared resource icon with multiple hand/cursor icons pointing to it (meaning many access the same state, NOT "competing concurrently" — this is still sequential)
+  - bottom-right box: "I/O 等待" — clock + database/cylinder icons
+- all four boxes have arrows pointing inward to a central vertical "主处理队列"
+- the main queue is visibly long (6-8 envelopes), with a dashed orange highlight box around the lower portion labeled "队列变长"
+- the queue output points to two result indicators on the right:
+  - "尾延迟" with an upward-trending arrow (orange, conveying degradation)
+  - "延迟传播" with a short chain of three request envelopes: the first delayed request passes delay rightward to the following two requests (orange)
+- below the main diagram inside the panel, add 3 short bullet lines in smaller text:
+  · 四类压力同汇一条队列
+  · 队列拉长，尾延迟急剧上升
+  · 慢 I/O 拖累整轮推进
+- use orange accents only for the queue-highlight and result indicators; keep pressure sources in teal / gray
+
+Bottom comparison strip (full width, below both panels):
+- left half: blue-toned, label "稳定推进" — show a flat / gently wavy line representing steady latency
+- middle: a gradient arrow from blue to orange pointing right, labeled "规模扩大"
+- right half: orange-toned, label "尾延迟恶化 + 延迟传播" — show a spiky / rising curve followed by three request envelopes shifting later in sequence
+
+Required labels (exact and short):
+- 双人原型
+- 多人同图
+- 顺序处理
+- 主处理队列
+- 连接规模
+- 事件密度
+- I/O 等待
+- 热点状态访问
+- 队列变长
+- 尾延迟
+- 延迟传播
+- 稳定推进
+- 规模扩大
+- 快速清空
+- 玩家A
+- 玩家B
+- 玩家C
+
+Avoid labels longer than 8 Chinese characters. No long Chinese sentences inside the image.
+
+Avoid:
+- do NOT use the label "共享状态竞争" or "卡顿传染" anywhere
+- do NOT draw goroutines, threads, or concurrent execution paths (this figure is still in sequential model)
+- do NOT draw specific game scenes or character art
+- no PPT-style cards, decorative icons, mascots, watermark
+- no text overlap, no cropped labels, no invented terminology
+- no heavy gradients or 3D effects
+- no concentric circles, radar, target, or broadcast-wave symbols for "延迟传播"
+
+FINAL RIGHT-PANEL REVISION
+
+- Arrange the right panel as three columns: four pressure sources in a 2×2 grid, one central long queue, and two consequence cards stacked vertically.
+- Fill the upper-right area with the "尾延迟" curve card; place the "延迟传播" mechanism card directly below it.
+- In "延迟传播", use three rows labeled "请求1", "请求2", and "请求3". Show "请求1" as a "慢请求" with a long orange processing bar; show gray waiting segments before requests 2 and 3 can complete; label the shared effect "后续等待".
+- The intended reading is: a slow request at the head of one sequential queue prevents later requests from passing, so their completion times move later together.
+
+FINAL BOTTOM-STRIP REVISION
+
+- Do not repeat the upper "尾延迟" curve or the "延迟传播" timeline in the bottom strip.
+- Replace the duplicate charts with one light causal summary labeled "队列状态变化".
+- Use three stages: "及时清空" -> "请求持续进入" -> "等待逐轮累积"; place "规模扩大" over the first transition.
+- Use envelope and waiting-bar icons only. The upper cards explain consequences; the bottom strip summarizes how queue state changes.
+
+V3 FINE-TUNE REVISION (build on v2 layout, fix 5 issues)
+
+Overall goal: keep the v2 two-panel + bottom-strip structure. These are targeted refinements, not a redesign.
+
+Issue 1 — "延迟传播" card mechanism must be clearer (highest priority):
+- Remove the checkmark icons and the looping red return arrow; they mislead readers into thinking requests depend on each other or flow backward.
+- Replace the three independent rows with a single shared horizontal timeline.
+- Draw the timeline left to right; label the left end "开始" and the right end "时间".
+- On the same timeline, stack three horizontal bars vertically: "请求1" (top), "请求2" (middle), "请求3" (bottom).
+- 请求1: a long orange bar from near the left end, labeled "慢请求" above it.
+- 请求2: a gray "等待" segment starting at the left (same x as 请求1 start), then an orange processing bar that starts only after 请求1 finishes.
+- 请求3: a longer gray "等待" segment starting at the left, then an orange processing bar that starts after 请求2 finishes.
+- The effect visually reads as: the first slow request holds up the queue, so requests 2 and 3 wait longer and finish later.
+- Add a small brace or annotation on the right covering all three finish points, labeled "后续等待".
+- Keep the card title "延迟传播".
+
+Issue 2 — Bottom strip middle stage "请求持续进入" is confusing:
+- Remove the "envelopes falling down into a line" visual; the drop metaphor is not intuitive.
+- Redraw the middle stage as a standard queue-arrival diagram: three envelope icons enter from the left (arrows pointing right), queue up inside a rectangular queue box, and exit from the right end one at a time.
+- The exit side should show only one envelope leaving, with a small "处理中" label or a single slow arrow, conveying that processing cannot keep up with arrivals.
+- Keep the stage title "请求持续进入".
+
+Issue 3 — "热点状态访问" icon should show shared-resource contention, not database access:
+- Replace the cylinder database icon with a single shared resource in the center: a treasure chest (宝箱) or a simple square labeled "共享资源".
+- Surround it with 4-6 small person / cursor / arrow icons pointing inward from different directions (top, left, bottom-right, etc.).
+- The visual reads as "many actors accessing the same shared state", not "many clients querying a database".
+- Keep the title "热点状态访问".
+
+Issue 4 — Left panel: "快速清空" and "稳定推进" labels are cramped:
+- Move "快速清空" next to the queue output (right side of the queue box), as a small label with an arrow pointing outward from the queue exit.
+- Move "稳定推进" to the right of the heartbeat / rhythm icon, on the same line as the icon.
+- Remove the two stacked rounded boxes below the heartbeat; replace with this inline labeling so the panel breathes.
+- Keep both labels; only change their position.
+
+Issue 5 — Main queue envelope color change is unexplained:
+- Make all envelopes in the "主处理队列" the same color (light blue, consistent with the left panel's envelopes).
+- Keep the dashed red/orange highlight box around the lower portion, with the "队列变长" label below it.
+- The dashed box alone is enough to convey "this is the backlogged part"; color change adds ambiguity.
+
+Preserve everything else from v2: overall layout, color palette, panel titles, other four pressure-source boxes, 尾延迟 curve card, left-panel three-player layout, bottom strip structure and stage titles.

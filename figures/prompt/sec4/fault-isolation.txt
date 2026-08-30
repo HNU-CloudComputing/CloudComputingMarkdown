@@ -1,0 +1,149 @@
+# 可用性公式与故障隔离对比图
+
+## 教学任务
+用直觉展示"机器越多，某一台出问题的概率越高"，同时说明分片系统的故障影响是局部的而非全局的。回答读者的疑问：既然多机系统更容易出故障，为什么还要做分布式？
+
+## 图片位置
+sec4.tex 4.4 节头引言（容错支柱引入）之后。
+
+## 图片内容描述
+
+整体布局：上下两部分对比。
+
+**上半部分：串联系统（无冗余）**
+- 标题：串联系统——任意一台故障即全服不可用
+- 画一行 5 台服务器，用串联线连接
+- 每台标注"99.9%"
+- 计算结果标注：整体可用性 = 99.9%^5 ≈ 99.5%
+- 下方补一行：如果是 100 台，99.9%^100 ≈ 90.5%
+- 其中一台用红色标注"故障"，红色叉号
+- 红色波及线覆盖所有服务器，标注"全部用户受影响"
+
+**下半部分：分片隔离系统（有冗余）**
+- 标题：分片隔离——单分片故障只影响该分片的用户
+- 画 5 个分片，每个分片内有 1 主 + 1 从（小方块）
+- 其中一个分片的主库用红色标注"故障"
+- 该分片内的从库用绿色箭头标注"故障切换"
+- 红色波及范围只覆盖该分片对应的用户组（用红色虚线框）
+- 其他 4 个分片正常运行（绿色），对应的用户组不受影响
+- 标注："故障影响范围 = 1/5 用户组"
+
+**底部总结**：
+"分布式系统的容错不是消除故障，而是把故障影响控制在局部，并通过冗余副本快速恢复。"
+
+## 视觉要求
+- 上下对比，上方用灰色/红色调表示风险，下方用绿色调表示恢复能力
+- 故障节点用醒目的红色 × 标记
+- 波及范围用红色虚线框或红色阴影
+- 数字（99.9%、90.5%）大字标注
+- 中文标注
+- 风格与书稿已有图片一致
+
+## 图注建议
+串联系统中任意一台故障即全服不可用，100 台串联后整体可用性降至约 90.5\%；分片隔离系统中单个分片故障只影响该分片负责的用户组，其他分片不受影响，且从库可快速接管。
+
+---
+
+Target image path: figures/sec4/fault-isolation.png
+Source TeX: section/sec4.tex
+Nearby section: 4.4 节头引言，容错支柱引入
+Created for imagegen: 2026-07-07 13:30
+
+Figure contract:
+- Why this figure exists: 解释多机系统虽然增加故障发生概率，但分片和副本能把影响控制在局部。
+- One teaching question: 为什么分布式系统不是简单地让系统更容易整体失败？
+- Beginner misconception to prevent: 学生可能把“机器更多”理解成“系统必然更脆弱”，忽略故障隔离和副本接管。
+- Diagram role: comparison, top-bottom contrast.
+- Required mechanism: 上半部分展示无冗余串联系统中单点故障扩散到全局；下半部分展示分片隔离系统中一个主节点故障只影响一个用户组，并由从节点接管。
+- Details to leave in the prose: 底部完整总结句放入图注或正文，不放进图内。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange/red only for the single failure or warning state
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- match the existing Cloudbook sec4 figures: wide landscape 16:9, light paper background, compact mechanism diagram, rounded rectangles with 6-10 px radius, reserved label areas
+
+Layout rules:
+- one clear top-to-bottom comparison: upper half is risk propagation, lower half is isolated recovery
+- no crossing arrows unless unavoidable
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the same baseline as the text
+- no floating comma, no raised comma, no Latin comma inside Chinese sentences
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels; do not add extra Chinese sentences beyond the required labels
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- avoid decorative clipart, cute characters, mascots, stock-business people, and generic cloud icons unless they explain the mechanism
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Draw a wide 16:9 textbook mechanism diagram comparing availability risk in a no-redundancy serial system with failure isolation in a sharded replicated system.
+
+Source context from the textbook:
+The section introduces fault tolerance after discussing sharding. Students need to see that adding machines increases the chance that some machine fails, but a distributed design can prevent one failure from becoming a global outage. The figure should make the distinction between global failure propagation and local shard failure isolation visually obvious.
+
+Teaching goal:
+Show that distributed fault tolerance does not eliminate failures; it limits the blast radius and uses replicas for quick recovery.
+
+Beginner misconception to prevent:
+More machines means the whole system is simply less reliable.
+
+Diagram type:
+Comparison with two horizontal bands.
+
+Required visual structure:
+- Upper band: a row of five connected server boxes labeled 99.9%, linked in series. One middle server has a red X and the label 故障. A red dashed impact frame covers the full row and the user group, showing global impact.
+- Upper band has a compact formula area: 整体可用性, 99.9%^5≈99.5%, 100 台≈90.5%.
+- Lower band: five separated shard groups. Each shard group contains one primary box and one replica box. One shard primary has a red X and 故障. A green arrow inside that shard points from 主 to 从 and is labeled 故障切换. Only that shard and its user group are inside a red dashed impact frame. The other four shards stay teal/green and normal.
+- Lower band has a compact impact label: 影响范围=1/5.
+- Use small user-group icons or grouped dots only where they clarify affected users.
+
+Required labels, exact and short:
+- 串联系统
+- 任一故障
+- 全服不可用
+- 99.9%
+- 整体可用性
+- 99.9%^5≈99.5%
+- 100 台≈90.5%
+- 故障
+- 全部用户
+- 分片隔离
+- 主
+- 从
+- 故障切换
+- 其他分片正常
+- 影响范围=1/5
+
+Main takeaway, if shown in the image:
+故障控制在局部
+
+Omit:
+- Do not place the long explanatory sentence from the caption inside the image.
+- Do not add formulas beyond the listed numbers.
+- Do not add cloud-provider logos or decorative server rooms.
+
+Quality constraints:
+- the figure should contain enough concrete mechanism detail to support the textbook explanation
+- all labels must remain readable when scaled to full text width in a LaTeX book
+- no text overlap, no label touching arrows, no cropped elements
+- Chinese punctuation baseline must be normal; if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+- no watermark, no logo, no SVG/vector look, final output must be a raster textbook illustration

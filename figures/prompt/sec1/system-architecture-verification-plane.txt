@@ -1,0 +1,59 @@
+Target image path: figures/sec1/system-architecture-verification-plane.png
+Source TeX: section/sec1.tex
+Figure label: fig:chapter1-structure
+Created for imagegen: 2026-08-02
+
+FIGURE CONTRACT
+
+Figure id: fig:chapter1-structure
+Nearby section: 第一章“在线系统的通用架构”
+Why this figure exists: 展示请求路径、控制面、验证面和基础设施之间的职责关系。
+One teaching question: 在线系统除完成请求外，怎样调整运行状态并验证服务是否正常？
+Beginner misconception to prevent: 指标、日志和链路追踪只是观测手段，承担记录、校验和追溯职责的整体称为验证面；验证面不会直接修改业务状态。
+Diagram role: 架构边界图的单一术语校正。
+Required mechanism: 保留原图中央请求路径、左侧控制路径、右侧信息采集路径和底部基础设施之间的全部关系。
+Required labels: 原图所有标签保持不变，仅将右侧面板标题“观测面”替换为“验证面”。
+Details to leave in the prose: 验证面如何利用指标、日志和链路追踪完成校验与追溯。
+Caption job: 说明请求路径完成业务处理，控制面与验证面维持系统运行。
+Post-figure sentence: 验证面通过指标、日志和链路追踪记录并校验系统的运行状态。
+
+SYSTEM STYLE PROMPT
+
+You are editing a polished architecture figure for a Chinese undergraduate cloud computing textbook.
+Preserve the existing semi-flat textbook style, cream-white background, muted blue and teal palette, exact grid, line weights, icons, arrows, spacing, and typography.
+This is a precise text-localization edit, not a redesign or regeneration.
+Every unchanged Chinese label must remain verbatim, sharp, aligned, and readable.
+Do not add any object, label, decoration, watermark, logo, title, footer, legend, gradient, or shadow.
+
+USER CONTEXT PROMPT
+
+Use case: text-localization
+Asset type: full-width architecture figure for a Chinese undergraduate cloud computing textbook
+Input image: figures/sec1/system-architecture.png is the edit target.
+
+Primary request:
+Change only the large heading inside the right-side vertical panel from “观测面” to “验证面”.
+
+Required text replacement, exact and verbatim:
+- Old: 观测面
+- New: 验证面
+
+Invariants:
+- Preserve the original 1536 x 1024 landscape canvas and composition.
+- Preserve every other Chinese label exactly as shown.
+- Preserve all boxes, icons, arrows, dotted lines, dashed lines, colors, spacing, borders, and alignment.
+- Keep the replacement text in the same position, size, weight, color, and sans-serif style as the old heading.
+- Do not reflow, redraw, translate, remove, or add anything else.
+- No text overlap, cropped labels, distorted glyphs, invented terms, or watermark.
+
+Required labels, exact and short:
+- 验证面
+
+Teaching goal:
+Make the figure use the same canonical term as the prose while preserving every architectural relationship.
+
+Beginner misconception to prevent:
+Do not imply that metrics, logs, and traces form a separate “观测面”; in this textbook they are observation mechanisms used by the “验证面”.
+
+Target output:
+Save the edited landscape raster image as figures/sec1/system-architecture-verification-plane.png.

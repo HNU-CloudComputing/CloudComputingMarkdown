@@ -1,0 +1,103 @@
+Target image path: figures/sec5/kubernetes-objects.png
+Source TeX: section/sec5.tex
+Figure label: fig:k8s-main-object
+Created for imagegen: 2026-07-04
+Change request: 删除 Service 到 Deployment 的"选择Pod"蓝色实线箭头。K8s 中 Service 通过 Selector 直接匹配 Pod 标签，不经过 Deployment。改为 Service 通过 Selector 指向带有 app=lobby 标签的 Pod。
+
+Figure contract:
+Figure id: fig:k8s-main-object
+Nearby section: section/sec5.tex, K8s 的核心抽象：Pod、Deployment 与 Service
+Why this figure exists: 帮助本科生理解 Pod、Deployment 和 Service 三个抽象的层次关系与松耦合协作方式。
+One teaching question: Service 如何在 Pod 被替换后仍然提供稳定的访问入口？
+Beginner misconception to prevent: 读者可能误以为 Service 通过 Deployment 间接选择 Pod；实际上 Service 用 Selector 直接匹配 Pod 标签，与 Deployment 没有直接依赖关系。
+Diagram role: 层次关系图（调用方 → Service → Pod；Deployment → Pod）
+Required mechanism: 调用方通过 Service 访问服务，Service 通过 Selector(app=lobby) 匹配 Pod 标签直接路由到 Pod；Deployment 独立管理 Pod 的目标副本数(3)，Pod 故障后可被替换，新 Pod 通过相同标签加入。
+Required labels: Kubernetes 集群, 调用方, Service, 稳定入口, Selector, app=lobby, Deployment, 目标副本 3, Node1, Node2, Node3, Pod, 可替换
+Details to leave in the prose: ReplicaSet、EndpointSlice、滚动更新等细节不在图中展示。
+Caption job: 说明 Service 通过 Selector 匹配符合标签的 Pod 提供稳定入口，Deployment 维持 Pod 目标副本数，Pod 可被替换但访问入口不变。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Recreate the Kubernetes core objects overview figure with a critical fix: remove the misleading "选择Pod" arrow from Service to Deployment. In Kubernetes, Service does NOT route through Deployment. Service uses a Selector to directly match Pods by label. The figure must show this correct relationship.
+
+Source context from the textbook:
+This figure appears after introducing Pod, Deployment, and Service. The text now says: "Service 不直接依赖某个固定 Pod，而是通过 Selector（如 app=lobby）匹配符合标签的 Pod，为调用方提供不受 Pod 重建影响的稳定访问入口。"
+
+Teaching goal:
+Show the three-layer abstraction hierarchy: Pod (smallest schedulable unit), Deployment (manages replica count), Service (stable access entry via Selector). The key insight is that Service and Deployment are loosely coupled — they both relate to Pods but not to each other directly.
+
+Diagram type:
+Layered architecture diagram, landscape 16:9 textbook diagram.
+
+Required visual structure:
+- TOP LEFT: A "调用方" box with user/laptop icons, connected by a blue arrow to Service.
+
+- TOP CENTER: A "Service" box with "稳定入口" label. On its right side, an orange dashed line connects to a "Selector" tag labeled "app=lobby".
+
+- KEY FIX: From Service, there should be dashed orange arrows going DOWN directly to the Pods (not to Deployment). These arrows represent "Selector 匹配" — the Service finds Pods whose labels match app=lobby. There must be NO arrow from Service to Deployment.
+
+- MIDDLE: A "Deployment" box with "目标副本 3" label. Teal arrows go from Deployment down to 3 Nodes, showing that Deployment manages the Pod count.
+
+- BOTTOM: Three Node boxes (Node1, Node2, Node3), each containing a Pod with "app=lobby" label tag. In Node2, show a grayed-out dashed Pod with "可替换" label and an orange arrow indicating Pod replacement.
+
+- IMPORTANT VISUAL SEPARATION: Service and Deployment should be visually at the same level or Service slightly above, to show they are parallel concepts that both relate to Pods independently. Service selects Pods by label; Deployment manages Pod count. They don't depend on each other.
+
+Required labels, exact and short:
+- Kubernetes 集群
+- 调用方
+- Service
+- 稳定入口
+- Selector
+- app=lobby (appears on Selector tag AND on each Pod)
+- Deployment
+- 目标副本 3
+- Node1, Node2, Node3
+- Pod (appears 3 times, plus 1 grayed-out replacement)
+- 可替换
+
+Quality constraints:
+- There MUST be NO arrow from Service to Deployment. This is the entire reason for regenerating the figure.
+- Service connects to Pods via Selector/label matching (dashed orange lines to Pods with app=lobby)
+- Deployment connects to Pods via management arrows (teal lines showing replica management)
+- The two relationships (Service→Pods, Deployment→Pods) should be visually distinct in color/style
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+
+Avoid:
+- NO arrow from Service to Deployment with "选择Pod" label — this is the critical error being fixed
+- no English text except: Service, Deployment, Pod, Node, Selector, Kubernetes, app=lobby
+- no PPT-style colored cards
+- no marketing infographic style
+- no watermark, no logo, no invented terms

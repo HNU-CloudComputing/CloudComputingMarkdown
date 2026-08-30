@@ -1,0 +1,221 @@
+# 一致性哈希环示意图
+
+## 教学任务
+展示一致性哈希的核心机制：节点和数据键映射到同一个哈希环；查询时沿顺时针找到最近的虚拟节点；新增节点只影响相邻局部区间。
+
+## 图片位置
+sec4.tex \subsubsection{映射策略：从静态哈希到一致性哈希}，紧跟概念讲解之后。
+
+## 图片内容描述
+
+整体布局：中心是一个蓝色圆环（一致性哈希环），环上均匀分布着若干小圆点（虚拟节点）。环的外围放置数据库节点，环的内侧/外侧放置数据键示例和说明框。
+
+**中心圆环**：
+- 圆环上均匀分布若干小圆点，分为四种颜色/样式，分别代表属于节点A、B、C、D的虚拟节点。
+- 环上标注若干数据键位置：P101、P238、P779、P904、P301、P512 等（用带颜色的小圆点或标签标注在环上）。
+
+**外围节点**（放在环外，用箭头或虚线指向环上的虚拟节点）：
+- 左上方：**数据库节点 A**（蓝色圆柱图标），旁边用虚线框标注"虚拟节点（属于节点 A）"。
+- 右上方：**数据库节点 B**（蓝色圆柱图标）。
+- 左侧中部：**数据库节点 C**（蓝色圆柱图标），旁边用虚线框标注"虚拟节点（属于节点 C）"。
+- 底部中央偏右：**新增节点 D**（橙色圆柱图标），标注"新增节点 D"。
+
+**三个编号教学标签**（放在环周围，用圆角矩形+编号）：
+
+1. **① 节点映射到环**（左上角）
+   - 箭头从"数据库节点 A"指向环上属于A的虚拟节点群。
+   - 旁边虚线框标注"虚拟节点（属于节点 A）"。
+
+2. **② 数据键映射到环**（右上角）
+   - 一个数据键（例如 P101）标注在环上。
+   - 从数据键引出一条虚线箭头，**顺时针方向**指向最近的归属节点（数据库节点 B）。
+   - 箭头终点标注"归属节点"。
+   - 旁边虚线框标注"用户 ID"（或"数据键"），表示这是被映射到环上的数据对象。
+
+3. **③ 顺时针找到最近节点**（环的下方偏左，或底部中央）
+   - 明确展示一条**顺时针查询路径**：从某个数据键位置（如 P301 或 P512）出发，沿环的顺时针方向画一条弧线箭头，指向遇到的第一个虚拟节点，再指向该虚拟节点所属的物理节点。
+   - 箭头样式：虚线或带方向的弧线，清晰表示"顺时针查找"。
+   - 目的：让读者一眼看懂"如何确定归属"。
+
+新增节点 D 插入环后，仍用橙色高亮显示 D 相邻的局部区间，并用箭头标注“迁到 D”；但不再单独放置编号 ④ 和“新节点只接管一小段”标签框。
+
+**右侧验证框**（竖向排列，放在图的最右侧）：
+- 标题："新增节点不影响全环"
+- 三个勾选/锁图标条目：
+  - ✅ "A 到 B 区间保持不变"
+  - ✅ "B 到 C 区间保持不变"
+  - 🔒 "仅局部迁移区间受影响"
+
+**右下角图例**：
+- 小圆点颜色对应四种归属：
+  - 🔵 属于节点 A 的虚拟节点
+  - 🟢 属于节点 B 的虚拟节点
+  - ⚪ 属于节点 C 的虚拟节点
+  - 🟠 属于新增节点 D 的虚拟节点
+
+## 视觉要求
+- 半扁平教材插图风格，浅色米白纸背景
+- 圆环使用深蓝/蓝紫线条，虚拟节点用四种区分色（蓝、绿、灰/浅蓝、橙）
+- 箭头清晰，顺时针查询路径用醒目虚线或粗箭头
+- 编号标签用圆角矩形白底+深色编号
+- 中文标注，字体清晰
+- 与书稿已有图片风格一致（参考 figures/sec4/multi-node-challenges.png 的配色和布局风格）
+- 16:9 宽图比例
+
+## 图注建议
+一致性哈希将节点和数据键映射到同一个首尾相接的哈希环；查询时沿顺时针找到最近的虚拟节点确定归属；新增节点只接管相邻的局部区间，其余区间保持不变。
+
+---
+
+Target image path: figures/sec4/consistent-hash.png
+Source TeX: section/sec4.tex
+Nearby section: \subsubsection{映射策略：从静态哈希到一致性哈希}
+Created for imagegen: 2026-07-18
+
+Figure contract:
+- Why this figure exists: 帮助读者理解一致性哈希的三个核心动作——节点上环、数据键路由、扩容局部影响。
+- One teaching question: 为什么新增节点只影响相邻区间，而不是所有数据都要重新分布？
+- Beginner misconception to prevent: 学生可能误以为一致性哈希的"环"是一个真实维护的圆形数据结构，或误以为新增节点会影响全部数据。
+- Diagram role: mechanism visualization with numbered stages.
+- Required mechanism: 节点→虚拟节点→哈希环；数据键→顺时针查找→归属节点；新增节点→局部迁移。
+- Details to leave in the prose: 虚拟节点数量、路由表实现、具体哈希函数等放在正文或算法中，图内只保留概念示意。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the key routing or mapping hints
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- match the existing Cloudbook sec4 figures, especially figures/sec4/multi-node-challenges.png: light paper background, restrained blue/teal/orange panels, compact labels
+
+Layout rules:
+- center: a large consistent-hash ring with evenly distributed virtual-node dots
+- around the ring: database node icons (cylinders) connected to their virtual nodes by faint dashed lines
+- numbered teaching labels (1-3) placed around the ring in clean rounded rectangles
+- right side: a compact verification box and a color legend
+- no crossing arrows unless unavoidable
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use a subtle centered label "一致性哈希环" if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the same baseline as the text
+- no floating comma, no raised comma, no Latin comma inside Chinese sentences
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; do not add extra Chinese sentences beyond the required labels
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- avoid decorative clipart, cute characters, mascots, stock-business people, and generic cloud icons unless they explain the mechanism
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Draw a wide 16:9 textbook mechanism diagram showing a consistent hashing ring with database nodes, virtual nodes, data keys, and a new node insertion.
+
+Input images:
+- Image 1 is the current figure and edit target: figures/sec4/consistent-hash.png. Preserve its ring-centered teaching composition, but correct the mechanism and labeling issues listed below.
+- Image 2 is a style reference only: figures/sec4/multi-node-challenges.png. Match its restrained palette, line weight, light paper background, spacing, and calm textbook tone. Do not copy its technical content.
+
+Optimization focus:
+- Interleave the virtual-node colors for nodes A, B, and C around the full ring. Do not place all virtual nodes of one physical node in one continuous arc.
+- Show each data key label exactly once. In particular, P904 must appear only once.
+- Use 用户 ID instead of 玩家ID.
+- Keep one clearly highlighted representative takeover interval near a newly added virtual node D. Make clear that only the adjacent interval changes ownership; do not imply that all orange virtual nodes form one continuous block.
+- Keep the clockwise routing arrow visually separate from the node-to-virtual-node mapping lines.
+- Distribute multiple A, B, and C virtual nodes across every quadrant of the ring; no physical node may own a visually contiguous color block.
+- Draw data-key markers as small diamonds or map pins, visually distinct from the round virtual-node dots.
+- For stage ③, use exactly one unidirectional clockwise arc from P301 or P512 to the first virtual node encountered. Do not draw a bidirectional arc or two opposing arrowheads.
+- Do not add a “虚拟节点（属于节点 B）” callout; only the A and C callouts listed below are allowed.
+- Remove the entire bottom orange stage-4 callout: the orange number ④, its rounded rectangle, and the text 新节点只接管一小段. Leave clean cream-white background in that area.
+- Preserve the orange node D, orange local-migration arc, 局部迁移区间 label, 迁到 D arrows, and every other element exactly as they are.
+- Do not reflow, resize, recolor, rewrite, or move any other object or label.
+
+Source context from the textbook:
+The section introduces consistent hashing as a sharding strategy that minimizes data migration during node scaling. Students need to see how nodes map to virtual positions on a ring, how data keys are routed clockwise to the nearest virtual node, and why adding a node only affects a local interval.
+
+Teaching goal:
+Show three core actions in one picture: (1) nodes map to virtual positions on the ring, (2) a data key maps to a position and is routed clockwise to the nearest node, (3) adding a new node only takes over adjacent intervals.
+
+Beginner misconception to prevent:
+The "ring" is a circular data structure that must be maintained in code; adding a node reshuffles all data.
+
+Diagram type:
+Mechanism visualization with numbered stages around a central ring.
+
+Required visual structure:
+- Center: a large blue ring labeled 一致性哈希环.
+- On the ring: evenly spaced small dots in four colors representing virtual nodes for Node A (blue), Node B (green), Node C (light gray/blue), and Node D (orange, newly added).
+- Data key points on/near the ring: P101, P238, P779, P904, P301, P512. Use small colored dots matching their assigned node.
+- Top-left outside ring: database cylinder icon labeled 数据库节点 A. Dashed-line box nearby labeled 虚拟节点（属于节点 A）. Arrow from A to its virtual-node cluster.
+- Top-right outside ring: database cylinder icon labeled 数据库节点 B.
+- Mid-left outside ring: database cylinder icon labeled 数据库节点 C. Dashed-line box nearby labeled 虚拟节点（属于节点 C）.
+- Bottom-right inside ring area: new orange database cylinder labeled 新增节点 D. An orange-shaded arc interval on the ring labeled 局部迁移区间. Orange arrows labeled 迁到 D pointing from the interval to D.
+- Label ① (top-left): 节点映射到环. Arrow from node A icon to its virtual nodes on the ring.
+- Label ② (top-right): 数据键映射到环. A data key point (e.g., P101) on the ring with a dashed-line box nearby labeled 用户 ID. A clockwise curved arrow from the key to the nearest virtual node, then to node B, with an endpoint label 归属节点.
+- Label ③ (bottom center): 顺时针找到最近节点. A prominent clockwise curved arrow starting from a data key point (e.g., P301 or P512), sweeping along the ring clockwise to the first virtual node it meets, then pointing to the owning physical node. This arrow must be visually unambiguous.
+- Right-side verification box (vertical list):
+  - Title: 新增节点不影响全环
+  - ✅ A 到 B 区间保持不变
+  - ✅ B 到 C 区间保持不变
+  - 🔒 仅局部迁移区间受影响
+- Bottom-right legend:
+  - 🔵 属于节点 A 的虚拟节点
+  - 🟢 属于节点 B 的虚拟节点
+  - ⚪ 属于节点 C 的虚拟节点
+  - 🟠 属于新增节点 D 的虚拟节点
+
+Required labels, exact and short:
+- 一致性哈希环
+- 数据库节点 A
+- 数据库节点 B
+- 数据库节点 C
+- 新增节点 D
+- 虚拟节点（属于节点 A）
+- 虚拟节点（属于节点 C）
+- 节点映射到环
+- 数据键映射到环
+- 用户 ID
+- 归属节点
+- 顺时针找到最近节点
+- 局部迁移区间
+- 迁到 D
+- 新增节点不影响全环
+- A 到 B 区间保持不变
+- B 到 C 区间保持不变
+- 仅局部迁移区间受影响
+- 属于节点 A 的虚拟节点
+- 属于节点 B 的虚拟节点
+- 属于节点 C 的虚拟节点
+- 属于新增节点 D 的虚拟节点
+- P101
+- P238
+- P779
+- P904
+- P301
+- P512
+
+Main takeaway, if shown in the image:
+局部变化，全局稳定
+
+Omit:
+- Do not add extra icons, people, cloud logos, product logos, or decorative backgrounds.
+- Do not add text labels beyond the listed labels.
+- Do not include implementation details like hash functions or replica counts.
+
+Quality constraints:
+- the figure should contain enough concrete mechanism detail to support the textbook explanation
+- all labels must remain readable when scaled to full text width in a LaTeX book
+- no text overlap, no label touching arrows, no cropped elements
+- Chinese punctuation baseline must be normal; if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+- no watermark, no logo, no SVG/vector look, final output must be a raster textbook illustration

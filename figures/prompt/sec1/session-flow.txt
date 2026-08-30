@@ -1,0 +1,117 @@
+Target image path: figures/sec1/session-flow.png
+Source TeX: section/sec1.tex
+Figure label: fig:chapter1-player-view
+Created for imagegen: 2026-07-13 23:52
+
+FIGURE BRIEF
+
+正文锚点：第一章“从玩家流程抽象出系统流程”。正文把一局在线对战拆成接入、行动、交互、退出四个阶段，并分别对应身份与连接、实时状态、权威裁决、回收与保存。
+
+教学目标：让本科生看清“玩家经历的阶段”如何逐一触发“服务后端承担的系统动作”，并理解四个阶段首尾相接后才形成完整的在线会话责任链。
+
+读者误区：只记住接入、行动、交互、退出四个阶段名称，却不知道每个阶段包含哪些请求、状态变化和系统责任；或者误以为图中的四个阶段只是四张互不关联的功能卡片。
+
+图型选择：横向连续的双层生命周期路径图。上层是玩家可见流程，下层是系统处理流程；四个阶段按时间从左到右对齐。不要使用四张孤立的大卡片。
+
+必须出现：
+- 一条从左到右连续贯通的会话路径，依次经过接入、行动、交互、退出。
+- 上层“玩家流程”：登录进入、移动或释放技能、两名玩家发生冲突操作、退出并查看结算。
+- 下层“系统处理”：连接建立→身份校验→会话分配；操作意图→状态更新→状态广播；冲突请求→权威裁决→结果同步；关闭连接后分叉为回收临时状态和保存关键结果。
+- 每个阶段都有从玩家行为指向系统处理的下行箭头，以及系统结果返回客户端的回传关系；箭头语义稳定，不交叉。
+- 退出阶段明确画出两条不同去向：临时状态被回收，关键结果进入持久化存储。
+
+必须省略：
+- 不画底部橙色总结语，不出现“流程背后是系统责任”。
+- 不画任何橙色页脚、横幅、口号或大结论框。
+- 不堆砌云朵、盾牌、装饰服务器机柜等无关图标。
+- 不加入正文尚未解释的协议、数据库、产品名或缩写。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, and warm gray palette; no large orange text, no orange footer, no slogan banner
+- thin but confident ink-like outlines, consistent stroke width, subtle paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the lifecycle; do not make the picture overly empty or generic
+
+Layout rules:
+- landscape 3:2 composition suitable for a full-width LaTeX textbook figure
+- one continuous left-to-right reading path; use two aligned horizontal lanes rather than four isolated cards
+- upper lane shows player-visible actions; lower lane shows system-side processing
+- four stage regions may use very light background bands or subtle separators, but must not look like PowerPoint cards
+- use vertical cause-and-response arrows within each stage and horizontal arrows for time progression; avoid crossing arrows
+- every text label must sit in its own reserved label area
+- no text may overlap icons, arrows, borders, or other text
+- keep all important content inside a generous safe margin
+- no decorative title banner and no bottom takeaway banner
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the normal baseline
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- use only the exact short labels listed below; do not invent extra Chinese sentences
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, direction, state changes, and the persistence split, not just isolated icons
+- do not use decorative clipart, cute characters, mascots, stock-business people, or generic cloud icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width mechanism figure for a Chinese undergraduate cloud computing textbook
+Input image: the existing chapter1_player_view.png is the edit target and conceptual reference. Preserve only its four-stage teaching concept and blue-teal textbook palette. Substantially redesign the composition and mechanism detail. Remove the entire orange bottom slogan and do not preserve the four-large-card PowerPoint layout.
+
+Primary request:
+Redraw the online-game session lifecycle as a richer continuous two-lane mechanism diagram. The upper lane represents what the player experiences; the lower lane represents what the service backend does. Align four stages from left to right: 接入、行动、交互、退出. Show how player actions trigger concrete backend steps and how results or state return to clients. Make the lifecycle visually continuous and slightly more complex than the source, while remaining readable at textbook scale.
+
+Required visual structure:
+1. Upper lane label: 玩家流程. Show four small scene-like moments along one continuous path:
+   - 接入: a player client logs in and enters the game
+   - 行动: the client sends movement or skill intent
+   - 交互: two player clients submit potentially conflicting actions
+   - 退出: the player leaves and receives settlement information
+2. Lower lane label: 系统处理. Under each aligned stage, show a compact three-step mechanism chain:
+   - 接入: 连接建立 → 身份校验 → 会话分配
+   - 行动: 操作意图 → 状态更新 → 状态广播
+   - 交互: 冲突请求 → 权威裁决 → 结果同步
+   - 退出: 关闭连接, then branch into 回收临时状态 and 保存关键结果
+3. Use vertical arrows from the upper player action to the lower processing chain. Use a restrained return arrow from system output back toward the relevant client where appropriate.
+4. Use a continuous horizontal lifecycle line connecting all four stages. Do not make the stages look like four separate slide cards.
+5. In the exit stage, clearly separate temporary-state reclamation from persistent saving with two distinct branches and simple storage/recycle symbols.
+
+Required labels, exact and short:
+- 玩家流程
+- 系统处理
+- 接入
+- 行动
+- 交互
+- 退出
+- 连接建立
+- 身份校验
+- 会话分配
+- 操作意图
+- 状态更新
+- 状态广播
+- 冲突请求
+- 权威裁决
+- 结果同步
+- 关闭连接
+- 回收临时状态
+- 保存关键结果
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Quality constraints:
+- preserve all four stages and their left-to-right order
+- the system processing lane must contain concrete mechanism detail, not generic icons
+- no orange bottom text, no orange footer, no slogan, no large conclusion box
+- no four equally sized isolated rounded cards
+- no text overlap, no arrows through text, no cropped elements, no watermark
+- all Chinese labels must be correct and readable after scaling to 0.9 text width in LaTeX
+- final image should look like a cohesive textbook lifecycle illustration rather than a PowerPoint process infographic

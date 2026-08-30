@@ -1,0 +1,139 @@
+Target image path: figures/sec4/cap-network-partition.png
+Source TeX: section/sec4.tex
+Nearby section: 4.4.4 CAP 定理与一致性取舍
+Figure label: fig:cap-network-partition
+Created for imagegen: 2026-07-27
+
+FIGURE CONTRACT
+
+Why this figure exists:
+正文已经提到 Raft 多数派和网络分区，但初学者还看不到“节点仍在运行、只是节点组之间无法通信”的故障状态，也难以理解这为什么会迫使系统在一致性与可用性之间取舍。
+
+One teaching question:
+同一份数据的副本被网络分成无法通信的两组后，为什么不能同时保证统一的最新状态和两侧请求都成功？
+
+Beginner misconception to prevent:
+- 不要把网络分区画成节点宕机；分区两侧的节点都可能仍在运行。
+- 不要把 CAP 画成正常运行时可以任意选择两项的三角形。
+- 不要暗示两侧同时接受冲突写入后还能保持线性一致。
+
+Diagram role:
+同一故障条件下的决策分支对比图（decision-boundary comparison）。
+
+Required mechanism:
+1. 上半部分是共同故障条件：左侧节点 A、B 与右侧节点 C 都仍在运行，两组之间的网络链路断开，用橙色断裂箭头或断线明确表示“消息丢失”。
+2. 分区发生前，两侧副本都显示“状态 100”。分区后，左侧客户端提交“写入 101”，右侧客户端提交“写入 99”。
+3. 从共同故障条件向下分成左右两个互斥的处理方式，必须看出这是两种备选策略，不是同时发生。
+4. 左下“保持一致性”：多数派一侧继续处理，少数派一侧显示“等待或拒绝”，底部结果是“历史唯一”和一个小橙色提示“部分请求不可用”。
+5. 右下“保持可用性”：两侧都显示“返回成功”，但状态分别变成 101 和 99，底部用橙色强调“状态分歧”，再用虚线箭头指向“恢复后合并”。
+6. 画面应让读者先看到网络分区是共同原因，再比较两种处理后果。
+
+Details to leave in the prose:
+- CAP 的形式化定义和论文出处。
+- 线性一致性的完整定义。
+- PACELC 对无分区时一致性与延迟取舍的补充。
+- 不展开冲突合并算法。
+
+Caption job:
+概括网络分区下的两种取舍：要保持统一历史，就要让至少一侧等待或拒绝；要让两侧继续响应，就必须接受暂时的状态分歧。
+
+Post-figure sentence:
+网络分区是已经发生的故障约束；系统真正需要决定的，是分区期间牺牲部分可用性，还是放宽立即一致的要求。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- one clear reading path with arrows; no crossing arrows unless unavoidable
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the same baseline as the text
+- no floating comma, no raised comma, no Latin comma inside Chinese sentences
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if a sentence would be long, replace it with a short label or leave the detailed explanation to the caption
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- avoid decorative clipart, cute characters, mascots, stock-business people, and generic cloud icons unless they explain the mechanism
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width concept figure for a Chinese undergraduate cloud computing textbook
+
+Source context from the textbook:
+The chapter has already explained replica failover and Raft majority decisions. It now needs to define a network partition as a failure in which nodes may still be running but two groups cannot exchange messages. The CAP discussion must show why, during that partition, a system cannot both preserve one immediately consistent history and return successful responses from both sides.
+
+Teaching goal:
+Show one shared network-partition condition and compare the two mutually exclusive response policies: preserve consistency by blocking or rejecting one side, or preserve availability by letting both sides respond and temporarily diverge.
+
+Beginner misconception to prevent:
+Do not depict partitioned nodes as powered off. Do not use a CAP triangle. Do not imply that both sides can accept conflicting writes successfully while preserving a single latest state.
+
+Diagram type:
+Decision-boundary comparison with one shared failure condition at the top and two alternative policy branches below.
+
+Required visual structure:
+- Landscape composition close to 16:9, designed to remain readable at full LaTeX text width.
+- Top half: two live server groups. Left group contains server nodes A and B; right group contains server node C. All servers show normal running indicators and the same initial label “状态 100”.
+- Between the groups, draw a clearly broken network link with a small orange warning mark. Label it “消息丢失”. Above the common condition place the short label “网络分区”.
+- A client on the left sends “写入 101”. A client on the right sends “写入 99”. Both request arrows reach their local live group; neither crosses the broken link.
+- From this shared condition, split downward into two clearly separated alternative panels.
+- Lower-left panel label “保持一致性”. Show the majority side continuing and the minority side marked “等待或拒绝”. Conclude with “历史唯一” and a small orange note “部分不可用”.
+- Lower-right panel label “保持可用性”. Show both sides marked “返回成功”, with local results “状态 101” and “状态 99”. Emphasize “状态分歧” in orange, then a dashed arrow to “恢复后合并”.
+- Make it visually unmistakable that the two lower panels are alternatives under the same partition, not simultaneous stages.
+
+Required labels, exact and short:
+- 网络分区
+- 节点 A
+- 节点 B
+- 节点 C
+- 状态 100
+- 消息丢失
+- 写入 101
+- 写入 99
+- 保持一致性
+- 多数派继续
+- 等待或拒绝
+- 历史唯一
+- 部分不可用
+- 保持可用性
+- 返回成功
+- 状态 101
+- 状态 99
+- 状态分歧
+- 恢复后合并
+
+Avoid labels longer than 8 Chinese characters where possible. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway:
+分区时一致性与可用性需要取舍。
+Keep this conclusion in the LaTeX caption rather than adding it as a long sentence inside the image.
+
+Quality constraints:
+- technically accurate CAP teaching diagram
+- no CAP triangle and no generic three-column definition table
+- all nodes remain visibly running during the partition
+- the broken link means cross-group messages are lost or indefinitely delayed, not that servers have crashed
+- lower panels must be clearly alternative policies
+- no text overlap, no label touching arrows, no cropped elements
+- no watermark, logo, decorative cloud, or invented terminology
+- Chinese text must be exact and readable after full-width LaTeX scaling

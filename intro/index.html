@@ -1,0 +1,1027 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="《云计算原理与实践：以在线游戏为载体》在线阅读版">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../sec1/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>前言 - 云计算原理与实践：以在线游戏为载体</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/course.css?v=20260830-captions">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href=".." title="云计算原理与实践：以在线游戏为载体" class="md-header__button md-logo" aria-label="云计算原理与实践：以在线游戏为载体" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            云计算原理与实践：以在线游戏为载体
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              前言
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  首页
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  前言
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sec1/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  第一章
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sec2/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  第二章
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sec3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  第三章
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sec4/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  第四章
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sec5/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  第五章
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sec6/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  第六章
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../AppendixA/" class="md-tabs__link">
+          
+  
+  
+  附录
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="云计算原理与实践：以在线游戏为载体" class="md-nav__button md-logo" aria-label="云计算原理与实践：以在线游戏为载体" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17z"/></svg>
+
+    </a>
+    云计算原理与实践：以在线游戏为载体
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首页
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    前言
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    前言
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 为什么写这本书
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 这本书有什么不一样
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 这本书如何学
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 致谢
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sec1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sec2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第二章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sec3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第三章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sec4/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第四章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sec5/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第五章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sec6/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第六章
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    附录
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    附录
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AppendixA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    附录 A
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AppendixB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    附录 B
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1 为什么写这本书
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2 这本书有什么不一样
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3 这本书如何学
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4 致谢
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<p><span id="前言"></span></p>
+<h1 id="_1">前言</h1>
+<p>这些年在课堂上，学生常问我："云计算究竟要学到什么程度，才算真正入门？"产生这种困惑并不奇怪。 云计算涉及的技术层次多，Docker、Kubernetes、Raft、Serverless、eBPF 等概念又不断出现。面对越来越长的学习清单，学生往往难以判断哪些内容必须掌握，也不知道自己是否真正理解了云计算。</p>
+<p>我认为学习云计算的关键，不是继续积累技术名词，而是建立一条由真实问题驱动的学习线索。 沿着这条线索，就可以理解一项技术为什么出现、受到哪些约束、解决了什么问题，又付出了什么代价。 本书希望帮助读者建立的，正是这样一条从问题走向机制、再回到工程取舍的线索。</p>
+<p><span id="为什么写这本书"></span></p>
+<h2 id="1">1 为什么写这本书</h2>
+<p>要建立这条线索，只掌握概念或只熟悉操作都不够。读者常见的云计算学习材料大致从两个方向展开。一类侧重概念体系，帮助读者理解 IaaS、PaaS、SaaS、CAP 等基本概念；另一类侧重平台操作，通过控制台、配置文件和部署步骤帮助读者快速上手。前者便于建立知识框架，后者便于熟悉具体工具，但从理解概念到独立分析和构建一个云计算系统，中间仍有一段路需要补足。</p>
+<p>云计算的难点通常不是某一个知识点格外陌生，而是许多已经学过的知识会同时作用于一个系统。学过 TCP 三次握手，不等于知道大量长连接到来后为什么会排队；学过进程、线程和锁，不等于知道并发为什么既能提高吞吐，也可能破坏共享状态；了解一致性与可用性的概念，也不等于能够判断一次跨节点操作应当怎样确认结果。网络、操作系统、数据结构和分布式系统原本分散在不同课程中，进入真实在线系统后却必须共同工作。</p>
+<p>本书位于这些基础课程与复杂系统实践之间。它从系统中已经出现的问题出发，分析问题受到哪些约束，引入相应的机制，再通过实现和运行结果检验设计是否成立。读者需要掌握的不只是某种工具的用法，还包括机制的适用条件，以及性能、状态正确性、可扩展性、可用性和成本之间的取舍。</p>
+<p>要把这些内容讲清楚，需要一个能够观察、实现和验证的教学载体。这些年，我先后尝试过选课系统和大模型服务系统。选课系统贴近生活，但问题主要集中在数据访问和名额分配，难以自然覆盖跨节点协作、故障恢复和弹性伸缩；大模型服务涉及队列调度、资源管理和横向扩展，但依赖 GPU，推理过程也具有较强的黑盒属性，不适合所有学生完整实现。</p>
+<p>经过比较，我们最终选择了在线游戏。游戏服务既包含长连接、并发处理、共享状态和跨节点协作，也会遇到部署、故障和弹性伸缩问题；更重要的是，它的运行过程足够透明。一次操作从客户端发出，经过网络传输、服务器校验、状态更新和结果同步，每一步都可以通过代码实现，也可以通过实验观察。学生可以运行配套系统，并直接感受延迟、状态冲突和故障对服务的影响。</p>
+<p>从选课系统到大模型服务，再到在线游戏，这条教学路线经过了近十年的调整和打磨。本书是这段课堂实践的阶段性总结。</p>
+<p><span id="这本书有什么不一样"></span></p>
+<h2 id="2">2 这本书有什么不一样</h2>
+<p><strong>第一，以持续演进的在线系统引出技术。</strong></p>
+<p>全书先建立在线系统的整体视图，再从最小的双人在线交互出发，推动案例随着规模和压力逐步演进：建立网络闭环后，处理单机并发；单机容量接近上限后，将系统拆分到多台机器；服务和实例难以人工管理后，再引入容器、编排和弹性机制；最后进入基础设施内部，解释容器隔离、网络虚拟化和弹性调度如何实现。</p>
+<p>每一阶段都承接前一阶段已经暴露的问题。读者由此看到的不是一组并列的技术名词，而是问题、约束、机制、取舍和新问题之间的因果关系。</p>
+<p><strong>第二，把分散的知识组织成完整的系统判断。</strong></p>
+<p>设计消息协议时，TCP 和 UDP 不再只是网络课程中的定义；组织并发时，进程、线程、goroutine、锁和 I/O 多路复用需要落实到真实代码；拆分系统时，哈希、分片、复制、事务和共识会共同决定请求与状态应当由谁处理和保存。</p>
+<p>在线游戏是本书的主要教学案例，但不限定知识范围。正文还会引入在线协作、电商平台和大模型服务等系统，说明传输、并发、一致性、容器和调度机制在不同场景中的作用与适用条件。业务形式可以变化，规模、状态、故障和资源问题具有共通性。</p>
+<p><strong>第三，使原理、实现和验证相互对应。</strong></p>
+<p>正文解释机制及其适用条件，配套案例提供可运行的代码，四组实验则围绕同一个游戏系统逐步扩大规模。读者需要观察吞吐、延迟、资源占用和错误现象，修改其中一个机制，再用运行结果判断修改是否有效。</p>
+<p>最后一章还将这些方法延伸到需要大量隔离执行环境的 Agent Sandbox。当平台管理的不再只是服务副本，还包括需要暂停、恢复、回滚和复现的执行过程时，云计算中的隔离、网络、调度、状态和验证机制会以新的方式组合。这个问题既是对全书知识的综合应用，也为希望继续深入的读者提供了进入系统研究的起点。</p>
+<p>本书可以用于云计算和系统工程类课程，也可以作为课程设计、综合实践以及进一步学习云原生系统的基础。</p>
+<p><span id="这本书如何学"></span></p>
+<h2 id="3">3 这本书如何学</h2>
+<p>阅读本书不要求预先掌握云计算或分布式系统，但需要具备基本的编程能力，并了解常见的数据结构。如果已经学过计算机网络和操作系统，阅读会更加顺畅；即使部分知识已经遗忘，也不必先把所有先修课程重新学习一遍，可以跟随案例，在真正需要时重新理解它们。</p>
+<p>全书六章构成一条连续的学习路线：</p>
+<ul>
+<li>
+<p><strong>第一章"谋定全局：在线系统与云计算"</strong>建立在线系统的整体视图，并从性能、状态正确性、可扩展性、可用性和成本五个维度评价架构；</p>
+</li>
+<li>
+<p><strong>第二章"双雄对战：网络通信"</strong>建立最小网络闭环，讨论通信、消息组织、状态同步和结果确认；</p>
+</li>
+<li>
+<p><strong>第三章"英雄集结：单机并发"</strong>进入单机并发，处理执行组织、共享状态保护和资源复用；</p>
+</li>
+<li>
+<p><strong>第四章"切分世界：分布式系统"</strong>将系统扩展到多台机器，围绕均衡、协同和容错展开；</p>
+</li>
+<li>
+<p><strong>第五章"飞升入定：云原生部署"</strong>将系统交给集群平台，讨论容器化交付、编排、弹性和自愈；</p>
+</li>
+<li>
+<p><strong>第六章"穷理尽微：云原生核心原理"</strong>继续下沉到容器、网络和弹性调度的内部机制，并探索 Agent Sandbox。</p>
+</li>
+</ul>
+<p>学习本书时，有三点需要注意。</p>
+<p><strong>第一，动手。</strong>配套程序应当真正运行起来。只有观察到连接排队、状态冲突、尾延迟上升或扩容滞后，书中的机制才会从文字变成可以分析的系统行为。</p>
+<p><strong>第二，追问。</strong>读到一个解决方案时，可以先思考自己会怎样处理当前问题，再把自己的方案与书中的实现进行比较。两者之间的差异，往往能够揭示此前忽略的条件和代价。</p>
+<p><strong>第三，善用 AI，但不依赖 AI。</strong>AI 可以帮助解释概念、检查代码和讨论替代方案，但不能代替对代码、运行现象和实验结果的判断。能够辨别一个答案是否符合系统的实际约束，本身就是本书希望培养的能力。</p>
+<p>对于采用本书授课的教师，本书可以按一学期组织教学。四组实验分别对应网络闭环、单机并发、多节点协作，以及 Kubernetes 上的部署与弹性运行。课时有限时，可以将第六章的拓展内容压缩为导览，但应为前面的系统演进和动手实验保留足够时间。</p>
+<p>配套代码、实验材料、授课视频和 PPT 将在 Gitee 仓库持续更新（<a href="https://gitee.com/hnu-cloudcomputing">https://gitee.com/hnu-cloudcomputing</a>）。实践时应使用相互对应的书稿和代码版本，避免接口或环境差异影响实验结果。</p>
+<p>云计算的水面之上，新技术来了又去；水面之下，进程、网络、状态、调度和故障这些基本问题长期存在。理解这些问题，才能在工具变化时保持判断。愿读者既能深入机制，也能回到系统全局。</p>
+<p><span id="致谢"></span></p>
+<h2 id="4">4 致谢</h2>
+<p>本书由陈果、徐方林负责编写。各章初稿撰写分工如下：胡文举（第1章）、庞海鑫（第2章）、谢先衍（第3章）、贺臻（第4章）、张道平（第5章）、徐方林（第6章）。胡文举承担了课程实验内容的验证与复核，并参与指导了书中配图的视觉修订工作；终稿由徐方林统一核定。</p>
+<p>实验案例的设计与实现离不开历届学生的参与。陈俊杰、王煌等同学在游戏案例代码、实验文档和测试用例方面做了大量工作。课程视频的制作同样有赖于学生团队的协助，刘筱芊等同学参与了授课视频的录制、剪辑与后期整理。</p>
+<p>出版社的编辑老师们为本书的出版同样付出了大量心血，在此一并感谢。</p>
+<p>受知识水平和时间精力所限，本书难免存在错误和疏漏。欢迎读者将发现的问题反馈至邮箱 <code>guochen@hnu.edu.cn</code>，我们将持续改进本书的质量。</p>
+<p>陈果\
+2026年7月于长沙</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 2026 GuoLab. All Rights Reserved.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.tracking", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

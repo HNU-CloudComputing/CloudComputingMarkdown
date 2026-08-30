@@ -1,0 +1,130 @@
+Target image path: figures/sec2/network-lat-imagegen-v2.png
+Source TeX: section/sec2.tex
+Figure label: fig:network-lat
+Created for imagegen: 2026-07-15 10:50
+
+FIGURE CONTRACT
+
+Nearby section:
+第二章章首。正文用双人实时对战说明：客户端只能依据已经收到的状态绘制画面；网络延迟会让不同客户端暂时持有不同版本；服务器权威状态为裁决与后续同步提供统一依据。
+
+Why this figure exists:
+仅靠文字不容易同时看清“同一场景、不同状态版本、更新仍在传输、收到更新后收敛”这四个关系。
+
+One teaching question:
+网络延迟怎样使客户端 A 暂时停留在旧状态，而客户端 B 已经显示较新状态？
+
+Beginner misconception to prevent:
+客户端画面不同不等于存在两个真实世界；差异来自各端当前持有的状态版本不同，后续权威更新会使客户端收敛。
+
+Diagram role:
+状态版本对比图，辅以一条清晰的状态传输路径。
+
+Required mechanism:
+同一个简化交火场景在客户端 A、服务器和客户端 B 三个视图中保持相同地图与角色；服务器与客户端 B 持有状态 v42，客户端 A 仍持有状态 v41。红方角色在 v41 中位于掩体外，在 v42 中已经移动到掩体后。服务器发往客户端 A 的“状态 v42”数据包仍在途中，旁边有小型时钟符号和“网络延迟”标签。用一条后续箭头表示客户端 A 收到 v42 后从旧位置更新到掩体后，并标记“状态收敛”。
+
+Required labels:
+- 客户端 A
+- 服务器
+- 客户端 B
+- 状态 v41
+- 状态 v42
+- 网络延迟
+- 晚到更新
+- 状态收敛
+
+Details to leave in the prose:
+攻击是否命中、业务裁决规则、客户端预测、插值、服务器和解以及具体网络时延数值。
+
+Caption job:
+说明客户端持有的状态版本不同会形成暂时的局部视图差异，服务器权威更新使各端继续收敛。
+
+Post-figure sentence:
+局部视图可以支撑客户端及时显示移动和射击，影响双方的结果仍需在服务器权威状态上完成校验与裁决。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange only for the delayed packet and clock
+- thin but confident ink-like outlines, consistent stroke width, very subtle paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, and technically serious
+- the game arena is a restrained teaching scene, not cinematic game concept art and not a cartoon poster
+
+Layout rules:
+- landscape composition suitable for full text width in a LaTeX textbook
+- one clear left-to-right reading path
+- no crossing arrows
+- every text label sits in a reserved label area with generous padding
+- no text overlaps characters, cover objects, packets, arrows, borders, or other text
+- keep all important content inside a wide safe margin
+- no large decorative title banner
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans, Noto Sans CJK, or PingFang
+- render only the exact short labels listed below
+- no Chinese sentences inside the image
+- no colloquial warning, slogan, badge, or commentary
+- no distorted Chinese characters, wrong glyphs, cropped text, floating punctuation, or wavy baselines
+
+Content rules:
+- preserve state-version semantics exactly
+- the three arena views must visibly depict the same map, same concrete cover, same blue player, and same red player
+- keep the blue player in the same position in all three views
+- change only the red player's position between v41 and v42
+- show relationships, version difference, delayed delivery, and eventual convergence
+- no decorative cloud icons, no mascot, no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width concept figure for a Chinese undergraduate cloud computing textbook
+
+Source context from the textbook:
+Two players move and exchange fire around one concrete cover object. Each client renders the scene from the newest server state it has received. At one observation moment, Client A still holds old state v41, while the server and Client B already hold state v42. A delayed v42 update is still traveling from the server to Client A. When it arrives, Client A updates the red player's position and converges toward the authoritative server state.
+
+Teaching goal:
+Make network delay and a late state update visually explicit, so beginners can see why clients temporarily display different positions and how the authoritative state restores a shared result.
+
+Beginner misconception to prevent:
+Do not imply that both client scenes are equally authoritative or that two real game worlds exist. The version labels and delayed packet must make clear that Client A is temporarily stale.
+
+Diagram type:
+State-version comparison with a mechanism path.
+
+Required visual structure:
+- Use three aligned, equally sized arena viewports: Client A on the left, Server in the center, Client B on the right.
+- Repeat exactly the same simple arena geometry in all three viewports: one blue player on the left, one rectangular concrete cover near the center, one red player whose position changes, neutral ground, no extra scenery.
+- Client A viewport: label “客户端 A” and “状态 v41”; red player is still exposed beside the cover.
+- Server viewport: label “服务器” and “状态 v42”; red player has already moved behind the cover. Give this viewport a slightly stronger dark-blue outline to indicate authority, without a crown, shield, or decorative badge.
+- Client B viewport: label “客户端 B” and “状态 v42”; red player matches the server position behind the cover.
+- Draw one clearly visible dashed delivery arrow from Server toward Client A. Place a small packet token labeled “状态 v42” partway along the arrow, with a small clock symbol and the exact nearby labels “网络延迟” and “晚到更新”. Orange is used only here.
+- Add one small, clean continuation arrow associated with Client A, showing the red player moving from the v41 exposed position to the v42 behind-cover position after receipt. Label this relationship “状态收敛”. Do not add another full dashboard row.
+- Make the version difference legible through both the short labels and the red player's clearly different position.
+
+Required labels, exact and short:
+- 客户端 A
+- 服务器
+- 客户端 B
+- 状态 v41
+- 状态 v42
+- 网络延迟
+- 晚到更新
+- 状态收敛
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway:
+Different received versions cause temporary view divergence; the server state remains the synchronization reference. Keep this takeaway in the visual mechanism, not as a sentence or slogan inside the image.
+
+Quality constraints:
+- network delay must be immediately visible from the in-transit v42 packet, clock, and dashed delivery arrow
+- the stale v41 state and current v42 state must be unmistakable
+- exact Chinese labels, no misspellings, no duplicated labels, no extra text
+- no text overlap, no label touching arrows, no cropped elements
+- preserve identical arena geometry and character identity across all three views
+- final image remains readable when scaled to 1.0 line width in a LaTeX book
+- no PowerPoint-style cards, no marketing infographic style, no long sentences, no colloquial phrase such as “不是看错”, no alert triangle, no warning badge, no watermark

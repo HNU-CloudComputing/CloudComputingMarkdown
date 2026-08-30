@@ -1,0 +1,141 @@
+Target image path: figures/sec2/socket-path.png
+Edit target: figures/sec2/socket-path.png
+Source TeX: section/sec2.tex
+Figure label: fig:stack-path
+Updated for imagegen: 2026-07-24
+
+FIGURE CONTRACT
+
+Figure id: fig:stack-path
+Nearby section: 第二章“网络通信基础：建立传输通道与消息边界”
+Why this figure exists: 把应用程序调用 write/read 后，字节经过 socket、内核协议栈、网卡、网络和对端接收路径的过程画成一条可追踪的双向路径。
+One teaching question: 两台主机通过 TCP 全双工通信时，两个方向的字节分别沿什么方向移动，TCP 又没有替应用完成哪些工作？
+Beginner misconception to prevent: 把全双工误解为一根无方向的双向箭头；把 conn.Write 返回误解为对端业务已经处理；把 TCP 字节流误解为自带消息边界。
+Diagram role: 双向机制路径图。
+Required mechanism: 左到右发送路径与右到左返回路径分别用独立单向箭头表示；每台主机内都显示用户态、系统调用、socket、缓冲区、TCP、IP、网卡；应用层责任只标“消息边界”“超时”“业务确认”。
+Required labels: 左侧主机，右侧主机，用户态，内核态，应用进程，对端进程，write/read，系统调用，socket，发送缓冲，接收缓冲，TCP 字节流，IP 数据报，网卡，网络，消息边界，超时，业务确认，发送方向，返回方向，五元组。
+Details to leave in prose: 不在图中解释确认号、重传窗口、拥塞控制、分帧格式、业务确认协议。
+Caption job: 说明两个传输方向彼此独立，TCP 交付字节流，但消息边界、超时与业务确认由应用协议规定。
+Post-figure sentence: 目标地址、socket 接口和传输协议确定后，下一步是实际建立 TCP 连接。
+
+SYSTEM STYLE PROMPT
+
+You are editing a concept figure for a Chinese undergraduate cloud computing textbook.
+The result must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- preserve the source image's semi-flat textbook style, landscape composition, light cream-white background, muted blue, teal, warm gray, and restrained orange
+- thin confident outlines, consistent stroke width, no glossy icons, no gradients, no heavy shadows
+- calm, readable, technically serious, with enough whitespace for every label
+- preserve canvas ratio and the two-host overall structure
+
+Layout rules:
+- two large host containers, each divided into user space and kernel space
+- one clear left-to-right solid green sending path
+- one separate right-to-left dashed blue return path
+- each path must have arrowheads pointing in exactly one direction; never use a double-headed arrow
+- no crossing arrows, no arrow through text, no label touching a border
+- keep all important content inside wide safe margins
+- no large decorative title banner
+
+Chinese typography rules:
+- clean Chinese sans-serif typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- use only the required short labels
+- no distorted glyphs, no cropped text, no wavy baseline, no invented term
+- no text overlap, no watermark
+
+USER CONTEXT PROMPT
+
+Use case: precise-object-edit
+Asset type: full-width protocol-stack teaching figure for a Chinese undergraduate cloud computing textbook
+Input image: the supplied socket-path.png is the edit target and visual reference.
+
+Primary request:
+Preserve the source image's two-host protocol-stack composition and textbook style, but rebuild the two colored routes so that both are complete end-to-end protocol-stack paths. The previous edit is still wrong because the dashed blue return route appears only between the two application boxes. Do not preserve that partial route.
+
+Required structural edits:
+1. Keep the solid green path as one continuous left-to-right route:
+   应用进程 -> write/read -> 系统调用 -> socket -> 发送缓冲 -> TCP 字节流 -> IP 数据报 -> 网卡 -> 网络 -> 网卡 -> IP 数据报 -> TCP 字节流 -> 接收缓冲 -> socket -> 系统调用 -> write/read -> 对端进程
+2. Rebuild the dashed blue return path as one complete right-to-left route:
+   右侧对端进程 -> write/read -> 系统调用 -> socket -> 发送缓冲 -> TCP 字节流 -> IP 数据报 -> 网卡 -> 网络 -> 网卡 -> IP 数据报 -> TCP 字节流 -> 接收缓冲 -> socket -> 系统调用 -> write/read -> 左侧应用进程
+   It must pass through every visible protocol-stack stage on both hosts, just like the green path, rather than stopping at application level.
+3. Draw the two routes as parallel offset lines wherever they share a stack. The solid green route has only left-to-right progression; the dashed blue route has only right-to-left progression. Their arrowheads must remain visually distinct and must never merge into a double-headed arrow.
+4. The bottom legend must repeat the exact same direction semantics: the green solid sample for “发送方向” points right; the blue dashed sample for “返回方向” points left. This correct left-pointing blue legend arrow is mandatory.
+5. Remove every occurrence of the vague label “语义缺口” and its large brace.
+6. Use three short orange application-responsibility callouts only:
+   - “消息边界” near the application read/write boundary
+   - “超时” near the read wait
+   - “业务确认” near the application endpoints, indicating that byte delivery does not prove business processing
+7. Keep “队头阻塞” only beside the TCP byte-stream path. Do not use it as the legend category for all application responsibilities.
+8. In the bottom legend, use the exact short entries “发送方向”“返回方向”“五元组”“应用责任”. The orange dashed sample corresponds to “应用责任”.
+
+Required labels, exact and short:
+- 左侧主机
+- 右侧主机
+- 用户态
+- 内核态
+- 应用进程
+- 对端进程
+- write/read
+- 系统调用
+- socket
+- 发送缓冲
+- 接收缓冲
+- TCP 字节流
+- IP 数据报
+- 网卡
+- 网络
+- 消息边界
+- 超时
+- 业务确认
+- 队头阻塞
+- 五元组
+- 发送方向
+- 返回方向
+- 应用责任
+
+Preserve:
+- two large host containers and the user-space/kernel-space division
+- left and right vertical protocol stacks
+- central network symbol
+- green, blue, purple, and orange semantic color roles
+- landscape textbook proportions
+
+Avoid:
+- no “语义缺口” text
+- no application-only shortcut for the blue return route
+- no right-pointing arrowhead in the blue return route or its legend sample
+- no double-headed arrow
+- no ambiguous arrowhead direction
+- no long Chinese sentence inside the image
+- no extra protocol modules
+- no decorative clouds, mascots, logos, title banners, watermark
+- no PPT-style card deck
+- no text overlap or cropped labels
+
+Built-in imagegen mode: precise-object-edit
+Selected generated source: /Users/lin/.codex/generated_images/019f940d-1c89-76c2-8264-3c4a9219af5d/exec-42ccd400-f129-4b03-ae25-253705ceaadb.png
+
+REGENERATION PASS 2 — STRUCTURAL CORRECTION
+
+The first 2026-07-24 regeneration is rejected: it duplicated the protocol stack inside each host and still failed to present two continuous routes. Regenerate from the project edit target with these stricter constraints:
+
+- Exactly one vertical protocol stack column in each host. Never duplicate socket, buffer, TCP, IP, or NIC boxes.
+- Each stack contains, from top to bottom: 应用进程/对端进程, write/read, 系统调用, socket, 发送/接收缓冲, TCP 字节流, IP 数据报, 网卡.
+- The green solid route runs down one side of the left stack, crosses the network on an upper horizontal line, then runs up one side of the right stack.
+- The blue dashed route runs down the opposite side of the right stack, crosses the network on a separate lower horizontal line, then runs up the opposite side of the left stack.
+- These are two continuous colored polylines. They may run alongside boxes but must visually touch or pass every stack level from application to NIC and back.
+- Put small arrowheads on enough vertical and horizontal segments to make progression unmistakable: green descends left, crosses right, ascends right; blue descends right, crosses left, ascends left.
+- Bottom legend: green arrow points right; blue dashed arrow points left.
+- Do not add a second stack, separate send/receive columns, or application-only shortcut.
+
+REGENERATION PASS 3 — PRECISE LAYOUT EDIT
+
+Use the accepted pass-2 image as the edit target. Preserve both colored paths, every arrowhead, both single-column stacks, the network symbol, and the bottom legend exactly. Make only these edits:
+
+- In each host, add one subtle horizontal dashed divider between “系统调用” and “socket”. Label the upper region “用户态” and the lower region “内核态” in small muted-blue text near the inner left edge.
+- Keep only the three orange application-responsibility callouts on the far left: “业务确认”“消息边界”“超时”. Remove the duplicated three orange callouts on the far right.
+- Keep “队头阻塞” beside a TCP box and keep “五元组” above the network.
+- Do not change route geometry, route colors, arrow direction, protocol labels, or legend direction.
+
+Accepted generated source: /Users/lin/.codex/generated_images/019f940d-1c89-76c2-8264-3c4a9219af5d/exec-1e382ee6-4ca6-46b2-9801-5ef1a6922f41.png

@@ -1,0 +1,123 @@
+Target image path: figures/sec4/storage-sharding.png
+Source TeX: section/sec4.tex
+Figure label: fig:database_sharding_overview
+Created for imagegen: 2026-07-18
+Change request: 将图中"玩家ID"改为"用户ID"，"游戏应用服务器"改为"应用服务器"，"单个玩家数据"改为"单个用户数据"，"全服排行榜"保持通用含义，保持其余结构不变。
+
+FIGURE CONTRACT
+
+Figure id: fig:database_sharding_overview
+Nearby section: section/sec4.tex, 缓存层的分布式演进，从单机Redis到集群
+Why this figure exists: 展示分片原则如何从持久化层延伸到缓存层：单用户查询直达一个分片，全局查询需跨分片聚合；Redis缓存集群同样把热数据键空间拆分。
+One teaching question: 为什么PostgreSQL分片和Redis缓存分片遵循同一原则，但组织数据的方式不同？
+Beginner misconception to prevent: 学生可能以为缓存层不需要分片，或者缓存分片与数据库分片必须一一绑定在同一台机器上。
+Diagram role: 三路径对比图+缓存层延伸。
+Required mechanism: 路径一单分片直达（应用服务器→用户ID→路由层→PostgreSQL分片2）；路径二跨分片聚合（排行榜查询→路由层→广播子查询→所有分片→合并排序→全服结果）；下方Redis缓存集群同样拆分键空间。
+Details to leave in prose: 哈希槽、哈希标签、多key操作限制。
+Caption job: 分片原则从持久化层延伸到缓存层：PostgreSQL根据查询范围访问一个或多个分片，Redis则把热数据键空间拆分到多个缓存节点。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the cross-shard aggregation path
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+
+Layout rules:
+- top half shows two side-by-side paths; bottom half shows Redis cluster extension
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label
+- keep all important content inside the safe area with wide margins
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels
+
+Content rules:
+- preserve the technical meaning from the source text
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Draw a mechanism diagram showing two sharding access patterns (single-shard direct vs. cross-shard aggregation) and how the same principle extends to a Redis cache cluster below.
+
+Teaching goal:
+Show that sharding principles apply to both persistent storage and cache layers, even though the data organization differs.
+
+Beginner misconception to prevent:
+Cache layer does not need sharding, or cache shards must be colocated with database shards.
+
+Diagram type:
+Two-path comparison with extension panel.
+
+Required visual structure:
+- TOP LEFT PANEL labeled "路径一：单分片直达":
+  - One application server icon labeled "应用服务器"
+  - Arrow labeled "用户ID" pointing to a routing layer icon
+  - Arrow labeled "目标分片 = 分片 2" pointing to a PostgreSQL database cylinder labeled "PostgreSQL 分片 2"
+  - Below: three grayed-out database cylinders labeled "分片 1 未访问", "分片 3 未访问", "分片 4 未访问"
+  - Bottom text:
+    - "只访问一个分片"
+    - "适合读取单个用户数据"
+
+- TOP RIGHT PANEL labeled "路径二：跨分片聚合":
+  - One icon labeled "排行榜查询"
+  - Arrow to "分片路由层"
+  - Orange fan-out arrows labeled "广播子查询" pointing to four database cylinders "分片 1", "分片 2", "分片 3", "分片 4"
+  - Dashed return arrows labeled "返回局部结果" from each shard upward
+  - One "合并排序" step
+  - Final result icon labeled "全服结果"
+  - Bottom text:
+    - "适合全服排行榜，代价更高"
+
+- BOTTOM PANEL labeled "Redis 缓存集群":
+  - Left side: one Redis cache stack icon with text "热数据键空间同样拆分"
+  - Right side: three Redis cache stack icons labeled "缓存 1", "缓存 2", "缓存 3"
+  - Far right label: "热数据访问"
+
+Required labels, exact and short:
+- 路径一：单分片直达
+- 应用服务器
+- 用户ID
+- 分片路由层
+- 目标分片 = 分片 2
+- PostgreSQL 分片 2
+- 分片 1 未访问
+- 分片 3 未访问
+- 分片 4 未访问
+- 只访问一个分片
+- 适合读取单个用户数据
+- 路径二：跨分片聚合
+- 排行榜查询
+- 广播子查询
+- 分片 1, 分片 2, 分片 3, 分片 4
+- 返回局部结果
+- 合并排序
+- 全服结果
+- 适合全服排行榜，代价更高
+- Redis 缓存集群
+- 热数据键空间同样拆分
+- 缓存 1, 缓存 2, 缓存 3
+- 热数据访问
+
+Main takeaway, if shown in the image:
+分片原则从持久化层延伸到缓存层
+
+Quality constraints:
+- all labels must remain readable when scaled to full text width in a LaTeX book
+- no text overlap, no label touching arrows, no cropped elements
+- no watermark, no logo
+
+Avoid:
+- no PPT-style colored cards
+- no marketing infographic style
+- no decorative clipart
+- no game-specific terms like "玩家" or "playerID"

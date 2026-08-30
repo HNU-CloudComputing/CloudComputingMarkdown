@@ -1,0 +1,164 @@
+Target image path: figures/sec1/system-architecture.png
+Source TeX: section/sec1.tex
+Figure label: fig:chapter1-structure
+Created for imagegen: 2026-07-14 07:41 UTC
+Built-in imagegen call: ig_011992891320f1e7016a55e8a7c734819195e33165e9823da8
+
+FIGURE BRIEF
+
+正文锚点：
+本图位于第一章“在线系统的通用架构”开头。正文先指出，仅有“客户端—服务—状态”的请求链不足以支撑系统长期运行，还需要运行治理和资源基础；本图负责建立完整架构认知。图后再按照接入、服务执行、状态管理、控制与观测的顺序展开，并以游戏案例验证这些通用职责。
+
+教学目标：
+帮助本科生建立一幅完整的通用在线系统架构图：中央是用户请求、服务处理和状态读写的数据路径；左侧是持续调整系统的控制面；右侧是收集运行信息的观测面；底部是计算、存储和网络资源。图应让读者理解在线系统不只是“客户端、服务、数据库”三块，还需要平台控制、观测反馈和资源基础。
+
+读者误区：
+读者可能把在线系统理解为一条简单的客户端到数据库链路，忽略部署调度、弹性伸缩、故障恢复、指标、日志、链路追踪和基础资源。本图要展示这些横向能力与主请求路径的关系，但不能画成复杂产品拓扑或 Kubernetes 组件图。
+
+图型选择：
+通用架构边界图。中央纵向主路径 + 左右横向能力 + 底部资源基础。
+
+必须出现：
+- 中央从上到下：用户终端、接入层、服务执行层、状态层、基础设施。
+- 用户终端包含网页端、移动端、API 客户端三种通用入口。
+- 接入层包含身份校验、路由转发、流量控制。
+- 服务执行层包含请求校验、业务处理、状态更新。
+- 状态层分为运行状态和持久记录，两者边界清楚。
+- 左侧控制面包含部署调度、弹性伸缩、故障恢复，并用细虚线连接中央各层，表示控制动作。
+- 右侧观测面包含指标、日志、链路追踪，并用细点线从中央各层汇入观测面，表示运行信息采集。
+- 底部基础设施包含计算资源、存储资源、网络资源，并以稳定底座形式支撑上层。
+- 中央使用实线箭头表示请求进入、处理结果返回和状态读写。
+
+必须省略：
+- 不出现在线游戏、玩家、权威裁决、世界状态等业务专属术语。
+- 不出现 Redis、PostgreSQL、MySQL、MongoDB、Docker、Kubernetes 或任何具体产品名。
+- 不出现云厂商 logo、营销式云朵、3D 数据库圆柱、服务器机柜和装饰人物。
+- 不出现底部橙色结论框，不出现橙色文字，不出现“分层职责清楚”或任何口号。
+- 不在图内放长句，不添加未列出的标签。
+
+SYSTEM STYLE PROMPT
+
+You are creating a submission-quality concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must look like a polished modern textbook architecture diagram, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not a black-and-white research paper sketch.
+
+Visual style:
+- clean semi-flat textbook illustration on a light cream-white paper background
+- restrained muted blue, teal, and warm gray palette; no orange text and no orange takeaway banner
+- thin but confident dark-gray outlines with consistent stroke width
+- subtle section fills, generous whitespace, balanced hierarchy, precise alignment
+- technically serious, calm, readable, and information-rich without visual clutter
+- vector-like clarity while remaining a raster textbook illustration
+
+Layout rules:
+- wide landscape composition suitable for a LaTeX textbook at full text width
+- central vertical architecture path occupies about 60 percent of the width
+- narrow control plane on the left and narrow observability plane on the right
+- infrastructure forms one stable horizontal base across the bottom
+- solid arrows represent request, response, and state data paths
+- dashed arrows represent control actions
+- dotted lines represent telemetry collection
+- no crossing arrows, no floating modules, no decorative elements
+- no large title banner inside the image
+
+Chinese typography rules:
+- render every required Chinese label exactly and only once unless repetition is explicitly requested
+- use a clean Chinese sans-serif textbook font similar to Source Han Sans or Noto Sans CJK
+- reserve enough space around every label; no label may touch a border or arrow
+- no distorted glyphs, missing strokes, mixed punctuation, cropped words, or wavy baselines
+- use short labels only; no long explanatory sentences
+
+Content rules:
+- preserve clear architectural boundaries and relationships
+- the diagram must show how the central request path is supported by control, observability, and infrastructure
+- do not imply that the control plane forwards user traffic
+- do not imply that the observability plane changes business state
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width architecture figure for a Chinese undergraduate cloud computing textbook
+Input image: the currently visible existing system-architecture.png is the edit target and conceptual reference. Redraw it completely as a richer generic online-system architecture. Preserve only the calm blue-teal textbook visual language; replace the old game-specific structure and remove the orange bottom label.
+
+Primary request:
+Create a true generic online-system architecture diagram. It must show one central end-to-end request and state path, plus cross-cutting control and observability capabilities, all supported by compute, storage, and network resources. The figure will be explained first as a general architecture, then mapped to an online-game example in the prose.
+
+Teaching goal:
+Show that a complete online system contains a request path, state boundaries, a control plane, an observability plane, and an infrastructure foundation. It is more than a simple client-service-database chain.
+
+Beginner misconception to prevent:
+Do not let readers think the control plane carries user requests, or that metrics and logs directly modify business state. Keep solid data paths, dashed control paths, and dotted telemetry paths visually distinct.
+
+Diagram type:
+Generic architecture boundary diagram with a central vertical data path, left control plane, right observability plane, and bottom infrastructure base.
+
+Required visual structure:
+- Top center: one rounded group labeled “用户终端”, containing three small boxes labeled “网页端”, “移动端”, and “API 客户端”.
+- Center second band: one wide rounded box labeled “接入层”, containing “身份校验”, “路由转发”, and “流量控制”.
+- Center third band: one larger rounded box labeled “服务执行层”, containing “请求校验”, “业务处理”, and “状态更新”.
+- Center fourth band: one wide rounded box labeled “状态层”, split into two clearly separated child areas labeled “运行状态” and “持久记录”. Under “运行状态”, show small tags “高频访问” and “可重建”. Under “持久记录”, show small tags “可靠保存” and “可恢复”.
+- Bottom: one horizontal foundation labeled “基础设施”, containing “计算资源”, “存储资源”, and “网络资源”.
+- Left side: one vertical bounded panel labeled “控制面”, containing “部署调度”, “弹性伸缩”, and “故障恢复”. Use thin dashed arrows from this panel toward the central access, service, state, and infrastructure areas.
+- Right side: one vertical bounded panel labeled “观测面”, containing “指标”, “日志”, and “链路追踪”. Use thin dotted lines from the central access, service, and state areas into this panel.
+- Solid blue downward arrows: 用户终端 -> 接入层 -> 服务执行层.
+- One solid blue return arrow from 服务执行层 back toward 用户终端 labeled “处理结果”.
+- One solid teal bidirectional arrow between 服务执行层 and 状态层 labeled “状态读写”.
+
+Required labels, exact and short:
+- 用户终端
+- 网页端
+- 移动端
+- API 客户端
+- 接入层
+- 身份校验
+- 路由转发
+- 流量控制
+- 服务执行层
+- 请求校验
+- 业务处理
+- 状态更新
+- 状态层
+- 运行状态
+- 高频访问
+- 可重建
+- 持久记录
+- 可靠保存
+- 可恢复
+- 控制面
+- 部署调度
+- 弹性伸缩
+- 故障恢复
+- 观测面
+- 指标
+- 日志
+- 链路追踪
+- 基础设施
+- 计算资源
+- 存储资源
+- 网络资源
+- 处理结果
+- 状态读写
+
+Text constraints:
+- Render the labels verbatim.
+- Do not add any other Chinese or English text.
+- No label longer than the listed text.
+- No title, slogan, legend paragraph, footer, takeaway box, or orange text.
+
+Negative requirements:
+- no game-specific terms or visuals
+- no orange bottom caption or orange takeaway label
+- no Redis, PostgreSQL, MySQL, MongoDB, Docker, Kubernetes, vendor logo, cloud-provider logo
+- no 3D cylinders, glossy server racks, decorative clouds, mascots, people, or stock icons
+- no gradients, no heavy shadows, no marketing-card layout
+- no text overlap, no arrow crossing text, no cropped labels, no watermark
+
+Quality constraints:
+- technically accurate architecture relationships
+- readable after scaling to full text width in LaTeX
+- all modules aligned to a clear grid
+- enough detail to teach the architecture without becoming dense
+- use visual line style, not a separate legend, to distinguish data, control, and telemetry paths
+
+Target output:
+Landscape raster image, approximately 1536 x 1024 composition, intended to replace figures/sec1/system-architecture.png.

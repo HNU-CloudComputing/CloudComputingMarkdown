@@ -1,0 +1,164 @@
+Target image path: figures/sec4/proxy-routing-v10.png
+Source TeX: section/sec4.tex
+Figure label: fig:proxy-routing-path
+Created for imagegen: 2026-07-28
+Generation mode: generate from scratch; chapter style is encoded directly below, with no attached reference image
+Revision note: preserve the successful v9 central composition and icon vocabulary. Correct exactly three defects: show “分片 2” only once; make the teal arrow at shard 2 point LEFT from shard 2 toward the proxy; remove every vertical teal tap or branch beneath the proxy stages. The teal return path must be one unbranched line through a reserved lower channel in the proxy.
+
+FIGURE CONTRACT
+
+Figure id: fig:proxy-routing-path
+Nearby section: 第四章“分片路由”，代理中间件路由
+Why this figure exists: 正文需要同时呈现代理内部的路由决策，以及查询只进入一个目标分片。
+One teaching question: 数据库代理如何从 SQL 参数中取得 player_id，计算目标分片，并只访问对应的 PostgreSQL 分片？
+Beginner misconception to prevent: 代理会把 SQL 广播到所有分片，或者所有数据库连接都会参与查询。
+Diagram role: 双泳道横向机制路径图。
+Required mechanism: 应用服务器提交 SQL 与 player_id；代理依次提取分片键、计算目标分片、选择连接；请求只进入分片 2；结果经代理返回应用服务器。
+Required labels: 应用服务器、SQL 请求、player_id=1001、数据库代理、提取分片键、计算目标分片、选择连接、转发 SQL、PostgreSQL 分片、分片 1、分片 2、分片 3、目标、查询结果。
+Details to leave in the prose: 代理高可用、SQL 解析开销、连接池大小、扩容迁移、额外网络跳数。
+Caption job: 说明代理集中完成分片键提取、目标计算与连接选择，并且一次查询只访问一个目标分片。
+Post-figure sentence: 代理集中维护分片规则后，应用只连接统一入口，不必直接感知全部数据库节点。
+
+PROSE TO VISUAL MAPPING
+
+- “应用服务器只提交 SQL 与参数” -> 左侧一个与本章现有图片一致的扁平服务器图标，发出一条带 player_id=1001 的请求。
+- “分片键提取、目标分片计算和连接选择都在统一入口完成” -> 中间一个轻量代理边界，内部用三个成熟中间件风格的功能图标表现三个步骤。
+- “代理只访问目标分片 2” -> 只有选择连接到分片 2 的一条橙色箭头，分片 1 和分片 3 无连线。
+- “结果沿原路径返回应用服务器” -> 一条青绿色下行泳道从分片 2 经过代理返回应用服务器。
+
+SYSTEM STYLE PROMPT
+
+You are creating a mechanism figure for a Chinese undergraduate cloud computing textbook.
+
+Match the established visual language of this chapter: white or warm-white background, crisp flat vector icons, thin dark-blue outlines, restrained pale blue and pale teal grouping areas, tiny orange emphasis, minimal or no shadow, consistent rounded rectangles, and clean technical spacing. Existing chapter figures use simple server, database-cylinder, user, key, routing-table, and load-balancer icons with flat fills and uniform line weight.
+
+The new figure must look as if it belongs to exactly this same icon family and chapter. It must not look like a separate industrial illustration, a machine chassis, a server-rack scene, a glossy 3D render, a marketing infographic, or a PowerPoint template.
+
+Visual style:
+- clean semi-flat vector textbook diagram on white or very light warm-white background
+- thin consistent dark-blue and dark-gray outlines, approximately 1.5 to 2.5 px at final resolution
+- flat fills only; muted blue #3B6EA8, teal #4D9B8F, warm gray #E7E0D6, pale blue #EEF3F5, and small orange #D97732
+- use refined production-system line icons with the visual maturity of established database middleware architecture diagrams: compact geometry, meaningful internal details, consistent line caps, and two-tone fills
+- allow small technical details such as SQL tokens, hash-ring nodes, routing-table cells, socket indicators, and pooled connection lines when they directly explain the proxy mechanism
+- no gradients, no glossy highlights, no thick black contour, no perspective, no large cast shadows, no paper blobs, no decorative circuit traces
+- compact, balanced, technically mature, visually rhythmic, and consistent with the established chapter icon system
+- achieve richness through distinct icon silhouettes and one coherent routing rail, not through background decoration or oversized frames
+
+Typography:
+- clean Chinese sans-serif similar to Source Han Sans, Noto Sans CJK, or PingFang
+- render every required label verbatim and exactly once
+- keep Chinese labels horizontal, short, centered, and separated from arrows and borders
+- render “player_id=1001” exactly, including underscore and digits
+- no distorted characters, wrong glyphs, cropped text, random English, or extra sentences
+
+Layout discipline:
+- wide landscape canvas around 2.1:1, suitable for LaTeX at 1.0 linewidth
+- one upper left-to-right request path and one lower right-to-left result path
+- use straight or gently elbowed orthogonal arrows with thin dark-blue strokes and compact triangular arrowheads
+- no crossing lines, fan-out, diagonal paths, outer-border routes, large title banner, or bottom slogan
+- use whitespace and one slim pale-blue proxy band, not giant decorative panels
+- vary the silhouettes: compact application icon on the left, low horizontal proxy rail in the center, vertically grouped database cylinders on the right
+- keep the center visually dense enough to feel like real middleware, while leaving clear gaps around all labels
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: database sharding mechanism figure for a Chinese undergraduate cloud computing textbook
+
+Primary request:
+Generate a new elegant database-proxy sharding route figure from scratch. It must visually match the established chapter style described above. The database proxy in the center must look like a compact software middleware pipeline with mature, recognizable functional iconography. Avoid the visual grammar of a flowchart, dashboard, presentation slide, physical machine, or set of cards.
+
+Teaching goal:
+Make a beginner understand that the proxy performs one deterministic routing decision and forwards the SQL to exactly one target shard.
+
+Beginner misconception to prevent:
+Do not imply broadcast, parallel queries, or active connections to all shards.
+
+Diagram type:
+Two-lane horizontal mechanism path with a compact functional proxy module.
+
+Required visual structure:
+
+1. Application zone on the left
+- draw one flat blue application-server icon in the chapter's simple line-icon style
+- label it exactly “应用服务器”
+- draw one blue right-pointing request arrow labeled exactly “SQL 请求”
+- place a small outlined parameter tag labeled exactly “player_id=1001”
+
+2. Database proxy in the center
+- do NOT draw a large enclosing proxy box
+- draw one slim pale-blue horizontal middleware rail occupying the center of the canvas; use a thin blue outline, modest 8 px corner radius, and a height only slightly larger than the functional icons
+- place a compact generic proxy emblem at the upper-left edge of the rail: a small database cylinder combined with split-and-merge arrows; label the rail exactly “数据库代理” beside this emblem
+- integrate exactly three DISTINCT functional pictograms directly on the shared rail, with no enclosing square cards and no enclosing circles:
+  a. an outlined SQL document with two tiny parameter rows and a separate small key symbol, labeled exactly “提取分片键”
+  b. a small hash ring with six nodes, one highlighted node, and a miniature routing-table grid beside it, labeled exactly “计算目标分片”
+  c. a connection-pool pictogram with four small sockets, three short pooled connection lines, and one orange selected plug leading to the outgoing path, labeled exactly “选择连接”
+- separate the three stages with two short dark-blue chevrons or arrow segments integrated into the rail
+- use varied icon silhouettes and small teal secondary details so the center is informative rather than monotonous
+- highlight only the selected plug and outgoing connection in muted orange
+- keep the labels beneath their pictograms in one aligned row, with reserved whitespace
+- the proxy must feel like a mature software middleware component, not a physical machine, industrial panel, server chassis, dashboard, empty rectangle, or three-card process diagram
+
+3. PostgreSQL shards on the right
+- use the group label exactly “PostgreSQL 分片”
+- draw three flat database-cylinder icons in the same simple line-icon style, vertically arranged and labeled exactly “分片 1”, “分片 2”, “分片 3”
+- place them inside one very light grouping boundary with thin teal outline
+- highlight only “分片 2” using a pale orange fill or outline and add the badge exactly “目标”
+- keep “分片 1” and “分片 3” neutral; do not connect them to the proxy
+- each shard label must appear exactly once; in particular, render “分片 2” exactly once to the right of the orange cylinder and never repeat it below the cylinder
+
+4. Forward request path
+- from “选择连接”, draw exactly one orange right-pointing arrow into “分片 2”
+- label it exactly “转发 SQL”
+- no other outgoing arrow from the proxy to the shard group
+
+5. Return result path
+- draw one continuous teal result path with no visual gap and no ambiguous starting point
+- the first teal segment must physically begin at the LEFT EDGE OF THE ORANGE “分片 2” DATABASE CYLINDER, not at the shard-group border
+- place a clear teal LEFT-POINTING arrowhead immediately to the left of the orange cylinder; its tip must point LEFT and look like the character “<”, visually carrying the result away from shard 2 toward the proxy; never point this arrowhead right toward the database
+- continue that same teal line leftward across the shard-group boundary and into a thin teal return channel running immediately below the pale-blue middleware rail
+- reserve one slim lower channel inside the bottom portion of the proxy rail; the teal line enters the proxy at the right border, travels horizontally through this channel, and exits the left border
+- the return line must remain a single unbranched path: no vertical taps, no upward branches, no circles, and no connectors from the result line to “提取分片键”, “计算目标分片”, or “选择连接”
+- continue the same teal line leftward from the proxy to “应用服务器”; use a short orthogonal upward turn only near the application-server icon, ending with a clear upward or left-pointing arrowhead touching the application-server side
+- label the proxy-to-application segment exactly “查询结果”
+- keep the shard-2-to-proxy segment aligned with the lower half of “分片 2”, clearly above “分片 3”, and visually separate from the upper request path
+- the teal path must not begin on the green shard-group frame, merge into the frame, stop at the proxy border, or travel entirely below and outside the proxy
+- do not add any second teal path
+
+Required labels, exact and short:
+- 应用服务器
+- SQL 请求
+- player_id=1001
+- 数据库代理
+- 提取分片键
+- 计算目标分片
+- 选择连接
+- 转发 SQL
+- PostgreSQL 分片
+- 分片 1
+- 分片 2
+- 分片 3
+- 目标
+- 查询结果
+
+Do not add any other text. Avoid labels longer than 8 Chinese characters. No long Chinese sentences inside the image.
+
+Quality constraints:
+- maintain one consistent visual family, icon proportions, outline weight, restrained palette, and flatness across the whole image
+- remain readable when scaled to 1.0 linewidth in LaTeX
+- show exactly one active target and exactly one return path
+- strict order: SQL 请求 -> 提取分片键 -> 计算目标分片 -> 选择连接 -> 转发 SQL -> 分片 2
+- the center must have three clearly different functional icon silhouettes and must not look like three repeated cards or circles
+- the proxy rail must occupy less than half the image height and must not dominate the whole composition
+- render each required label exactly once; especially no duplicate “分片 2”
+- the teal result line must have zero branches and its shard-side arrowhead must point left
+- no text overlap, no cropped label, no watermark
+
+Avoid:
+- physical proxy machine, industrial equipment, server chassis, monitor, workbench, server-rack scene
+- photorealistic or 3D hardware, thick outlines, strong shadows, gradients, decorative background blobs
+- giant proxy boundary, empty proxy box, three oversized generic cards, three repeated circles, excessive whitespace, monotonous repeated panels
+- large pale rectangle surrounding the entire center, UI tiles, dashboard widgets, step-number badges
+- trademarked ProxySQL, Apache ShardingSphere, PgBouncer, PostgreSQL elephant, or vendor logos
+- fan-out arrows, lines to 分片 1 or 分片 3, multiple highlighted shards
+- PPT-style infographic, dashboard layout, marketing poster, random icons, extra modules, extra labels

@@ -1,0 +1,108 @@
+Target image path: figures/sec4/compute-storage.png
+Source TeX: section/sec4.tex
+Figure label: fig:server_db_relationship
+Created for imagegen: 2026-07-18
+Change request: 将图中"在线玩家"改为"在线用户"，"游戏服务器"改为"应用服务器"，"按玩家ID路由"改为"按用户ID路由"，保持其余结构不变。
+
+FIGURE CONTRACT
+
+Figure id: fig:server_db_relationship
+Nearby section: section/sec4.tex, 分片路由小节末尾，计算层与存储层解耦
+Why this figure exists: 展示应用服务器和数据库分片之间不是固定绑定，而是经由分片路由层按用户ID路由，使计算层和存储层可以独立扩展。
+One teaching question: 为什么计算层扩容不需要同时扩容存储层，反之亦然？
+Beginner misconception to prevent: 学生可能以为一台应用服务器固定绑定一个数据库分片，导致扩容时必须成对增加。
+Diagram role: 三层解耦架构图（计算层→分片路由层→存储层）。
+Required mechanism: 计算层的多台应用服务器通过统一的分片路由层访问存储层的多个数据库分片；路径A和路径B都经过同一分片路由层，目标分片取决于用户ID而非请求来源。
+Details to leave in prose: 具体的路由算法、连接池管理、扩容步骤。
+Caption job: 计算层与存储层解耦：应用服务器经由分片路由访问数据库分片，两层可按各自压力独立扩展。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for emphasis
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+
+Layout rules:
+- three horizontal layers with clear separation
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label
+- keep all important content inside the safe area with wide margins
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels
+
+Content rules:
+- preserve the technical meaning from the source text
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Draw a three-layer architecture diagram showing decoupled compute and storage layers through a sharding routing layer.
+
+Teaching goal:
+Show that compute nodes and storage nodes are not fixed one-to-one; both paths go through the same routing layer and reach shards based on user ID, allowing independent scaling.
+
+Beginner misconception to prevent:
+One application server is permanently bound to one database shard.
+
+Diagram type:
+Three-layer horizontal architecture diagram.
+
+Required visual structure:
+- TOP LAYER labeled "计算层":
+  - Three application server icons arranged horizontally, each with a small cluster of user icons above labeled "在线用户"
+  - Each server labeled "应用服务器"
+  - On the far right of this layer, a small tag "计算层独立扩容"
+
+- MIDDLE LAYER labeled "分片路由层":
+  - A wide rounded rectangle spanning the full width
+  - Center text "按用户ID路由"
+  - Two curved arrows entering from above:
+    - "路径 A" from the first application server
+    - "路径 B" from the third application server
+  - Both arrows curve down into the routing layer and then down to the storage layer
+  - On the right side of this layer, a small orange tag "不是一一绑定"
+
+- BOTTOM LAYER labeled "存储层":
+  - Four database cylinder icons arranged horizontally, each labeled "数据库分片"
+  - On the far right, a small tag "存储层独立扩容"
+
+- Arrows from the routing layer to the database cylinders should show that both paths can reach any shard based on user ID.
+
+Required labels, exact and short:
+- 计算层
+- 在线用户
+- 应用服务器
+- 计算层独立扩容
+- 分片路由层
+- 按用户ID路由
+- 路径 A
+- 路径 B
+- 不是一一绑定
+- 存储层
+- 数据库分片
+- 存储层独立扩容
+
+Main takeaway, if shown in the image:
+计算与存储按各自压力独立伸缩
+
+Quality constraints:
+- all labels must remain readable when scaled to full text width in a LaTeX book
+- no text overlap, no label touching arrows, no cropped elements
+- no watermark, no logo
+
+Avoid:
+- no PPT-style colored cards
+- no marketing infographic style
+- no decorative clipart
+- no game-specific terms like "玩家" or "游戏服务器"

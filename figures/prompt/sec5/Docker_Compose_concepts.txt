@@ -1,0 +1,123 @@
+Target image path: figures/sec5/Docker_Compose_concepts.png
+Source TeX: section/sec5.tex
+Figure label: fig:compose-concepts
+Created for imagegen: 2026-07-04
+Change request: 1) 左侧 YAML 蓝图删除底部 networks / game-net 声明，因为正文说 Compose 默认创建项目共享网络不需要显式声明；右侧运行拓扑底部网络标签从"game-net"改为"项目默认网络"。2) 底部流程条删除"统一版本管理（git 仓库）"环节，该概念正文未讲解，会分散对 Compose 运行机制的理解。
+
+Figure contract:
+Figure id: fig:compose-concepts
+Nearby section: section/sec5.tex, Docker Compose：用声明式文件管理多容器
+Why this figure exists: 帮助本科生理解 Compose 如何将一份 YAML 声明转化为包含多个容器、网络、数据卷和环境变量的运行时拓扑。
+One teaching question: 一份 compose.yaml 文件中的声明如何对应到右侧的容器、网络、数据卷和环境变量？
+Beginner misconception to prevent: 读者可能误以为必须在 YAML 中显式声明 networks 才能让容器互通；实际上 Compose 默认为整个项目创建一张共享网络。
+Diagram role: 蓝图到运行拓扑的映射图（左侧 YAML 声明 → 右侧容器拓扑 → 底部转化流程）
+Required mechanism: 左侧 Compose 蓝图列出 services、ports、env、volumes（不包含 networks 声明）；右侧单机运行拓扑展示 gateway、lobby-api、redis、postgres 四个容器通过项目默认网络互通，postgres 挂载 pg-data 数据卷；底部流程展示从 compose.yaml 到服务定义、网络定义、卷定义、配置与环境的转化路径。
+Required labels: Compose 蓝图, services, ports, env, volumes, 生成拓扑, 单机运行拓扑, gateway, lobby-api, redis, postgres, 玩家入口, 8080:8080, depends_on, REDIS_ADDR, DB_ADDR, pg-data 数据卷, 项目默认网络, compose.yaml, 服务定义(services), 网络定义(networks), 卷定义(volumes), 配置与环境(ports/env), 可复现的单机拓扑(一条命令启动), 一份 YAML 生成拓扑
+Details to leave in the prose: docker compose up 的具体命令参数、网络驱动类型、volume driver 等细节不在图中展示。
+Caption job: 说明一份 Compose YAML 如何声明服务、端口、环境变量和数据卷，并由 Compose 自动转化为包含容器、默认网络和持久化卷的运行拓扑。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Recreate the Docker Compose concepts figure with two key fixes:
+1. Remove the explicit `networks: game-net` declaration from the left-side YAML blueprint. The textbook explains that Compose automatically creates a default shared network for the project, so showing an explicit network declaration contradicts the text. On the right-side runtime topology, change the network label from "game-net" to "项目默认网络".
+2. Remove the "统一版本管理（git 仓库）" node from the bottom pipeline. The textbook does not discuss version control or Git in the Compose section; this node introduces an unexplained concept.
+
+Source context from the textbook:
+This figure appears after introducing Docker Compose's declarative approach. The text explains that a single compose.yaml file defines all services, ports, environment variables, and volumes. When `docker compose up` runs, Compose reads the YAML and creates the corresponding containers, network, and volumes. The text explicitly states: "YAML 中不需要显式声明网络名称，Compose 默认为整个项目创建一张共享网络".
+
+Teaching goal:
+Show how a Compose YAML blueprint (left) maps to a running multi-container topology (right), with a bottom pipeline summarizing the transformation steps.
+
+Diagram type:
+Blueprint-to-topology mapping diagram, landscape 16:9 textbook diagram.
+
+Required visual structure:
+- LEFT ZONE ("Compose 蓝图"): A blue-outlined box containing YAML structure preview:
+  - services: gateway, lobby-api, redis, postgres
+  - ports: "8080:8080"
+  - env: DB_ADDR=postgres:5432, REDIS_ADDR=redis:6379
+  - volumes: pg-data:
+  - IMPORTANT: NO `networks` or `game-net` declaration. This is the key fix #1.
+
+- CENTER: A large bold arrow labeled "生成拓扑" pointing from left to right.
+
+- RIGHT ZONE ("单机运行拓扑"): A green-outlined box containing:
+  - gateway container (top, with port mapping 8080:8080, "玩家入口" label)
+  - lobby-api container (middle, showing env vars DB_ADDR and REDIS_ADDR)
+  - redis container (right, with image redis:7.2-alpine, port 6379)
+  - postgres container (right, with image postgres:15-alpine, port 5432)
+  - depends_on dashed lines from lobby-api to redis and postgres
+  - A horizontal line at bottom connecting all containers, labeled "项目默认网络" (NOT "game-net")
+  - pg-data volume icon attached to postgres
+
+- BOTTOM ZONE: A horizontal pipeline showing transformation steps:
+  - compose.yaml → 服务定义(services) → 网络定义(networks) → 卷定义(volumes) → 配置与环境(ports/env) → 可复现的单机拓扑(一条命令启动)
+  - IMPORTANT: NO "统一版本管理（git 仓库）" step. This is key fix #2.
+  - Below pipeline: orange highlight banner "一份 YAML 生成拓扑"
+
+Required labels, exact and short:
+- Compose 蓝图
+- services, ports, env, volumes
+- 生成拓扑
+- 单机运行拓扑
+- gateway, lobby-api, redis, postgres
+- 玩家入口
+- 8080:8080
+- depends_on
+- REDIS_ADDR, DB_ADDR
+- pg-data 数据卷
+- 项目默认网络
+- compose.yaml
+- 服务定义(services)
+- 网络定义(networks)
+- 卷定义(volumes)
+- 配置与环境(ports/env)
+- 可复现的单机拓扑
+
+Quality constraints:
+- The left YAML blueprint MUST NOT contain any `networks` or `game-net` entry. This is the primary fix.
+- The right topology network label MUST say "项目默认网络", NOT "game-net".
+- The bottom pipeline MUST NOT include "统一版本管理（git 仓库）". This is the secondary fix.
+- Maintain the same overall visual style as the original figure.
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+
+Avoid:
+- no `networks: game-net` anywhere in the figure
+- no "统一版本管理" or "git 仓库" anywhere in the figure
+- no English text except standard programming terms (services, ports, env, volumes, gateway, lobby-api, redis, postgres, depends_on, compose.yaml)
+- no PPT-style colored cards
+- no marketing infographic style
+- no watermark, no logo, no invented terms

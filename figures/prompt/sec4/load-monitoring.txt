@@ -1,0 +1,166 @@
+Target image path: figures/sec4/load-monitoring.png
+Source TeX: section/sec4.tex
+Figure label: not yet inserted
+Created for imagegen: 2026-07-19
+Input images: Image 1 is figures/sec4/load-balancing.png and Image 2 is figures/sec4/fault-isolation.png; both are style references only, not edit targets.
+
+# 负载监测维度示意图
+
+## 教学任务
+说明负载监测从"死活检测"到"压力感知"的维度递进，以及推/拉两种感知方式的组合。帮助读者理解负载均衡器做调度决策时需要什么信息、信息怎样获取。
+
+## 图片位置
+sec4.tex 4.2.4（负载监测与调度策略）中"负载监测"段落之后。
+
+## 图片内容描述
+
+整体布局：左侧是监测维度（从简到深），右侧是感知方式（推 + 拉）。
+
+**左侧：监测维度（纵向递进，由上到下从简单到丰富）**
+
+1. **存活检测**（最简单）
+   - 图标：心跳 / 对号
+   - 标注：节点是否可达？进程是否存活？
+   - 信息粒度：二值（活 / 死）
+
+2. **连接数**
+   - 图标：连接线条
+   - 标注：当前承载多少连接？
+   - 信息粒度：单一计数
+
+3. **资源压力**（最丰富）
+   - 图标：仪表盘
+   - 标注：CPU 使用率、内存占用、网络带宽、请求队列长度
+   - 信息粒度：多维向量
+
+每层用箭头连接，标注"信息越丰富，调度越精准，采集成本也越高"。
+
+**右侧：感知方式（两种并列）**
+
+1. **推（Push）**
+   - 应用服务器主动上报心跳 + 指标
+   - 箭头：应用服务器 → 负载均衡器
+   - 标注：周期性上报，时效性好，但上报间隔内有盲区
+
+2. **拉（Pull）**
+   - 负载均衡器主动查询服务器状态
+   - 箭头：负载均衡器 → 应用服务器
+   - 标注：按需查询，可控节奏，但增加服务器响应开销
+
+底部标注："工程实践中推拉结合——服务器定期推送心跳，均衡器在关键决策前主动拉取最新状态。"
+
+## 视觉要求
+- 左右两部分用虚线框分开
+- 左侧纵向递进用渐变色或阶梯表示（如浅→深）
+- 右侧推拉用不同颜色箭头（如蓝色推、绿色拉）
+- 中文标注
+- 整体风格与书稿已有图片一致
+
+## 图注建议
+负载监测的维度从存活检测到资源压力逐步丰富，感知方式通过推拉结合获取：服务器主动上报心跳和指标，均衡器在需要时主动查询最新状态。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange only for the cost/tradeoff cue
+- thin confident ink-like outlines, consistent stroke width, subtle paper texture
+- calm, readable, friendly, technically serious
+- match the visual language, typography, line weight, and cream-paper palette of Images 1 and 2
+- no glossy icons, gradients, heavy shadows, poster composition, or business-infographic cards
+
+Layout rules:
+- landscape full-width textbook figure with two clearly separated zones
+- left zone is a vertical three-level progression; right zone is a push/pull mechanism path
+- every label has reserved whitespace and does not touch arrows, icons, borders, or other text
+- wide safe margins, no cropped elements, no large decorative title banner
+- avoid long Chinese sentences; use short labels and let the LaTeX caption carry the explanation
+
+Chinese typography rules:
+- clean Source Han Sans / Noto Sans CJK / PingFang-like sans-serif
+- correct glyphs, no distorted characters, no wavy baselines, no floating punctuation
+- prefer 2-8 Chinese-character labels
+
+Content rules:
+- show what information becomes available and how it moves, not just isolated icons
+- no databases, storage nodes, Kubernetes, provider logos, decorative clouds, mascots, watermark, logo, random text, or invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width mechanism figure for a Chinese undergraduate cloud computing textbook
+
+Source context from the textbook:
+分片映射保证对象归属正确，但不保证实例压力均衡。监测系统需要先判断节点是否存活，再比较连接或对象规模，最后结合 CPU、内存、带宽和队列等资源压力。状态通常通过实例定期推送与监测方主动拉取相结合的方式获得。
+
+Teaching goal:
+Show two connected ideas in one compact figure: monitoring information progresses from simple liveness to richer pressure metrics, and the latest state is obtained by combining Push and Pull.
+
+Beginner misconception to prevent:
+Students may think a heartbeat alone is enough for load-aware scheduling, or that Push and Pull are mutually exclusive alternatives. The figure must show that richer metrics improve decisions but cost more to collect, and that practical systems combine both sensing directions.
+
+Diagram type:
+Comparison/progression on the left plus mechanism path on the right.
+
+Required visual structure:
+- Split the canvas into two soft dashed zones, left about 55% width and right about 45%.
+- LEFT ZONE, small heading “监测维度”:
+  - draw a clear three-level upward staircase or vertical progression
+  - level 1: heart/check icon, label “存活检测”, small status chips “活” and “死”
+  - level 2: connection-line icon, label “连接数”, small label “单一计数”
+  - level 3: compact gauge icon, label “资源压力”, four short metric chips “CPU”, “内存”, “带宽”, “队列”
+  - beside the progression, show an upward blue/teal cue “信息更全” and “调度更准”
+  - place one restrained orange cue near the top “采集更贵”
+  - do not write the long original explanatory sentence inside the image
+- RIGHT ZONE, small heading “感知方式”:
+  - one application-server block labeled “应用服务器” on the left
+  - one monitoring/load-balancer block labeled “负载均衡器” on the right
+  - upper solid blue arrow from application server to load balancer, labeled “推 Push”; nearby short tags “主动上报”, “心跳”, “指标”
+  - lower solid teal arrow from load balancer back to application server, labeled “拉 Pull”; nearby short tag “主动查询”
+  - keep the two arrows clearly separated and opposite in direction
+  - at the bottom of the right zone, a small merged/loop cue labeled “推拉结合”
+
+Required labels, exact and short:
+- 监测维度
+- 存活检测
+- 活
+- 死
+- 连接数
+- 单一计数
+- 资源压力
+- CPU
+- 内存
+- 带宽
+- 队列
+- 信息更全
+- 调度更准
+- 采集更贵
+- 感知方式
+- 应用服务器
+- 负载均衡器
+- 推 Push
+- 主动上报
+- 心跳
+- 指标
+- 拉 Pull
+- 主动查询
+- 推拉结合
+
+Avoid labels longer than 8 Chinese characters.
+No long Chinese sentences inside the image.
+No extra labels beyond the required list.
+
+Quality constraints:
+- the left progression must visibly move from binary liveness to a single count to a multidimensional pressure view
+- the tradeoff must be visible: richer information and more precise scheduling, but higher collection cost
+- Push arrow must point from application server to load balancer
+- Pull arrow must point from load balancer to application server
+- Push and Pull must look complementary, not mutually exclusive
+- final image remains readable at full LaTeX text width
+- no text overlap, no cropped labels, no watermark
+
+Avoid:
+PPT-style colored cards, marketing infographic style, dashboard styling, long explanatory paragraphs, glossy icons, gradients, heavy shadows, cute mascots, decorative network backgrounds, databases, random English text beyond Push/Pull/CPU.

@@ -1,0 +1,92 @@
+Target image path: figures/sec4/shard-routing.png
+Source TeX: section/sec4.tex
+Figure label: fig:shard-routing-path
+Created for imagegen: 2026-07-09
+Input image: Image 1 is the existing figure at figures/sec4/shard-routing.png and is the composition/style reference plus terminology-edit target. Recreate it while preserving the three parallel routing lanes.
+
+Brief
+- Textbook anchor: section/sec4.tex, subsection "分片路由". The nearby text has just explained that sharding strategies answer "which instance owns an object", but a live request still needs a routing layer to turn object ownership into an access path.
+- Teaching goal: show how one incoming request is routed differently in storage, compute, and connection layers after extracting the sharding key.
+- Beginner misconception to prevent: students may think consistent hashing alone sends requests to the correct machine. The figure should make clear that a runtime routing decision sits between the incoming request and the target instance.
+- Diagram type: path swimlane / routing map.
+- Required visual structure: left side has one incoming "用户请求" entering a small "提取分片键" step. Then the path branches into three horizontal lanes. Each lane shows a different key, a routing metadata component, and a target instance group. Use arrows left-to-right. Keep the three lanes visually parallel and clearly separated. Use a small central routing layer, not a large dashboard.
+- Must appear: storage lane, compute lane, connection lane; keys UserID, MapID, SessionID; routing table or hash ring; target PostgreSQL shard, logic server, gateway.
+- Must omit: code, SQL syntax, long explanations, vendor logos, extra systems not mentioned in the text.
+- Exact short labels:
+  - 用户请求
+  - 提取分片键
+  - 存储路由
+  - UserID
+  - 路由表
+  - PostgreSQL 分片
+  - 计算路由
+  - MapID
+  - 逻辑服
+  - 连接路由
+  - SessionID
+  - 网关实例
+  - 分片键到实例
+- Main takeaway if shown: 归属变成路径
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- one clear reading path with arrows; no crossing arrows unless unavoidable
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the same baseline as the text
+- no floating comma, no raised comma, no Latin comma inside Chinese sentences
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if a sentence would be long, replace it with a short label or leave the detailed explanation to the caption
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- avoid decorative clipart, cute characters, mascots, stock-business people, and generic cloud icons unless they explain the mechanism
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Create a landscape textbook illustration that explains runtime shard routing. A live user request first extracts a sharding key, then the routing layer turns that key into a target instance. Show three parallel routing lanes: storage, compute, and connection.
+Source context from the textbook: Sharding strategy decides object ownership, but a request entering the system still needs a routing decision. In storage, UserID routes to a PostgreSQL shard; in compute, MapID routes to a logic server; in connection management, SessionID routes to a gateway instance.
+Teaching goal: Students should see that "object ownership" must become a concrete request path at runtime.
+Beginner misconception to prevent: consistent hashing or a static partition rule does not by itself deliver the request to the target machine; a routing table or equivalent metadata is still needed.
+Diagram type: path swimlane / routing map.
+Composition/framing: wide horizontal layout, one incoming request on the left, a small key extraction box, then three stacked lanes flowing left-to-right. Each lane has key -> routing metadata -> target instance. Use subtle lane backgrounds and clear arrows.
+Color palette: light cream background, muted blue for routing components, teal for target instances, warm gray for lane boundaries, small orange accent only on "分片键到实例".
+Required labels, exact and short:
+- 用户请求
+- 提取分片键
+- 存储路由
+- UserID
+- 路由表
+- PostgreSQL 分片
+- 计算路由
+- MapID
+- 逻辑服
+- 连接路由
+- SessionID
+- 网关实例
+- 分片键到实例
+Main takeaway label: 归属变成路径
+Constraints: labels must be exactly the listed Chinese or English text, short and readable; no long Chinese sentences inside the image; no text overlap, no cropped labels, no watermark; no extra labels beyond the list; final image must remain readable when scaled to full text width in a LaTeX book.
+Avoid: PPT-style colored cards, dashboard layout, vendor logos, decorative people, cute characters, dense technical labels, long captions inside the image, random English text, dark background, gradients, heavy shadows.

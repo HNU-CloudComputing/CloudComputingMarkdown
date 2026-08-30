@@ -1,0 +1,134 @@
+Target image path: figures/sec4/load-balancing.png
+Source TeX: section/sec4.tex
+Figure label: fig:load_balancer_entry
+Created for imagegen: 2026-07-28
+Input image: Image 1 is the current figures/sec4/load-balancing.png. Treat it as the edit target and visual-style reference. Preserve its clean semi-flat textbook style, overall top-center-bottom hierarchy, server icons, cream background, muted blue and teal palette. Rebuild labels and decision arrows as specified below.
+
+Figure contract
+
+Figure id: fig:load_balancer_entry
+Nearby section: 负载监测与入口调度
+Why this figure exists: 同一负载均衡入口面对首次接入和断线重连时，目标服务器的选择依据不同。正文需要一张比较图，把“按负载选择”和“按会话归属选择”放在同一视野中。
+One teaching question: 为什么首次接入可以选择当前合适的服务器，而断线重连应优先返回保存会话的原服务器？
+Beginner misconception to prevent: 学生可能把两者理解成相同的普通新连接，都只按当前负载选择服务器；也可能误以为“新连接”天然排除断线重连。
+Diagram role: Comparison figure with two adjacent access scenarios. Do not describe or visually frame them as “two paths”.
+Required mechanism: 左侧场景是“首次接入 -> 尚无会话归属 -> 查看状态表 -> 按负载选择服务器 B”；右侧场景是“断线重连 -> 携带会话 ID -> 查询会话归属 -> 返回仍保存会话的服务器 C”。
+Required labels: 首次接入, 断线重连, 负载均衡器, 状态表, 在线人数, CPU, 按负载选择, 会话归属, 会话 ID, 归属服务器, 回原服, 应用服务器 A, 应用服务器 B, 应用服务器 C, 会话状态.
+Details to leave in prose: Nginx、加权轮询、最少连接、原服务器故障后的会话恢复、数据库分片路由都不进入图片。
+Caption job: 概括同一入口下两种接入场景的节点选择依据不同。
+Post-figure sentence: 会话粘性只在原服务器可用且会话未失效时成立。
+
+Prose claim -> visual mapping
+
+- “首次接入尚未形成会话归属” -> 左上用户组标题为“首次接入”，不显示会话 ID 或会话状态。
+- “负载均衡器比较在线人数和 CPU” -> 左侧状态表列出 A、B、C 的在线人数和 CPU，B 的负载较低。
+- “选择服务器 B” -> 蓝色实线箭头只指向服务器 B，B 有克制的橙色选中标记。
+- “断线重连携带会话标识” -> 右上返回用户标题为“断线重连”，进入右侧会话归属查询。
+- “会话归属为 C” -> 右侧表格显示一个会话 ID 映射到归属服务器 C。
+- “返回仍保存会话的 C” -> 青绿色虚线箭头只指向服务器 C，C 内标注“会话状态”。
+
+SYSTEM STYLE PROMPT
+
+You are editing a mechanism comparison figure for a Chinese undergraduate cloud computing textbook.
+Preserve the input image's established visual identity, but make the teaching contrast explicit and terminology exact.
+
+Visual style:
+- polished semi-flat textbook teaching illustration, calm and technically serious
+- light cream-white paper background with subtle paper texture
+- muted blue for first-access decisions, muted teal for reconnection decisions, warm gray for neutral structures, small orange accent only for the selected server B
+- thin confident outlines, consistent line weight, clean Chinese sans-serif typography
+- landscape 16:9, readable after scaling to full text width in LaTeX
+- no glossy effects, gradients, heavy shadows, marketing infographic style, dashboard style, or PPT card deck
+
+Comparison layout:
+- show two adjacent scenarios inside one shared system structure, not two unrelated diagrams and not a “two paths” title
+- left scenario heading: “首次接入”
+- right scenario heading: “断线重连”
+- both scenarios pass through one shared central component labeled “负载均衡器”
+- visually divide the inside of the load balancer into two decision areas with a subtle vertical divider
+- left decision area: “状态表” and “按负载选择”
+- right decision area: “会话归属” and “回原服”
+- bottom row contains application servers A, B, C
+- server A is neutral, server B is selected for first access, server C owns the reconnecting user's session
+
+Arrow and relation rules:
+- use a solid muted-blue arrow from the first-access users into the left decision area, then one solid blue arrow downward only to server B
+- use a dashed muted-teal arrow from the reconnecting user into the right decision area, then one dashed teal arrow downward only to server C
+- the internal arrow from the session mapping to “回原服” must also be teal and dashed, never blue
+- all arrows flow strictly from top to bottom
+- no fan-out to all servers, no arrow to server A, no upward arrow, no bidirectional arrow, no crossing arrows
+- arrowheads must be obvious and point toward the selected target server
+
+Chinese typography rules:
+- use exact Chinese labels as listed; no distorted characters, wrong glyphs, cropped text, wavy baselines, or random punctuation
+- short labels only; do not add explanatory sentences inside the image
+- use “首次接入”, never “新连接” or “首次连接”
+- use “断线重连”, never shorten it to “重连”
+
+Content rules:
+- show the different node-selection basis of the two access scenarios
+- do not add databases, Redis, PostgreSQL, Kubernetes, cloud provider logos, decorative clouds, mascots, watermark, or invented modules
+- do not show failure recovery in the image
+
+USER CONTEXT PROMPT
+
+Use case: precise-object-edit
+Asset type: scientific educational comparison figure for a Chinese undergraduate cloud computing textbook
+Primary request: Edit and redraw the current load-balancer figure so it teaches two access scenarios with different node-selection constraints. Keep the current book style and three-server composition, but update terminology, labels, and arrows.
+
+Teaching goal:
+Students should understand that first access and reconnection use the same entrance but not the same selection basis. First access has no existing session ownership and may choose a suitable healthy replica by load. Reconnection carries a session ID and should return to the server that still owns the session.
+
+Beginner misconception to prevent:
+Do not call the left scenario “新连接”, because a reconnection also establishes a network connection. Do not imply that both scenarios merely choose the least-loaded server. Do not describe the comparison as two network paths.
+
+Required visual structure:
+
+Left scenario — first access:
+- top-left user group labeled exactly “首次接入”
+- solid blue downward arrow into the shared load balancer
+- compact table titled “状态表” with columns “在线人数” and “CPU”; rows A, B, C; B visibly has the lowest load
+- decision label exactly “按负载选择”
+- exactly one solid blue arrow from the load balancer to “应用服务器 B”
+- server B has a subtle orange selected outline
+
+Right scenario — reconnection:
+- top-right returning user labeled exactly “断线重连”
+- dashed teal downward arrow into the shared load balancer
+- compact mapping titled “会话归属” with columns “会话 ID” and “归属服务器”; one example maps to C
+- decision label exactly “回原服”
+- exactly one dashed teal arrow from the load balancer to “应用服务器 C”
+- the entire right-side decision relation, including the arrow from the mapping toward “回原服”, uses teal dashed styling
+- inside server C, label exactly “会话状态”
+
+Neutral context:
+- show “应用服务器 A” but do not connect or highlight it
+- do not show a connection from either scenario to A
+
+Required labels, exact and short:
+- 首次接入
+- 断线重连
+- 负载均衡器
+- 状态表
+- 在线人数
+- CPU
+- 按负载选择
+- 会话归属
+- 会话 ID
+- 归属服务器
+- 回原服
+- 应用服务器 A
+- 应用服务器 B
+- 应用服务器 C
+- 会话状态
+
+Do not add Chinese labels beyond this list. Numerical example values and a short alphanumeric session ID are allowed.
+
+Final validation constraints:
+- the figure is a comparison of two access scenarios, not a diagram titled or described as two paths
+- left decision basis is load status; target is B
+- right decision basis is session ownership; target is C
+- “新连接” must not appear anywhere
+- all blue arrows belong only to first access; all teal dashed arrows belong only to reconnection
+- no arrow ambiguity, fan-out, overlap, cropping, watermark, logo, or random text
+- preserve the current figure's calm cream, muted blue, teal, warm gray textbook style

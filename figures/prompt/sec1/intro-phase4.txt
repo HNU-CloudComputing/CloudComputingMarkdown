@@ -1,0 +1,38 @@
+Target image path: figures/sec1/intro-phase4.png
+Source TeX: section/sec1.tex
+Figure label: fig:intro-phase4
+Created for imagegen: 2026-07-14 00:04
+
+FIGURE BRIEF
+正文锚点：第一章“分布式阶段”。单机资源达到上限后，玩家、地图或服务职责被拆到多个节点；跨节点通信带来分片路由、状态归属、跨区迁移、状态同步和故障接管问题。
+教学目标：展示多节点扩展并非简单复制服务器，而是必须明确请求路由、状态归属和跨节点协作，并预告第四章的分片、多机协作、一致性与恢复。
+读者误区：以为增加服务器后每台机器都能独立处理所有玩家，不需要跨节点通信与状态协调。
+图型：多区域服务拓扑图，稳定入口和路由位于上游，三个区域节点分担不同状态，跨区迁移和故障接管作为真实路径嵌入拓扑。
+
+SYSTEM STYLE PROMPT
+Create a polished distributed-systems topology figure for a Chinese undergraduate cloud computing textbook. Use a semi-flat educational illustration style on a light cream-white background, muted blue, teal, and warm gray, thin confident outlines, subtle paper texture, and generous whitespace. It must look like a textbook topology with meaningful flows, not a PowerPoint slide, marketing infographic, dashboard, or academic monochrome paper diagram.
+Use clear node boundaries and distinct arrow styles for request routing, state synchronization, and failure takeover; include a small in-figure legend using only short labels if needed. Avoid three-column layouts, large cards, decorative title banners, footer slogans, orange text, orange conclusion boxes, gradients, heavy shadows, glossy icons, mascots, and decorative clouds. No text overlap, no arrows through labels, no cropped elements, no watermark, no invented terms.
+
+USER CONTEXT PROMPT
+Use case: scientific-educational
+Asset type: full-width chapter roadmap topology figure
+Input image: the previous distributed-stage concept image is the conceptual edit target. Preserve only the idea of a world split across multiple servers. Completely replace its three-column PowerPoint layout and remove the bottom orange slogan.
+Primary request: Draw a richer multi-node online-world topology. At the top-left, show several clients entering a stable 服务入口, then a 分片路由 component that sends requests to three distinct region nodes: 区域A, 区域B, 区域C. Each region node visibly owns a different partition of players/state, marked 状态归属. Draw one player moving from 区域A to 区域B along a clear 跨区迁移 path. Place 协调服务 between the regions to support cross-region requests, and show 状态同步 between relevant nodes. Depict 区域C as partially failed and show a restrained dashed 故障接管 path to a standby node. The topology must make clear that local interactions stay within a region while cross-region operations require coordination.
+Required labels, exact and short:
+- 客户端
+- 服务入口
+- 分片路由
+- 区域A
+- 区域B
+- 区域C
+- 状态归属
+- 本地交互
+- 跨区迁移
+- 状态同步
+- 协调服务
+- 节点故障
+- 故障接管
+Constraints: landscape 2:1; topology is the main visual; request routing, migration, synchronization, and takeover must be visually distinguishable; no 本章机制, 阶段压力, 系统形态; no orange footer or slogan; no three-column card template; readable Chinese at full LaTeX width.
+
+REVISION CORRECTION FOR FINAL OUTPUT
+The previous candidate added a large legend and a long explanatory paragraph across the bottom. Remove the entire bottom legend box and the entire bottom explanatory text box. Do not place any full Chinese sentence inside the figure. Expand the region topology, coordination service, and standby node to use the reclaimed space. Put only the short exact labels 请求路由, 状态同步, 跨区迁移, and 故障接管 directly beside their corresponding arrows. Keep the topology and node relationships unchanged. No long notes, no footer, no paragraph, no slogan.

@@ -1,0 +1,148 @@
+Target image path: figures/sec6/nat-direction-comparison.png
+Source TeX: section/sec6.tex
+Figure label: fig:nat-direction-comparison
+Created for imagegen: 2026-07-20 CST
+QA note: The first generated version was selected as the final figure. A later targeted edit was rejected because it reversed the bottom return arrow. In the selected figure, the orange dashed connector between DNAT and “连接跟踪” represents mapping registration; the prose and caption explicitly explain that the bottom return restoration uses this record.
+
+Figure contract:
+- Nearby section: section/sec6.tex, “容器访问外网：默认网关、SNAT 与连接跟踪”以及“外部访问容器：端口映射与 DNAT”。
+- Why this figure exists: 现有两张图分别讲 SNAT 和 DNAT，但使用了相近的“容器—宿主机—外部网络”构图，读者容易把它们看成重复内容。合并图需要把两条路径放在同一坐标系中比较。
+- One teaching question: 连接由谁主动发起，为什么会分别触发源地址改写或目的地址改写？
+- Beginner misconception to prevent: 读者可能把 SNAT、DNAT 和 VXLAN 当成同一方向的三种候选方案，也可能只记住“NAT 会改地址”，却分不清首次改写的是源地址还是目的地址。
+- Diagram role: Comparison plus two mechanism paths.
+- Required mechanism: 上行展示容器主动访问外部服务，宿主机用 SNAT 改写源地址；下行展示外部用户主动访问容器服务，宿主机用 DNAT 改写目的地址。两条连接的返回方向都依赖连接跟踪还原地址。
+- Required labels: 容器主动发起、外部主动发起、容器、容器服务、宿主机、外部服务、外部用户、SNAT、DNAT、源地址改写、目的地址改写、连接跟踪、请求、返回。
+- Details to leave in the prose: iptables/nftables 规则链、五元组字段、端口分配策略、Kubernetes Service 的上层抽象、VXLAN 的跨宿主机封装。
+- Caption job: 说明 SNAT 与 DNAT 的共同点是都依赖连接跟踪完成往返，区别是连接发起方向和首次改写的地址字段不同。
+- Post-figure sentence: SNAT 解决容器主动出网，DNAT 为外部主动入网建立明确入口，二者不属于 VXLAN 所解决的跨宿主机互通问题。
+
+Input images:
+- Image 1: figures/sec6/outbound-snat.png — reference image for the existing chapter palette, host/container/external-network visual vocabulary, and outbound SNAT semantics.
+- Image 2: figures/sec6/port-mapping.png — reference image for the existing chapter palette, inbound DNAT semantics, and connection-tracking return path.
+- Use both images only as technical and style references. Create a new comparison composition rather than placing the two old figures side by side.
+
+SYSTEM STYLE PROMPT
+
+You are creating a final concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- match the two reference figures: muted blue for request paths, teal for return paths, warm gray for host boundaries, and a small amount of orange only for NAT address changes
+- thin but confident ink-like outlines, consistent stroke width, restrained rounded corners, soft paper texture
+- no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+
+Layout rules:
+- use one stable three-column spatial model in both rows: container side on the left, host in the middle, external side on the right
+- use two clearly separated horizontal lanes with identical column alignment
+- top lane is outbound and reads left to right
+- bottom lane is inbound and reads right to left
+- solid dark-blue arrows always mean the initiating request
+- dashed teal arrows always mean the return packet
+- the host boundary must contain SNAT, DNAT, all address rewriting, and connection tracking
+- every text label must sit in its own reserved area; no text may overlap icons, arrows, borders, or other text
+- keep all content inside a wide safe margin
+- no large decorative title banner
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, wrong glyphs, cropped text, or wavy baselines
+- prefer short labels of 2-8 Chinese characters
+- do not add long Chinese sentences or punctuation-heavy annotations
+
+Content rules:
+- preserve the technical meaning exactly
+- show relationships, initiator direction, address-field change, host boundary, and return dependence on connection tracking
+- no VXLAN, VTEP, Overlay, Kubernetes, Service, bridge, veth, physical NIC, firewall icon, generic cloud icon, decorative person, mascot, watermark, logo, or invented term
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width mechanism comparison figure for a Chinese undergraduate cloud computing textbook
+
+Source context from the textbook:
+The text first explains outbound access: a container initiates a connection, and the host rewrites the packet source address with SNAT so the external service can return traffic to the host. The text then explains inbound access: an external user initiates a connection to a published host port, and the host rewrites the packet destination address with DNAT so it reaches the container service. In both cases, connection tracking records the mapping and supports the reverse-direction restoration.
+
+Teaching goal:
+Make the contrast immediately visible: container-initiated outbound traffic uses SNAT to rewrite the source address; externally initiated inbound traffic uses DNAT to rewrite the destination address. Both are stateful round trips supported by connection tracking.
+
+Beginner misconception to prevent:
+Do not imply that SNAT and DNAT are duplicate explanations, that DNAT is an outbound method, or that VXLAN is an alternative implementation of NAT.
+
+Diagram type:
+Two-lane comparison with mechanism paths.
+
+Required visual structure:
+- Landscape figure close to 16:9.
+- Three aligned columns repeated across both lanes:
+  - left column is the container side
+  - middle column is one large host boundary labeled “宿主机”
+  - right column is the external side
+- The single host boundary spans both lanes. Inside the host:
+  - top orange module labeled “SNAT” with a smaller label “源地址改写”
+  - bottom orange module labeled “DNAT” with a smaller label “目的地址改写”
+  - centered dashed-outline module labeled “连接跟踪”
+  - thin orange dashed connectors from both NAT modules to “连接跟踪”
+
+- TOP LANE:
+  - small lane label “容器主动发起”
+  - left object labeled “容器”
+  - right object labeled “外部服务”
+  - solid dark-blue request arrow: 容器 -> SNAT -> 外部服务
+  - dashed teal return arrow: 外部服务 -> 宿主机 -> 容器
+  - compact address badges near SNAT:
+    “172.17.0.2:34567”
+    “203.0.113.10:54321”
+  - show a clear source-address transformation between those two badges
+
+- BOTTOM LANE:
+  - small lane label “外部主动发起”
+  - right object labeled “外部用户”
+  - left object labeled “容器服务”
+  - solid dark-blue request arrow: 外部用户 -> DNAT -> 容器服务
+  - dashed teal return arrow: 容器服务 -> 宿主机 -> 外部用户
+  - compact address badges near DNAT:
+    “203.0.113.10:8080”
+    “172.17.0.2:80”
+  - show a clear destination-address transformation between those two badges
+
+- Add a tiny two-item legend in an open corner:
+  - solid dark-blue arrow labeled “请求”
+  - dashed teal arrow labeled “返回”
+
+Required labels, exact and short:
+- 容器主动发起
+- 外部主动发起
+- 容器
+- 容器服务
+- 宿主机
+- 外部服务
+- 外部用户
+- SNAT
+- DNAT
+- 源地址改写
+- 目的地址改写
+- 连接跟踪
+- 请求
+- 返回
+- 172.17.0.2:34567
+- 203.0.113.10:54321
+- 203.0.113.10:8080
+- 172.17.0.2:80
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Quality constraints:
+- the two lanes must use the same left-middle-right spatial model so readers compare them directly
+- the initiating request direction must be unmistakable and opposite between the two lanes
+- all NAT and connection-tracking operations must appear inside the host boundary
+- address badges must be attached to the correct NAT lane
+- no arrow crossing, no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable when scaled to 1.0\linewidth in a LaTeX book
+- no watermark, no logo, no invented terms
+
+Avoid:
+- do not place the two reference images as separate panels
+- do not add VXLAN, Overlay, VTEP, Service, bridge, veth, or physical NIC
+- do not use PPT-style colored cards, marketing infographic styling, a dashboard layout, a big title, decorative icons, gradients, or shadows

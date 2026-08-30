@@ -1,0 +1,100 @@
+Target image path: figures/sec6/interaction-control-data-plane-split.png
+Source TeX: section/sec6.tex
+Figure label: fig:interaction-control-data-plane-split
+Created for imagegen: 2026-07-08 13:55
+
+Figure contract:
+- Nearby section: section/sec6.tex, "交互面：分离控制路径与高频数据路径".
+- Why this figure exists: The prose explains cold control path and hot data path, but readers need a topology that shows what bypasses the central controller and what remains under control.
+- One teaching question: Why should screenshots, commands, and file transfer avoid the central controller, and where are lease checks still applied?
+- Beginner misconception to prevent: Students may think all Agent interactions should pass through the Kubernetes API Server or one central orchestrator.
+- Diagram role: Architecture comparison and mechanism path.
+- Required mechanism: Naive central forwarding bottleneck, split control path, direct data path through async gateway, sandbox route table, lease version check, and per-sandbox lock.
+- Details to leave in the prose: Connection pooling internals, sharding algorithm, exact API names.
+- Caption job: Explain that low-frequency lifecycle control and high-frequency action/observation data are separated but meet at gateway authorization and lease checks.
+- Post-figure sentence: After the split, the control plane maintains ownership, and the data plane carries each step's high-frequency I/O.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue for control path, teal for data path, small orange for rejected stale requests
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture
+- no glossy icons, no gradients, no heavy drop shadows
+
+Layout rules:
+- 16:9 landscape textbook figure
+- left small comparison panel for naive central forwarding
+- right larger panel for split control path and data path
+- blue thin arrows for control path, teal thick arrows for data path, orange blocked arrow for stale lease
+- every label must sit in reserved space with generous padding
+- no text overlap and no cropped labels
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography
+- no distorted Chinese characters, no cropped text
+- prefer short labels of 2-8 Chinese characters
+- do not put long Chinese sentences inside the image
+
+Content rules:
+- preserve the technical meaning from the source text
+- show boundaries, routes, and authorization checks, not just isolated boxes
+- no watermark, no logo, no invented terms
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+The text says that putting screenshots, command output, file transfer, and mouse or keyboard events through a central controller will overload the control plane. A better design separates low-frequency lifecycle control from high-frequency action and observation data. The data path can go through an async I/O gateway to an execution agent inside each sandbox, while still checking sandbox id, lease version, and per-sandbox locking.
+
+Teaching goal:
+Show the difference between naive central forwarding and a split design where control path and high-frequency data path are separated.
+
+Beginner misconception to prevent:
+Do not imply that bypassing the central controller means bypassing permission checks. The gateway must still validate identity, sandbox id, and lease version.
+
+Diagram type:
+Architecture comparison and path diagram.
+
+Required visual structure:
+- Left panel labeled "朴素转发": one central controller receives thick arrows from 模型 and sends all 截图, 命令输出, 文件内容 through itself; add orange bottleneck mark "瓶颈".
+- Right panel labeled "路径分离": top thin blue control path from 控制面 to API Server to Sandbox lifecycle labels 创建, 删除, 策略, 心跳.
+- Right panel lower thick teal data path from 模型 to I/O 网关 to 执行 agent inside Sandbox.
+- Show a small "路由表" near the gateway, mapping SandboxId to sandbox.
+- Show a small "租约校验" gate at the gateway and an orange blocked arrow labeled "旧租约拒绝".
+- Inside each Sandbox show "执行 agent" and "单沙箱锁".
+
+Required labels, exact and short:
+- 朴素转发
+- 路径分离
+- 控制面
+- API Server
+- I/O 网关
+- Sandbox
+- 执行 agent
+- 路由表
+- SandboxId
+- 租约校验
+- 单沙箱锁
+- 创建
+- 删除
+- 策略
+- 心跳
+- 截图
+- 命令输出
+- 文件内容
+- 旧租约拒绝
+- 瓶颈
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+冷路径管生命周期
+
+Quality constraints:
+- enough mechanism detail to support the textbook explanation
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after scaling to full text width
+- no marketing cloud poster, no dashboard, no decorative people

@@ -1,0 +1,142 @@
+Target image path: figures/sec4/redis-hash-tag.png
+Source TeX: section/sec4.tex
+Figure label: fig:redis_hash_tag_multikey
+Created for imagegen: 2026-06-24
+
+Figure contract:
+Figure id: fig:redis_hash_tag_multikey
+Nearby section: section/sec4.tex, 缓存层的分布式演进：从单机Redis到集群
+Why this figure exists: 帮助本科生理解 Redis 集群中多 key 操作为什么要求相关 key 落在同一个哈希槽，以及 Hash Tag 如何把同一用户的相关 key 放到同一槽位。
+One teaching question: 一条多 key 操作为什么不能跨多个 Redis 节点直接执行，Hash Tag 如何给这条操作一个明确的执行节点？
+Beginner misconception to prevent: 读者可能误以为“有 key 就都能访问”，看不出一条多 key 命令需要由同一个 Redis 节点拿到所有 key 后完整执行。
+Diagram role: Side-by-side mechanism comparison.
+Required mechanism: 左侧展示无 Hash Tag 时 pos 和 online 两个 key 落入不同槽位和不同 Redis 节点，单个节点看不全 key；右侧展示使用 {user:1001} Hash Tag 后两个 key 落入同一槽位和同一 Redis 节点，多 key 操作有明确执行位置。
+Required labels: 无标签, 有标签, Key, Slot, Redis B, Redis C, pos, online, 多 key 操作, 看不全, 同一槽位, 同一节点
+Details to leave in prose: 不在图中解释 CRC16、MOVED、ASK、完整 Redis 命令语法；不在图中写长句解释哈希标签规则。
+Caption job: 说明无 Hash Tag 时相关 key 可能落到不同槽位和节点，单个节点无法完整执行多 key 操作；Hash Tag 让相关 key 使用同一哈希片段，从而落到同一槽位和同一节点。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- landscape 16:9 textbook diagram
+- two balanced side-by-side panels
+- left panel shows the problem without Hash Tag
+- right panel shows the fix with Hash Tag
+- one clear reading path in each panel from top to bottom: Key -> Slot -> Redis node -> multi-key operation result
+- use orange only for the left-side failure marker and warning arrow
+- use teal/green only for the right-side successful co-location path
+- no crossing arrows
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- avoid Chinese punctuation if possible; use short labels instead of full sentences
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Create a Redis Cluster Hash Tag teaching diagram. It must explain why a multi-key operation cannot be executed by one Redis node when the keys are in different slots, and how Hash Tag makes related keys use the same slot.
+
+Source context from the textbook:
+The section explains Redis as a key-value database used for hot game data such as online state and real-time position. Redis Cluster splits key ownership through hash slots. A single key can be routed to its slot and node. The difficult point is multi-key operations: one Redis command, transaction, or Lua script needs one execution node to see all involved keys. Hash Tag lets related keys use the same slot.
+
+Teaching goal:
+Show one problem and one fix: without Hash Tag, user position and online state may go to different slots and nodes, so one Redis node cannot see both keys; with Hash Tag, both keys use the same hash segment and land on the same slot and node.
+
+Beginner misconception to prevent:
+Students may think separate keys can always be accessed together just because each key exists. The figure must show that a single multi-key operation needs one Redis node that holds all involved keys.
+
+Diagram type:
+Side-by-side mechanism comparison.
+
+Required visual structure:
+- Left panel title label: “无标签”
+- Right panel title label: “有标签”
+- In the left panel, show two key boxes:
+  - “pos”
+  - “online”
+- Arrows from the two key boxes go to two different slot boxes:
+  - “Slot 5208”
+  - “Slot 9812”
+- Arrows from the two slot boxes go to two different Redis node cylinders:
+  - “Redis B”
+  - “Redis C”
+- Below the two nodes, show a multi-key operation box labeled “多 key 操作”
+- Use an orange broken line or warning mark from the multi-key operation to the two separated nodes, with the short label “看不全”
+- In the right panel, show two key boxes:
+  - “{user:1001}:pos”
+  - “{user:1001}:online”
+- Both arrows go to one slot box:
+  - “同一槽位”
+- One arrow goes from that slot to one Redis node cylinder:
+  - “Redis B”
+- Below it, show a multi-key operation box labeled “多 key 操作”
+- Use a green check or solid green path to show the operation can be executed on one node, with the short label “同一节点”
+
+Required labels, exact and short:
+- 无标签
+- 有标签
+- pos
+- online
+- Slot 5208
+- Slot 9812
+- Redis B
+- Redis C
+- 多 key 操作
+- 看不全
+- 同一槽位
+- 同一节点
+- {user:1001}:pos
+- {user:1001}:online
+
+Avoid labels longer than 12 characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway if shown in image:
+Do not show a long takeaway sentence. Let the LaTeX caption explain the conclusion.
+
+Quality constraints:
+- The figure must clearly show the contrast between separated slots and same slot.
+- The left side must make it obvious that no single Redis node has both keys.
+- The right side must make it obvious that both keys go through the same hash tag to one slot and one node.
+- Keep all labels readable after scaling to full text width in a LaTeX book.
+- No text overlap, no label touching arrows, no cropped elements.
+- No long explanatory paragraphs inside the image.
+
+Avoid:
+- no marketing infographic style
+- no PPT-style card deck
+- no decorative cloud icons
+- no cute mascot
+- no database logos
+- no random English text beyond Redis, Key, Slot
+- no watermark
+
+FINAL TERMINOLOGY CORRECTION
+
+Image 1 is the edit target. Preserve its composition, panel geometry, arrows, colors, icons, spacing, and all other labels exactly. Change only the two Hash Tag key labels:
+- replace “{player:1001}:pos” with “{user:1001}:pos”
+- replace “{player:1001}:online” with “{user:1001}:online”
+
+Do not show the word “player” or “玩家” anywhere in the image. Render the two replacement strings verbatim, with balanced braces and the colon in the exact positions shown above.

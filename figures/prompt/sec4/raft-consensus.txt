@@ -1,0 +1,151 @@
+Target image path: figures/sec4/raft-consensus.png
+Source TeX: section/sec4.tex
+Figure label: fig:raft_core
+Created for imagegen: 2026-07-25
+Input image: figures/sec4/raft-consensus.png is the edit target and style reference.
+Accepted V3 imagegen source: /Users/lin/.codex/generated_images/019f9893-99b3-7f83-8012-143b10924d8a/exec-06811225-ff1c-415a-948f-6280f581946f.png
+
+Figure contract
+
+Figure id: fig:raft_core
+Nearby section: section/sec4.tex, Raft fault recovery and majority commit
+Why this figure exists:
+The prose explains that node A is delayed, while B and C can elect B as the new Leader, replicate log entry 3, and form a majority that commits it. A catches up only after it reconnects. The figure must make these events visibly sequential rather than showing all three state machines becoming consistent at the same moment.
+One teaching question:
+Why can B and C commit log entry 3 while A is delayed, and when does A apply that entry?
+Beginner misconception to prevent:
+Do not imply that majority commit means every node has already received and applied the entry. A quorum establishes the commit decision; a delayed follower catches up later.
+Diagram role:
+Timeline plus per-node state transition.
+Required mechanism:
+Show one left-to-right time axis with four stages. Stage 1: old Leader A loses contact with B and C. Stage 2: B becomes candidate, receives C's vote, and becomes Leader in Term 3. Stage 3: B appends log entry 3 and replicates it to C; B and C contain entries 1, 2, and 3, while A still contains only entries 1 and 2 and is marked delayed. Stage 4: B and C form a majority and entry 3 becomes committed; B and C may apply it, but A remains visibly behind. At the far right, a small later-recovery inset shows A reconnecting, copying entry 3, and then applying it, after which the three replicas are consistent.
+Required labels, exact and short:
+- 旧 Leader A
+- 失联
+- B 候选
+- C 投票
+- Leader B
+- Term 3
+- 日志 1
+- 日志 2
+- 日志 3
+- 多数确认
+- 已提交
+- A 延迟
+- 待追赶
+- A 恢复
+- 补齐日志 3
+- 应用日志 3
+- 最终一致
+Details to leave in the prose:
+Election timeout details, RequestVote and AppendEntries RPC fields, term comparison rules, and conflict-index repair.
+Caption job:
+The caption states that B and C first form a majority and commit entry 3; delayed node A catches up and applies it only after recovery.
+
+SYSTEM STYLE PROMPT
+
+Create a precise mechanism figure for a Chinese undergraduate cloud computing textbook. Use a semi-flat technical illustration on a light cream-white paper background. Use muted blue for leadership and control flow, teal-green for replicated or committed log entries, warm gray for delayed or unavailable state, and a small amount of orange only for the majority-commit milestone. Use thin, confident outlines, consistent stroke widths, reserved label areas, generous margins, and clean Chinese sans-serif typography similar to Source Han Sans or PingFang. The result must look like a polished textbook figure rather than a presentation slide, marketing infographic, dashboard, or academic monochrome diagram.
+
+Keep a single clear left-to-right time direction. Separate election, replication and majority commit, and delayed-node catch-up into visibly distinct stages. Arrows must have stable meanings: blue solid arrows for election or replication messages, a gray dashed path for the unavailable A, and a short teal arrow for A's later catch-up. Do not use one arrow style for incompatible meanings. No gradients, glossy icons, decorative clouds, stock people, mascots, watermark, logo, random English, or large title banner.
+
+Every Chinese label must be legible and must not overlap nodes, logs, arrows, borders, or another label. Do not invent labels beyond the required list. Keep punctuation and glyphs correct. Important content must remain readable at full textbook width.
+
+USER CONTEXT PROMPT
+
+Edit and substantially rebuild the supplied Raft diagram while preserving its calm cream-background textbook style.
+
+Primary correction:
+The current diagram incorrectly makes A, B, and C appear to show “状态机一致” simultaneously immediately after B and C commit. Replace that visual with a strict sequence: B and C first form a majority and commit log entry 3 while A is delayed; A catches up and applies entry 3 only after it recovers.
+
+Composition:
+Use four left-to-right stages under a subtle time arrow.
+
+1. Election trigger: three node rows A, B, C. Mark A as “旧 Leader A” and “失联”. Keep A visually separated with a warm-gray dashed divider. B and C remain connected.
+2. New leader: mark B as “B 候选”, show one vote arrow from C labeled “C 投票”, then show “Leader B” and “Term 3”.
+3. Replication: show compact per-node log strips. B and C each contain “日志 1”, “日志 2”, “日志 3”. A contains only “日志 1” and “日志 2”, with an empty outlined slot for the missing third entry and labels “A 延迟” and “待追赶”. A must not contain or apply log entry 3 in this stage.
+4. Majority commit: bracket or connect only B and C with the orange milestone “多数确认”, then mark their entry 3 “已提交”. Do not connect A to this majority bracket. Do not show A as consistent here.
+
+At the far right, add a compact later-recovery inset: label it “A 恢复”, show one teal arrow “补齐日志 3” into A's missing slot, then “应用日志 3” and finally one small shared label “最终一致”. The “最终一致” label belongs only after the A-recovery inset, never under the majority-commit stage.
+
+Critical semantic gates:
+- A remains behind during election, replication to C, and majority commit.
+- Only B and C participate in the majority that commits entry 3.
+- A receives entry 3 and applies it later, after “A 恢复”.
+- Never draw three simultaneous identical state-machine boxes before A catches up.
+- Majority confirmation and final all-node consistency are two different moments.
+
+Required labels, exact and short:
+- 旧 Leader A
+- 失联
+- B 候选
+- C 投票
+- Leader B
+- Term 3
+- 日志 1
+- 日志 2
+- 日志 3
+- 多数确认
+- 已提交
+- A 延迟
+- 待追赶
+- A 恢复
+- 补齐日志 3
+- 应用日志 3
+- 最终一致
+
+Constraints:
+- landscape figure for full-width LaTeX inclusion
+- no long explanatory sentences inside the image
+- no text overlap or cropped labels
+- no duplicate stages or extra nodes
+- no central database, broker, cloud icon, or decorative network background
+- no implication that A commits or applies entry 3 before it recovers
+
+REVISION V2 — show every replica log and state-machine progress
+
+Use the current Raft consensus image as the edit target. Preserve its four-stage left-to-right timeline, election and majority semantics, node identities A/B/C, log-strip style, cream paper background, palette, typography, and compact A-recovery inset. Improve only the relationship between replicated logs, commit position, and state-machine application.
+
+Teaching goal:
+Students must see that “entry 3 is stored”, “entry 3 is committed”, and “entry 3 is applied to a replica state machine” are three distinct states. A majority commit does not mean every replica has already applied the entry.
+
+Required mechanism correction:
+1. In the majority-commit stage, retain one row for each replica B, C, and A. Each row must contain both a compact log strip and a compact state-machine progress box.
+2. B and C each contain “日志 1”, “日志 2”, “日志 3”. Entry 3 is marked “已提交”. After the majority decision, show a short arrow “应用日志 3” from the log strip to that replica's state-machine box, whose progress label is “已应用 3”.
+3. A still contains only “日志 1” and “日志 2”, with an empty dashed third slot. A's state-machine progress box must read “已应用 2”. Do not mark A's third slot committed or applied in this stage.
+4. Keep the orange bracket connecting only B and C and label it “多数确认”. Add the short label “提交位置 3” beside the bracket or directly after it, without connecting A to the bracket.
+5. In the later “A 恢复” inset, show A receiving “日志 3”, then a separate arrow labeled “应用日志 3”, then changing its progress from “已应用 2” to “已应用 3”. Only after this transition show the short final label “状态机一致”.
+6. Do not show three identical state-machine boxes before A recovers. Final state-machine consistency belongs only at the far right after catch-up and application.
+
+Additional required labels, exact and short:
+- 状态机
+- 已应用 2
+- 已应用 3
+- 提交位置 3
+- 状态机一致
+
+Layout guidance:
+- Keep logs and state-machine boxes aligned by replica row so each node's local progress can be read horizontally.
+- Use small state-machine boxes, not large decorative cards.
+- Preserve generous whitespace and full-width LaTeX readability. Reduce icon size before reducing label size.
+- Use teal for committed/applied progress, warm gray for A's delayed state, and orange only for the majority-commit milestone.
+
+Invariants:
+- preserve the exact election order: A失联 → B候选 → C投票 → Leader B Term 3
+- preserve that only B and C form the majority for entry 3
+- preserve that A catches up only in the later recovery inset
+- no extra node, no invented RPC, no database icon, no long sentence, no text overlap, no cropped label, no watermark
+
+REVISION V3 — separate replicated, committed, and applied states
+
+Use the immediately previous generated candidate as the edit target. Preserve its composition, typography, node rows, state-machine boxes, majority bracket, recovery inset, colors, spacing, and all correctly rendered labels. Correct only the following state values:
+
+1. Stage 3 “日志复制”: B and C may contain “日志 3”, but entry 3 is only replicated here. Remove every “已提交” label from stage 3. If a status label is needed under entry 3, use exactly “已复制”. B and C state-machine boxes must remain “已应用 2”.
+2. Stage 4 “多数提交”: after the B/C majority bracket establishes “提交位置 3”, mark B and C entry 3 as “已提交”. Then the separate arrows “应用日志 3” must end at B and C state-machine boxes labeled exactly “已应用 3”, not “已应用 2”.
+3. Stage 4 node A must still show only logs 1 and 2, an empty third slot, and state machine “已应用 2”. A must not be included in the majority bracket.
+4. In the “A 恢复” inset, preserve the three successive states: before catch-up “已应用 2”; after “补齐日志 3” the log contains entry 3 but the state machine is still “已应用 2”; only after “应用日志 3” does it become “已应用 3”.
+5. Show “状态机一致” only below the final recovered A state.
+
+Additional exact label permitted:
+- 已复制
+
+Do not change the election stage, do not change node identities, do not add a new stage, and do not introduce long explanations. No text overlap, cropped text, invented terms, watermark, or decorative icon.

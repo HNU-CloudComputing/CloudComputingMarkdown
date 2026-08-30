@@ -1,0 +1,171 @@
+Target image path: figures/sec5/self-healing.png
+Source TeX: section/sec5.tex
+Figure label: fig:self-healing-control-loop
+Created for imagegen: 2026-07-19
+
+FIGURE CONTRACT
+
+Figure id:
+fig:self-healing-control-loop
+
+Nearby section:
+第五章“故障自愈：检测、修复与约束”。正文先区分容量偏差与健康状态偏差，随后依次解释故障检测、修复粒度和生产约束。
+
+Why this figure exists:
+正文中的检测信号、故障层级、约束检查、修复动作和恢复验证分散在多个段落。图需要把它们组织成一个持续控制闭环，使读者理解自愈是一套可重复执行的决策过程。
+
+One teaching question:
+平台如何把一次故障信号转化为受约束、可验证、能够再次触发的恢复过程？
+
+Beginner misconception to prevent:
+故障自愈等同于“探针失败后立即重启”。这种理解忽略故障层级、可用性与依赖约束，也忽略修复后必须验证是否真正恢复。
+
+Diagram role:
+Control loop / 反馈闭环图。
+
+Required mechanism:
+故障信号进入故障分级；分级结果进入约束检查；约束允许后选择进程重启、实例重建或节点替换；修复完成后进行恢复验证；验证未通过时沿反馈箭头重新进入故障信号与判断过程，验证通过时回到稳定服务状态。
+
+Required labels:
+故障自愈闭环
+故障信号
+主动探测
+心跳超时
+指标异常
+故障分级
+约束检查
+可用性
+依赖状态
+排水条件
+修复动作
+进程重启
+实例重建
+节点替换
+恢复验证
+未恢复
+恢复
+稳定服务
+受约束的持续恢复
+
+Details to leave in the prose:
+Liveness Probe、Readiness Probe、PDB、preStop、Cluster Autoscaler 的具体语义；重启风暴；游戏大厅服、网关、战斗服和数据库的不同恢复代价。
+
+Caption job:
+说明自愈由检测、分级、约束检查、修复和恢复验证构成；修复未达到服务目标时必须重新进入闭环。
+
+Post-figure sentence:
+检测信号的准确性决定后续修复是否会被正确触发，因此首先需要明确平台如何判断实例或节点已经失效。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for faults, blocked actions, or the single feedback path
+- thin but confident ink-like outlines, consistent stroke width, very subtle paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- landscape 16:9 composition suitable for full-width placement in a LaTeX textbook
+- one continuous clockwise control loop with a clear reading path and no crossing arrows
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label and keep labels away from arrowheads
+- keep all important content inside a wide safe area
+- use only a small restrained title, not a decorative banner
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans, Noto Sans CJK, or PingFang
+- render every required label verbatim with no extra characters
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- use short labels only; do not add explanatory Chinese sentences
+- do not add punctuation to labels
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, decision gates, feedback direction, and recovery state, not isolated decorative icons
+- do not include Kubernetes logos, vendor logos, game characters, mascots, stock-business people, or generic cloud decoration
+- no watermark, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width mechanism figure for a Chinese undergraduate cloud computing textbook
+
+Source context from the textbook:
+The section distinguishes autoscaling from self-healing. Autoscaling changes the amount of healthy capacity; self-healing detects unhealthy processes, instances, or nodes and selects a repair action. A production repair must first respect availability, dependency, and draining constraints, and must verify recovery afterward. If recovery fails, the system must observe and decide again.
+
+Teaching goal:
+Help beginners understand that self-healing is a constrained feedback loop rather than an unconditional restart action.
+
+Beginner misconception to prevent:
+Probe failure directly means restart, and restart automatically means recovery.
+
+Diagram type:
+Control loop / 反馈闭环图。
+
+Required visual structure:
+- Build one continuous clockwise loop across the canvas.
+- Start with a grouped input area labeled “故障信号”, containing three small signal sources labeled “主动探测”, “心跳超时”, and “指标异常”.
+- Flow into a distinct decision stage labeled “故障分级”. Use three simple nested technical glyphs to suggest process, instance, and node scope, but do not add new text labels.
+- Flow into a gate labeled “约束检查”, containing exactly three short checks: “可用性”, “依赖状态”, and “排水条件”.
+- Flow into a grouped action stage labeled “修复动作”, containing three vertically ordered actions: “进程重启”, “实例重建”, and “节点替换”. Show them as increasing repair scope, not as three simultaneous mandatory actions.
+- Flow into “恢复验证”.
+- From recovery verification, a teal success arrow labeled “恢复” leads to “稳定服务”.
+- An orange feedback arrow labeled “未恢复” returns to “故障信号”, visibly closing the loop.
+- Add a small restrained title “故障自愈闭环”.
+- Add a small bottom takeaway strip “受约束的持续恢复”.
+
+Required labels, exact and short:
+- 故障自愈闭环
+- 故障信号
+- 主动探测
+- 心跳超时
+- 指标异常
+- 故障分级
+- 约束检查
+- 可用性
+- 依赖状态
+- 排水条件
+- 修复动作
+- 进程重启
+- 实例重建
+- 节点替换
+- 恢复验证
+- 未恢复
+- 恢复
+- 稳定服务
+- 受约束的持续恢复
+
+Text rendering:
+Render every listed Chinese label verbatim, exactly once where specified. Do not add other Chinese or English text. Keep all labels horizontal and readable after the image is scaled to 0.95 text width in a printed textbook.
+
+Color semantics:
+- muted blue for observation and decision flow
+- muted teal for successful recovery and stable service
+- restrained orange only for fault signals, blocked or failed recovery, and the feedback arrow
+- warm gray for neutral boundaries and inactive technical objects
+
+Quality constraints:
+- technically accurate continuous feedback loop
+- clear distinction between fault signals, decision, constraint gate, repair scope, and recovery verification
+- no implication that all repairs happen at once
+- no implication that availability checks themselves repair the service
+- no text overlap, no label touching arrows, no cropped elements
+- no long Chinese sentences inside the image
+- no decorative characters, no logos, no watermark
+- final image must remain readable at full textbook width
+
+Avoid:
+- PPT-style card dashboard
+- marketing infographic style
+- game-specific imagery
+- cute or anthropomorphic server icons
+- dense paragraphs
+- crossed arrows
+- large decorative title banner
+- gradients, glossy effects, heavy shadows
+- invented labels or repeated labels

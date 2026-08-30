@@ -1,0 +1,36 @@
+Target image path: figures/sec1/concurrent-server.png
+Source TeX: section/sec1.tex
+Figure label: fig:intro-phase3
+Created for imagegen: 2026-07-14 00:04
+
+FIGURE BRIEF
+正文锚点：第一章“并发优化阶段”。大量连接和请求进入同一台机器，串行处理产生排队；并发执行、同步保护、连接池、对象池和缓存提高单机吞吐，但资源竞争与尾延迟仍受单机上限约束。
+教学目标：展示同一台机器内部如何把大量连接组织成并发处理流水线，并预告第三章的并发模型、同步、资源复用与性能指标。
+读者误区：认为“增加并发数量”本身就等于性能提高，忽略排队、共享状态竞争和单机资源边界。
+图型：从大量客户端汇入单机内部的漏斗式并发流水线；机制嵌入处理路径，不做侧边知识点列表。
+
+SYSTEM STYLE PROMPT
+Create a polished mechanism figure for a Chinese undergraduate cloud computing textbook. Use a semi-flat educational illustration style on a light cream-white background, muted blue, teal, and warm gray, thin confident outlines, subtle paper texture, and generous whitespace. It must look like a textbook systems figure, not a PowerPoint slide, marketing infographic, dashboard, or academic monochrome diagram.
+Use one coherent left-to-right request path, clear queue direction, a visible machine boundary, and stable arrow meanings. Avoid three-column layouts, large isolated cards, decorative title banners, footer slogans, orange text, orange conclusion boxes, gradients, heavy shadows, glossy icons, mascots, and unrelated decoration. All labels must be short and correct. No text overlap, no crossing arrows, no cropped elements, no watermark, no invented terms.
+
+USER CONTEXT PROMPT
+Use case: scientific-educational
+Asset type: full-width chapter roadmap mechanism figure
+Input image: intro-phase3.png is the conceptual edit target. Preserve only the idea of many connections entering one machine. Completely replace its three-column PowerPoint layout and remove the bottom orange slogan.
+Primary request: Draw a richer concurrent single-machine processing pipeline. On the left, show many client connections converging into 事件就绪 and a bounded 请求队列. Enclose the main processing area in a boundary labeled 单机边界. Inside, show several parallel execution paths labeled 并发执行体 taking work from the queue. They update a central 共享状态 through a clearly marked 同步保护 boundary. Place 缓存复用 and 对象复用 beside the hot path as shared resources that reduce repeated work. On the right, merge the paths into 响应返回. Add two small restrained measurement callouts near the queue/output: 排队长度 and 尾延迟, indicating what must be observed. Show CPU and memory as finite resources along the machine boundary without turning them into decorative gauges.
+Required labels, exact and short:
+- 大量连接
+- 事件就绪
+- 请求队列
+- 单机边界
+- 并发执行体
+- 同步保护
+- 共享状态
+- 缓存复用
+- 对象复用
+- 响应返回
+- 排队长度
+- 尾延迟
+- CPU
+- 内存
+Constraints: landscape 2:1; mechanisms embedded in one pipeline; parallel paths visibly share finite machine resources; no 本章机制, 阶段压力, 系统形态; no orange footer or slogan; no three-column card template; readable Chinese at full LaTeX width.

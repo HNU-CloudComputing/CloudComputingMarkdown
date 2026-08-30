@@ -1,0 +1,128 @@
+Target image path: figures/sec5/orchestrator-comparison.png
+Source TeX: section/sec5.tex
+Figure label: fig:swarm-vs-k8s
+Created for imagegen: 2026-06-26
+
+Figure contract:
+Figure id: fig:swarm-vs-k8s
+Nearby section: section/sec5.tex, \subsubsection{控制面的精细分工：从 Swarm Manager 到 K8s 组件}
+Why this figure exists: 帮助本科生看清 Swarm 和 Kubernetes 在控制面架构上的核心差异：Swarm 的 Manager 是一个整体角色集中承担所有职责，K8s 将这些职责拆分为四个独立组件，每个组件单一职责、可独立扩展。
+One teaching question: 为什么 K8s 要把 Swarm Manager 的职责拆成四个独立组件，这种拆分带来了什么工程好处？
+Beginner misconception to prevent: 读者可能误以为 K8s 只是 Swarm 的"升级版"或"更大规模的同一种东西"。实际上两者的架构设计思路不同：Swarm 追求简洁（一个 Manager 做所有事），K8s 追求可扩展性和职责解耦（每个组件只做一件事）。
+Diagram role: Architecture comparison (side-by-side)
+Required mechanism: 左侧 Swarm：Manager 整体角色内含 API 接收、Raft 状态存储、调度、健康检查；Worker 节点运行容器。右侧 K8s：控制面拆为 API Server（唯一入口）、etcd（状态存储）、Scheduler（调度决策）、Controller Manager（持续对齐）；数据面每个 Node 上有 kubelet 从 API Server 获取任务并执行。
+Required labels: Swarm, Manager, API 接收, 状态存储, 调度, 健康检查, Worker, 容器, Kubernetes, 控制面, API Server, etcd, Scheduler, Controller Manager, 数据面, Node, kubelet, Pod
+Details to leave in the prose: 不在图中解释 etcd 的 Raft 一致性实现、API Server 的认证鉴权细节、Scheduler 的打分算法、Controller Manager 中各控制器的具体种类。
+Caption job: 说明 Swarm 的 Manager 集中承担所有控制职责，K8s 将其拆分为 API Server、etcd、Scheduler 和 Controller Manager 四个独立组件，数据面由每个节点上的 kubelet 执行。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- Use a two-panel side-by-side layout: LEFT panel labeled "Swarm", RIGHT panel labeled "Kubernetes".
+- A thin vertical divider or subtle background color difference separates the two panels.
+- LEFT PANEL (Swarm): One large rounded rectangle at top labeled "Manager". Inside the Manager box, show four sub-areas or internal labels stacked vertically: "API 接收", "状态存储 (Raft)", "调度", "健康检查". These are visually grouped together inside the single Manager boundary to emphasize they are ONE role doing FOUR things. Below the Manager: two smaller rounded rectangles labeled "Worker" each containing small container icons.
+- RIGHT PANEL (Kubernetes): A dashed rounded rectangle at top labeled "控制面" containing FOUR separate boxes arranged in a 2x2 grid or horizontal row: "API Server", "etcd", "Scheduler", "Controller Manager". Each box is visually independent (separate borders, separate colors or shading) to emphasize they are INDEPENDENT components. Below the control plane: two or three rounded rectangles labeled "Node", each containing a "kubelet" label and small Pod icons.
+- Thin arrows in the K8s panel should show: all components connect through API Server (star topology), kubelet connects to API Server.
+- In the Swarm panel: a single arrow from Manager to each Worker.
+- The visual weight of the two panels should be roughly equal (same height, similar complexity).
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- DO NOT include any banner, tagline, or conclusion text at the bottom of the figure
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Create a side-by-side architecture comparison figure showing how Kubernetes decomposes the Swarm Manager's monolithic role into specialized independent components. The figure must make ONE thing visually obvious: Swarm has a single control entity doing everything, K8s has multiple independent components each doing one thing.
+
+Source context from the textbook:
+In Swarm, the Manager node simultaneously handles: receiving deployment requests (API), storing cluster state (built-in Raft storage), making scheduling decisions (which node gets which container), and health checking (detecting failed containers/nodes). This works for small clusters but becomes a bottleneck at scale because responsibilities are coupled. Kubernetes decomposes this into: API Server (single entry point for all operations), etcd (distributed state storage), Scheduler (placement decisions only), and Controller Manager (runs multiple reconciliation loops). On the data plane, each node runs a kubelet that talks to API Server to know what to run and reports health status back.
+
+Teaching goal:
+Show the architectural decomposition clearly: one monolithic Manager (Swarm) vs four independent specialized components (K8s). The reader should immediately understand WHY this decomposition helps: each component can be scaled, replaced, or upgraded independently.
+
+Beginner misconception to prevent:
+The figure must NOT show K8s as just "a bigger Swarm" or "Swarm with more nodes". The structural difference must be visually clear: inside the Swarm Manager, responsibilities are packed together; in K8s, they are separate boxes with clear boundaries.
+
+Diagram type:
+Architecture comparison, landscape 16:9 textbook diagram.
+
+Required visual structure:
+- LEFT PANEL ("Swarm"):
+  - One large rounded rectangle labeled "Manager" with a blue/teal fill.
+  - Inside the Manager: four horizontal bands or stacked sections, each with a label: "API 接收", "状态存储", "调度", "健康检查". Use the same background color for all four to emphasize they are part of ONE entity.
+  - Below: two rounded rectangles labeled "Worker", each containing 2-3 small container icons.
+  - Thin arrows from Manager down to each Worker.
+  - The overall message: one box does everything.
+
+- RIGHT PANEL ("Kubernetes"):
+  - A dashed rounded rectangle labeled "控制面" at top.
+  - Inside: four SEPARATE rounded boxes with DIFFERENT subtle shading or borders: "API Server" (central, slightly larger), "etcd" (database icon), "Scheduler", "Controller Manager".
+  - Thin arrows showing: etcd ↔ API Server, Scheduler → API Server, Controller Manager → API Server (star topology centered on API Server).
+  - Below: two or three rounded rectangles labeled "Node".
+  - Inside each Node: a label "kubelet" and 2-3 small Pod icons (rounded squares with "Pod" label).
+  - Thin arrows from each kubelet up to API Server.
+  - The overall message: four independent components, each with a single job, communicating through a central API.
+
+Required labels, exact and short:
+- Swarm
+- Manager
+- API 接收
+- 状态存储
+- 调度
+- 健康检查
+- Worker
+- 容器
+- Kubernetes
+- 控制面
+- API Server
+- etcd
+- Scheduler
+- Controller Manager
+- 数据面
+- Node
+- kubelet
+- Pod
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Quality constraints:
+- The Swarm Manager must look like ONE monolithic block with internal divisions (same color, shared border).
+- The K8s control plane components must look like SEPARATE independent boxes (different borders, possibly slightly different shades).
+- The visual contrast between "monolithic" and "decomposed" must be the primary takeaway.
+- API Server should be visually central in the K8s panel, with other components connecting to/through it.
+- The data plane (Workers/Nodes) should be visually similar in both panels to emphasize that the key difference is in the CONTROL plane, not the worker layer.
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+
+Avoid:
+- no bottom banner with conclusion text
+- no PPT-style colored summary cards
+- no marketing infographic style
+- no cute mascot, no stock business people, no decorative cloud icons
+- no watermark, no logo, no random English text, no invented terms
+- no detailed internal arrows within Manager (keep it as one block)
+- no network topology details (those belong in chapter 6)

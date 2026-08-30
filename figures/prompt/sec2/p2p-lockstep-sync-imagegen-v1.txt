@@ -1,0 +1,128 @@
+Target image path: figures/sec2/p2p-lockstep-sync-imagegen-v1.png
+Source TeX: section/sec2.tex
+Figure label: fig:p2p-lockstep-sync
+Created for imagegen: 2026-07-15
+Imagegen call ID: ig_0ff1b2def9a76746016a5713161eb48191b8b28461ae325047
+
+FIGURE CONTRACT
+
+Nearby section:
+第二章 P2P 直连原型。前文已经介绍 socket、TCP、序列化和长度前缀分帧；本图用于解释两个对等进程怎样通过交换带帧号的输入，在本地执行相同的确定性更新，并使两份状态从 S(n) 一起推进到 S(n+1)。
+
+Why this figure exists:
+让本科生看清“输入同步”和“状态同步”的区别：网络中传输的是输入消息，不是完整世界状态；状态一致是两端使用相同初始状态、相同输入和相同更新函数分别计算出来的结果。
+
+One teaching question:
+P2P 两端只交换玩家输入，为什么仍能得到相同的下一帧状态？
+
+Beginner misconceptions to prevent:
+- 不要表现为两端共享同一块内存。
+- 不要表现为一端把完整状态复制给另一端。
+- 不要出现服务器、中心节点或权威裁决者。
+- 状态摘要只能检查是否一致，不能自动修复状态。
+
+Diagram role:
+单个逻辑帧的对称状态推进图。左右两个对等进程地位完全相同，展示相同起点、输入交换、确定性更新和摘要核对。
+
+Required mechanism:
+1. 对等进程 A 和对等进程 B 都从“状态 S(n)”开始。
+2. A 产生“输入 A(n+1)”，B 产生“输入 B(n+1)”。
+3. 两端通过双向 P2P 连接交换带有“帧 n+1”的输入消息。
+4. 每一端都形成同一组输入：“A(n+1) + B(n+1)”。
+5. 每一端独立执行完全相同的更新函数：“S(n+1) = Update(S(n), A(n+1), B(n+1))”。
+6. 两端分别得到“状态 S(n+1)”，用明显的等号或一致标记说明结果相同。
+7. 两端交换“状态摘要”，摘要相同则继续；摘要不同只标记“发现分歧”。
+
+Caption job:
+说明两端交换的是带帧号的输入；在初始状态和更新逻辑一致时，两端可独立计算出相同的新状态，状态摘要用于发现分歧。
+
+SYSTEM STYLE PROMPT
+
+You are creating a scientific-educational mechanism diagram for a Chinese undergraduate cloud computing textbook.
+
+Visual style:
+- polished semi-flat textbook illustration, technically serious and beginner-friendly
+- light cream-white paper background
+- muted dark blue for peer-process containers and input-message arrows
+- restrained teal for local state-transition arrows and update modules
+- muted purple dashed line only for state-hash comparison
+- small amount of orange only for the “发现分歧” branch
+- thin confident outlines, consistent line weight, subtle paper texture
+- no gradients, no glossy icons, no heavy shadow, no 3D server hardware, no marketing infographic styling
+
+Composition:
+- wide landscape canvas, approximately 2:1, suitable for 0.98 linewidth in LaTeX
+- two large symmetric peer columns: “对等进程 A” on the left and “对等进程 B” on the right
+- both columns must have exactly the same height, internal module order, box sizes, and visual weight
+- top-to-bottom teaching flow inside each column: current state -> local input -> collected input pair -> deterministic update -> next state
+- a centered bidirectional input-exchange path connects the two peer columns
+- a lower dashed bidirectional state-summary comparison connects the two resulting states
+- fill at least 85 percent of the canvas with meaningful content; no large blank lower half, no detached footer card, no title banner
+
+Arrow semantics:
+- solid blue horizontal arrows: exchange of frame-numbered input messages
+- solid teal vertical arrows: local deterministic state transition
+- dashed purple horizontal arrow: state-summary comparison
+- arrows must never cross text or boxes
+
+Chinese typography:
+- clean Chinese sans-serif textbook typography similar to Source Han Sans or Noto Sans CJK
+- labels must be short, aligned, readable, and rendered verbatim
+- no paragraph-length text inside the figure
+- no distorted Chinese characters, duplicated labels, cropped text, floating punctuation, or malformed formulas
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width P2P lockstep input-synchronization diagram for a Chinese undergraduate cloud computing textbook
+
+Primary request:
+Create a new diagram that explains one logical frame of P2P lockstep input synchronization. Two equal peer processes start with the same state S(n), exchange only their frame-numbered inputs, independently execute the same deterministic update, obtain the same state S(n+1), and compare state summaries to detect divergence.
+
+Required visual structure:
+- Left container exact header: “对等进程 A”
+- Right container exact header: “对等进程 B”
+- At the top of both containers, exact label: “状态 S(n)”
+- Left local input exact label: “输入 A(n+1)”
+- Right local input exact label: “输入 B(n+1)”
+- In the middle, a clear bidirectional solid-blue exchange labeled: “P2P 输入交换”
+- Each input token must carry the short exact label: “帧 n+1”
+- After exchange, both containers show the identical collected pair: “A(n+1) + B(n+1)”
+- Both containers then show a teal process box with exact label: “确定性更新”
+- Place the exact formula once in the center between the two update boxes, without duplication:
+  “S(n+1) = Update(S(n), A(n+1), B(n+1))”
+- At the bottom of both containers, exact label: “状态 S(n+1)”
+- Place a clear equality symbol between the two bottom state boxes to show the states are expected to match
+- Under the states, draw a dashed purple bidirectional comparison labeled: “状态摘要核对”
+- Add two short outcomes near the comparison, without a decision-tree box: “一致：继续” in teal and “不一致：发现分歧” in restrained orange
+
+Teaching emphasis:
+- The strongest visual message must be that only inputs cross the network, while state updates happen locally inside both peer processes.
+- The two local update paths must be visually parallel and symmetric.
+- The summary comparison is a verification step after state calculation, not a state-transfer arrow.
+
+Exact labels allowed:
+- 对等进程 A
+- 对等进程 B
+- 状态 S(n)
+- 输入 A(n+1)
+- 输入 B(n+1)
+- P2P 输入交换
+- 帧 n+1
+- A(n+1) + B(n+1)
+- 确定性更新
+- S(n+1) = Update(S(n), A(n+1), B(n+1))
+- 状态 S(n+1)
+- 状态摘要核对
+- 一致：继续
+- 不一致：发现分歧
+
+Hard constraints:
+- no server, no central coordinator, no authoritative node, no cloud, no database, no load balancer
+- no shared-memory symbol and no arrow that transfers the full state from one peer to the other
+- no game characters, weapons, arena, decorative devices, mascots, or unrelated UI
+- no “MVP”, no “权威服务器”, no “最终裁决”, no “状态复制”
+- no long explanatory sentence, no slogan, no watermark, no logo
+- do not invent extra modules, labels, steps, formulas, or protocol names
+- preserve a clean textbook hierarchy and exact arrow meanings
+- output a high-resolution landscape PNG

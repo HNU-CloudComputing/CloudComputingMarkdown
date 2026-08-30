@@ -1,0 +1,149 @@
+Target image path: figures/sec4/gossip-spread.png
+Source TeX: section/sec4.tex
+Figure label: fig:gossip-rounds
+Created for imagegen: 2026-07-09
+Updated for imagegen: 2026-07-09, use hop labels 第1跳-第4跳
+Updated for imagegen: 2026-07-25, preserve at least one uninformed node in 第4跳 so the figure does not imply guaranteed full coverage after a fixed number of hops
+Accepted imagegen source: /Users/lin/.codex/generated_images/019f940d-1c89-76c2-8264-3c4a9219af5d/exec-dc03cbbe-e7fb-4f4a-a8fc-01201ea7a8a9.png
+Input images: Image 1 is figures/sec4/load-monitoring.png and Image 2 is figures/sec4/load-balancing.png; both are style references only, not edit targets.
+Revision note: Several radial-layout candidates dropped nodes in later panels. Generate a fresh four-panel figure using a strict 2-column by 4-row node grid in every panel. The grid makes all eight nodes explicitly countable and must remain identical across hops.
+
+Figure contract
+
+Figure id: fig:gossip-rounds
+Nearby section: section/sec4.tex, "去中心化广播：Gossip 协议"
+Why this figure exists:
+The textbook has just explained that centralized Pub/Sub creates a single forwarding point. The next mechanism is Gossip: a world Boss event should spread across many map-shard servers without every message passing through one center. PPT5 teaches this with an animation across several hops; the textbook needs a static figure that preserves that dynamic intuition.
+One teaching question:
+How does one world Boss event spread from one server to many servers over several Gossip hops when each informed server only contacts a few random peers?
+Beginner misconception to prevent:
+Students may think Gossip is either a normal one-hop broadcast from one sender to all nodes, or a reliable ordered protocol that must cover every node after a fixed number of hops. The figure should show that informed nodes independently continue forwarding to random targets, so coverage grows probabilistically by hops, but duplicates and stopping control are necessary.
+Diagram role:
+Timeline / mechanism path.
+Required mechanism:
+Four side-by-side panels show hop 1, hop 2, hop 3, and hop 4. A small network of 8 application servers is repeated in each panel. Gray nodes are unknown, green nodes have received the world Boss event. Dashed arrows show UDP gossip messages. The first panel has only one green source node. The second panel shows the source randomly notifying two gray nodes without redundant arrow labels. The third panel shows the newly informed nodes also sending to random targets. The fourth panel shows exactly seven green nodes and one gray node, with a muted gray-teal duplicate-message arrow, an orange de-duplication callout, and a much lighter gray TTL-stopped arrow. The remaining gray node is essential: it shows that four illustrated hops do not guarantee complete coverage.
+Required labels, exact and short:
+- 第1跳
+- 第2跳
+- 第3跳
+- 第4跳
+- 事件源
+- 已收到
+- 未收到
+- fanout=2
+- event_id去重
+- TTL停止
+- UDP消息
+Details to leave in the prose:
+The prose will explain O(log N) convergence, why redundant paths compensate for unreliable transport, and why Gossip is suitable for notification-style cross-server events but not for transaction or arbitration events.
+Caption job:
+The LaTeX caption will explain that Gossip expands coverage hop by hop: each informed server periodically picks fanout random peers and forwards the event; repeated arrivals are discarded by event_id, and TTL or maximum hops stop old events from circulating.
+Post-figure sentence:
+After the figure, the prose should state that fanout controls the speed-bandwidth tradeoff, while event_id and TTL control duplicate processing and stopping.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- one clear left-to-right reading path with four panels
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small panel labels only
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the same baseline as the text
+- no floating comma, no raised comma, no Latin comma inside Chinese sentences
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- use only the labels listed under Required labels; avoid long sentence labels inside the image
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, direction, and state changes, not just isolated icons
+- avoid decorative clipart, cute characters, mascots, stock-business people, and generic cloud icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request:
+Create a textbook mechanism diagram explaining hop-by-hop Gossip propagation for a world Boss event across application servers.
+
+Scene/backdrop:
+Light cream-white paper background. Four side-by-side panels across the page. Each panel repeats the same small cluster of 8 circular game-server nodes connected only by dashed arrows for this hop's messages.
+
+Teaching goal:
+Show that Gossip propagation is not a central broadcast. Once a server receives an event, it periodically and independently selects fanout random peers and forwards the event. Coverage grows over hops, while duplicates and old messages must be controlled.
+
+Beginner misconception to prevent:
+Do not make it look like one central server sends directly to everyone. Do not make it look like a strict ordered reliable protocol, and do not imply that a fixed number of hops must cover all nodes. The important idea is independent random forwarding plus high-probability spread over repeated hops.
+
+Composition:
+Four panels from left to right:
+1. Panel label "第1跳": one green node labeled "事件源"; seven gray nodes labeled conceptually as "未收到".
+2. Panel label "第2跳": source node sends two plain dashed teal arrows to two random gray nodes; do not put "UDP消息" labels on either arrow; label "fanout=2"; those two nodes turn green.
+3. Panel label "第3跳": the three green nodes each send dashed arrows to random peers; more nodes turn green; include one crossing dashed arrow to show random targets, but keep the image readable.
+4. Panel label "第4跳": exactly seven nodes are green and one lower-right node remains gray; show one muted gray-teal dashed UDP message arrow toward an already green node, with an orange callout labeled "event_id去重"; add small label "TTL停止" near a much lighter gray dashed old-arrow symbol. The duplicate message arrow is dimmed because it arrives but is discarded; the TTL arrow is even lighter because the expired message is no longer forwarded. Do not draw any arrow reaching the remaining gray node.
+
+Required visual elements:
+- 8 server nodes in each panel, same positions across panels
+- use the same eight fixed positions in every panel: a strict 2-column by 4-row grid
+- never remove, merge, hide, crop, or replace any of these eight nodes in panels 2-4
+- green nodes represent "已收到"
+- warm gray nodes represent "未收到"
+- dashed teal arrows represent "UDP消息"
+- orange accent only for the duplicate/stopping control callouts, never for the UDP data arrows
+- duplicate-message arrow is muted gray-teal; TTL-stopped arrow is a lighter gray
+- small legend in a corner with labels "已收到" and "未收到"
+
+Fresh-layout instructions:
+- draw the eight circular server nodes before drawing any arrows
+- each panel must visibly contain two straight columns and four straight rows, with one node at every grid intersection
+- keep this 2-by-4 grid identical in all four panels
+- panel 1: only the top-left node is green and labeled “事件源”
+- panel 2: top-left source plus exactly two target nodes are green; show two dashed arrows and “fanout=2”
+- panel 3: five or six nodes are green; draw only the arrows needed to show independent forwarding
+- panel 4: exactly seven nodes are green and the lower-right node remains warm gray; add one duplicate arrival cue and one TTL stop cue
+- route arrows through the whitespace between rows and columns; arrows may not replace or cover nodes
+
+Required labels, exact and short:
+- 第1跳
+- 第2跳
+- 第3跳
+- 第4跳
+- 事件源
+- 已收到
+- 未收到
+- fanout=2
+- event_id去重
+- TTL停止
+- UDP消息
+
+Main takeaway:
+Do not put a long takeaway sentence inside the image. Leave the full explanation to the LaTeX caption.
+
+Constraints:
+- final image should be landscape, suitable for full-width inclusion in a LaTeX textbook
+- count gate: each of the four panels must visibly contain exactly eight complete server nodes in an obvious 2-column by 4-row grid before adding arrows or callouts
+- the figure must remain readable when scaled to 0.95 text width
+- no long Chinese sentences in the image
+- no text overlap, no cropped labels, no watermark
+- no extra labels beyond the required list
+- avoid dense decorative network background
+- do not draw a central broker or Redis/Kafka icon
+- do not use a dark background
+
+Avoid:
+PPT-style colored cards, marketing infographic style, glossy icons, cute mascots, academic monotone line art, gradients, heavy shadows, large title banners, dense technical labels, floating punctuation, text squeezed into boxes.

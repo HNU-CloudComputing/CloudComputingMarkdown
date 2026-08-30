@@ -1,0 +1,155 @@
+Target image path: figures/sec4/recovery-timeline.png
+Source TeX: section/sec4.tex
+Figure label: fig:pitr-rpo-rto-timeline
+Created for imagegen: 2026-07-19
+Input image: Image 1 is the existing figure at figures/sec4/recovery-timeline.png and is the composition/style reference plus terminology-edit target. Recreate the diagram while preserving the aligned dual-track mechanism.
+
+# PITR 恢复的双时间轨道
+
+## Figure Contract
+
+- **Figure id:** `fig:pitr-rpo-rto-timeline`
+- **Nearby section:** `section/sec4.tex`，4.4“容错”中的“备份与恢复演练”
+- **Why this figure exists:** 纯文字很难同时讲清“数据库能恢复到哪一刻”和“系统需要多久恢复服务”。本图用两条对齐但语义不同的时间轨道拆开这两个问题。
+- **One teaching question:** PITR 如何利用基础备份与连续归档的 WAL 回到误删之前，以及实际数据丢失窗口、实际恢复耗时分别如何与 RPO、RTO 对照？
+- **Beginner misconception to prevent:**
+  1. 不要把 RPO、RTO 当成本次事故中实际测得的时间；它们是业务预先设定的目标上限。
+  2. 不要把 WAL 连续归档画成“每小时增量备份”；WAL 是沿时间连续保存的有序写入历史。
+  3. 不要让读者误以为加载基础备份后即可直接上线；恢复实例还必须重放 WAL、只读校验，再切换服务。
+- **Diagram role:** 双轨时间轴。上轨表示数据状态随业务时间演进，下轨表示事故发生后的恢复流程。
+- **Required mechanism:** 基础备份提供恢复基线；WAL 连续归档保存后续写入顺序；日志在误删前停止重放；隔离恢复通过只读校验后切换服务。
+- **Details to leave in prose:** WAL 链连续性检查的代码、用户资产与订单数量的具体验证逻辑、生产环境的写入冻结和数据补偿命令。
+- **Caption job:** 强调两条时间轨道回答不同问题，实际窗口和实际耗时都要小于等于对应目标。
+- **Post-figure conclusion:** RPO 约束可用恢复点与事故时刻的距离，RTO 约束发现故障、恢复、校验和切换的总时长。
+
+---
+
+## SYSTEM STYLE PROMPT
+
+You are creating a mechanism figure for a Chinese undergraduate cloud computing textbook.
+
+Create a polished, compact, landscape textbook illustration in a Chinese undergraduate teaching style. It must look like a carefully drawn textbook mechanism diagram, not a PowerPoint slide, corporate dashboard, poster, web UI, or collection of floating cards.
+
+Visual language:
+- warm white or very light cream paper background;
+- semi-flat educational illustration with restrained depth and subtle paper texture;
+- dark gray-blue outlines, approximately 2 px, clean and consistent;
+- low-saturation textbook palette: deep blue for normal data flow, teal green for successful recovery, muted orange for target constraints, red only for the erroneous deletion;
+- compact horizontal composition with strong reading order and little unused blank space;
+- short Chinese labels in a clear sans-serif typeface;
+- no gradients, neon colors, glossy 3D, glass effects, huge banners, decorative clouds, random shields, or meaningless arrows;
+- no cropped text, overlapping labels, invented terminology, or English paragraphs;
+- use icons only when they teach a mechanism: database cylinder, ordered WAL log strips, damaged backpack data, isolated recovery database, verification checklist, traffic switch;
+- all arrows must have one stable meaning: solid blue/teal arrows indicate chronological progression; a thin vertical guide aligns the accident on the two tracks; orange brackets indicate measured intervals checked against objectives.
+
+The final image should be suitable for placement at full text width in a printed textbook, approximately 2:1 landscape ratio, high resolution, with readable Chinese labels.
+
+---
+
+## USER CONTEXT PROMPT
+
+### Teaching goal
+
+Teach one mechanism only: PostgreSQL-style point-in-time recovery uses a base backup plus continuously archived WAL to restore data to the moment immediately before an erroneous deletion, while RPO and RTO constrain two different measured intervals.
+
+### Overall composition
+
+Build one integrated illustration with **two horizontally aligned time tracks**, not two unrelated panels and not rows of business cards.
+
+The upper track is labeled **“数据时间线”** and occupies about 55% of the image height. It explains where the restored data comes from.
+
+The lower track is labeled **“恢复流程线”** and occupies about 35% of the image height. It explains what happens after the error is discovered.
+
+The two tracks share the same horizontal direction from left to right. A thin vertical red guide at **15:20** connects the erroneous deletion on the upper track with the start of recovery on the lower track.
+
+### Upper track: 数据时间线
+
+Draw the following continuous sequence:
+
+1. At the far left, a complete database snapshot icon labeled exactly:
+   - `0:00 基础备份`
+
+2. From the base backup to the accident, draw a continuous ordered stream of small log strips or log pages, not isolated hourly dots. Label the stream exactly:
+   - `WAL 连续归档`
+
+3. Near the accident, place a green recovery marker immediately before the red accident marker. Label it exactly:
+   - `15:19:59 恢复点`
+
+4. At the red accident marker, show a small user data panel being damaged by an erroneous cleanup script. Use a restrained red cross and label exactly:
+   - `15:20 误删用户数据`
+
+5. Show a curved or backward recovery relation from the accident to the recovery point, but do not imply that production time itself travels backward. It should mean “choose this earlier state as the recovery target”. Label the relation briefly:
+   - `停止重放`
+
+6. Between the recovery point and the accident marker, draw a small orange measurement bracket labeled exactly:
+   - `实际数据丢失窗口 ≤ RPO`
+
+The top track must make clear that the base backup is the starting state and WAL is replayed in order until the recovery point. Do not show “增量备份” anywhere in this figure.
+
+### Lower track: 恢复流程线
+
+Start directly below the 15:20 accident guide and continue left-to-right through one connected operational path:
+
+1. Warning/inspection marker:
+   - `发现故障`
+
+2. Backup and archive selection with a small catalog/check icon:
+   - `选备份并校验`
+
+3. A separate recovery database inside a light dashed boundary labeled `隔离环境`; beneath or beside it, show the base backup being loaded and ordered WAL strips entering the database. Main step label:
+   - `隔离恢复`
+
+4. A short step immediately following recovery:
+   - `重放到点停止`
+
+5. A checklist beside a restored user asset panel:
+   - `只读校验`
+
+6. A controlled arrow from the verified recovery database to a healthy service/database endpoint:
+   - `切换服务`
+
+7. Under the entire lower recovery path, draw one orange measurement bracket from `发现故障` to `切换服务`, labeled exactly:
+   - `实际恢复耗时 ≤ RTO`
+
+### Required visual relationships
+
+- The base backup and WAL archive must visually feed the isolated recovery database.
+- WAL strips must remain ordered and continuous.
+- The replay must visibly stop at `15:19:59 恢复点`, before the red erroneous deletion.
+- `只读校验` must occur before `切换服务`.
+- RPO and RTO labels must be attached to different tracks and must include the `≤` relation.
+- The context should be subtle but concrete: user asset records before/after recovery. Do not draw detailed game characters or decorative battle scenes.
+
+### Required labels, exact and short
+
+- `数据时间线`
+- `恢复流程线`
+- `0:00 基础备份`
+- `WAL 连续归档`
+- `15:19:59 恢复点`
+- `15:20 误删用户数据`
+- `停止重放`
+- `实际数据丢失窗口 ≤ RPO`
+- `发现故障`
+- `选备份并校验`
+- `隔离环境`
+- `隔离恢复`
+- `重放到点停止`
+- `只读校验`
+- `切换服务`
+- `实际恢复耗时 ≤ RTO`
+
+### Omit
+
+- Do not draw incremental backups, replicas, Raft, 2PC, failover election, monitoring dashboards, source code, SQL statements, command-line windows, or vendor logos.
+- Do not define RPO/RTO with long sentences inside the image.
+- Do not draw the figure caption, explanatory summary, dashed summary box, footer sentence, or any full-width text strip inside the image. The caption is typeset separately in LaTeX.
+- Do not use separate top/bottom presentation cards with large empty margins.
+- Do not use arrows merely to decorate the layout.
+
+### Final visual test
+
+A beginner should be able to answer these two questions after viewing the figure:
+
+1. Why can the database stop immediately before the erroneous deletion? Because it restores a base backup and replays a continuous ordered WAL archive only up to the selected recovery point.
+2. Why are RPO and RTO different? RPO limits the actual lost-data window on the data timeline, while RTO limits the actual service-recovery duration on the recovery workflow timeline.

@@ -1,0 +1,172 @@
+# 三类分片并列示意图
+
+## 教学任务
+展示"分片是通用原则"：存储分片、计算分片、连接分片并列出现在同一个多机架构中，它们共享分片键 → 映射 → 路由的通用结构，但对象类型不同。
+
+## 图片位置
+sec4.tex 4.2 节头引言，紧跟"三类分片"概念段落之后。
+
+## 图片内容描述
+
+整体布局：上方是用户请求入口，下方分三列，每列展示一种分片类型。
+
+**顶部**：一组用户图标，代表"所有用户请求"。
+
+**三列并列**（从左到右）：
+
+1. **连接分片**（左列）
+   - 标题：连接分片
+   - 分片键标注：SessionID / 入口区域
+   - 画 3 个网关实例（Gateway A, Gateway B, Gateway C）
+   - 箭头从用户到网关实例，标注"按区域分配"
+   - 每个网关内部标注"维护在线会话"
+
+2. **计算分片**（中列）
+   - 标题：计算分片
+   - 分片键标注：ModuleID / RoomID
+   - 画 3 个逻辑服实例（逻辑服 A, 逻辑服 B, 逻辑服 C）
+   - 箭头从网关到逻辑服，标注"按模块/房间分配"
+   - 每个逻辑服内部标注"业务计算 / 消息广播"
+
+3. **存储分片**（右列）
+   - 标题：存储分片
+   - 分片键标注：UserID / OrgID
+   - 画 3 个数据库实例（DB Shard 1, DB Shard 2, DB Shard 3）
+   - 箭头从逻辑服到数据库，标注"按用户 ID 路由"
+   - 每个数据库内部标注"用户数据"
+
+**底部**：一行总结文字——"三类分片共享通用机制：分片键选择 → 映射策略 → 路由查找 → 负载监测 → 动态调整"
+
+## 视觉要求
+- 三列使用不同底色区分（如蓝/绿/橙），但风格统一
+- 箭头方向清晰：从左到右的数据流（用户 → 网关 → 逻辑服 → 数据库）
+- 每列内部结构对称，强调三类分片的并列关系
+- 中文标注，字体清晰
+- 与书稿已有图片风格一致（参考 figures/sec4/multi-node-challenges.png 的配色和布局风格）
+
+## 图注建议
+三类分片并列：连接按区域分配到网关实例，计算按模块分配到逻辑服实例，存储按用户 ID 分配到数据库实例。三者共享分片键、映射、路由、监测和动态调整的通用机制。
+
+---
+
+Target image path: figures/sec4/sharding-types.png
+Source TeX: section/sec4.tex
+Nearby section: 4.2 节头引言，三类分片概念段落之后
+Created for imagegen: 2026-07-07 13:30
+Input image: Image 1 is the existing figure at figures/sec4/sharding-types.png and is the composition/style reference plus terminology-edit target. Recreate it while preserving the three aligned sharding columns and the shared-mechanism strip.
+
+Figure contract:
+- Why this figure exists: 帮助读者把连接分片、计算分片、存储分片看成同一原则在不同对象上的应用。
+- One teaching question: 三类分片为什么共享“分片键、映射、路由”的通用结构？
+- Beginner misconception to prevent: 学生可能把三类分片理解成互不相关的三个功能模块，而不是同一分片原则在不同资源上的落点。
+- Diagram role: mechanism path with three parallel typed stages.
+- Required mechanism: 用户请求依次经过网关、逻辑服、数据库；每一列都有自己的分片键和实例集合，但都通过映射与路由把请求送到对应实例。
+- Details to leave in the prose: “负载监测、动态调整”等完整机制链放在图注或正文中，图内只保留底部短标签。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the key routing or mapping hints
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- match the existing Cloudbook sec4 figures, especially figures/sec4/multi-node-challenges.png: wide landscape 16:9, light paper background, three-column mechanism layout, restrained blue/teal/orange panels, compact labels
+
+Layout rules:
+- one clear left-to-right data path: 用户请求 -> 网关 -> 逻辑服 -> 数据库
+- three aligned columns under the path: 连接分片, 计算分片, 存储分片
+- no crossing arrows unless unavoidable
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the same baseline as the text
+- no floating comma, no raised comma, no Latin comma inside Chinese sentences
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; do not add extra Chinese sentences beyond the required labels
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- avoid decorative clipart, cute characters, mascots, stock-business people, and generic cloud icons unless they explain the mechanism
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Draw a wide 16:9 textbook mechanism diagram showing three sharding types in the same general online-system architecture: connection sharding, compute sharding, and storage sharding.
+
+Source context from the textbook:
+The section introduces sharding as a general principle. Students have just learned that a single server or database becomes a bottleneck, and now need to see that connection entries, business logic computation, and persistent data can all be partitioned by a key and routed to different instances.
+
+Teaching goal:
+Show that the three sharding types share the same structure: choose a sharding key, map the key to an instance, route the request, and later monitor load for adjustment.
+
+Beginner misconception to prevent:
+Connection sharding, compute sharding, and storage sharding are three unrelated technologies.
+
+Diagram type:
+Mechanism path with three parallel typed stages.
+
+Required visual structure:
+- Top-left: a small group of user icons labeled 用户请求.
+- Left-to-right main path: 用户请求 flows into three gateway boxes, then to three logic-server boxes, then to three database-shard cylinders.
+- Column 1: title 连接分片, key label SessionID / 区域, three boxes Gateway A, Gateway B, Gateway C, short arrow label 按区域.
+- Column 2: title 计算分片, key label ModuleID / RoomID, three boxes 逻辑服 A, 逻辑服 B, 逻辑服 C, short arrow label 按模块.
+- Column 3: title 存储分片, key label UserID / OrgID, three database cylinders DB Shard 1, DB Shard 2, DB Shard 3, short arrow label 按用户ID.
+- Inside each column, include a small mapping strip labeled 分片键 -> 映射 -> 路由. Keep it compact and aligned across all three columns.
+- Bottom shared strip: 通用机制, 分片键, 映射, 路由, 监测, 调整. Use separate short chips, not one long sentence.
+
+Required labels, exact and short:
+- 用户请求
+- 连接分片
+- SessionID / 区域
+- Gateway A
+- Gateway B
+- Gateway C
+- 按区域
+- 在线会话
+- 计算分片
+- ModuleID / RoomID
+- 逻辑服 A
+- 逻辑服 B
+- 逻辑服 C
+- 按模块
+- 业务计算
+- 消息广播
+- 存储分片
+- UserID / OrgID
+- DB Shard 1
+- DB Shard 2
+- DB Shard 3
+- 按用户ID
+- 用户数据
+- 通用机制
+- 分片键
+- 映射
+- 路由
+- 监测
+- 调整
+
+Main takeaway, if shown in the image:
+对象不同，机制相同
+
+Omit:
+- Do not include the long bottom sentence from the original brief inside the image.
+- Do not add extra icons, people, cloud logos, product logos, or decorative backgrounds.
+- Do not add text labels beyond the listed labels.
+
+Quality constraints:
+- the figure should contain enough concrete mechanism detail to support the textbook explanation
+- all labels must remain readable when scaled to full text width in a LaTeX book
+- no text overlap, no label touching arrows, no cropped elements
+- Chinese punctuation baseline must be normal; if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+- no watermark, no logo, no SVG/vector look, final output must be a raster textbook illustration

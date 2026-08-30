@@ -1,0 +1,109 @@
+Target image path: figures/sec6/admission-transaction.png
+Source TeX: section/sec6.tex
+Figure label: fig:admission-transaction-swimlane
+Created for imagegen: 2026-07-08 14:51
+
+Figure contract:
+- Nearby section: section/sec6.tex, "控制面：维护全局秩序".
+- Why this figure exists: The prose explains that admission must become a reversible reservation transaction. The figure must distinguish scheduler requests, service confirmations, rollback coordination, and backpressure failure causes.
+- One teaching question: When can an Attempt enter the system, and how does the scheduler undo partial reservations?
+- Beginner misconception to prevent: Do not imply that services call each other to rollback. Do not imply that backpressure happens after successful commit.
+- Diagram role: Swimlane transaction diagram.
+- Required mechanism: Queue peek, request/ack for model budget, sandbox lease, trajectory writer, final commit, pre-commit failure causes, scheduler-coordinated rollback, and requeue/waiting state.
+- Details to leave in the prose: Exact code, retry policy, RPC implementation.
+- Caption job: Explain that the admission transaction binds three resource promises into one reversible commitment.
+- Post-figure sentence: Service boundaries isolate failures; the transaction boundary keeps resource state consistent.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue for request/confirm, teal for commit, orange for failure/rollback/backpressure
+- thin confident outlines, consistent stroke width, soft paper texture
+- no glossy icons, no gradients, no heavy shadows
+
+Layout rules:
+- 16:9 landscape textbook figure
+- four horizontal swimlanes with left-to-right time flow
+- distinguish request arrows and confirmation arrows by line style or short req/ack tags
+- rollback arrows start from the scheduler lane and go to services, never service-to-service
+- keep labels in reserved boxes with padding; no overlaps
+- avoid large title banner
+
+Chinese typography rules:
+- clean Chinese sans-serif typography
+- no distorted Chinese characters, no cropped text
+- short labels only; no long explanatory sentences inside the figure
+
+Content rules:
+- Preserve the scheduler as the transaction coordinator.
+- Backpressure/failure signals must be shown before commit or beside the failed reservation step.
+- The green/teal "提交运行" exit must be separated from backpressure signals.
+- Show "全部撤销完成" before the failed Attempt returns to waiting or requeue.
+- No watermark, no logo, no invented services.
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+Before an Attempt starts, the scheduler checks and reserves model budget, sandbox lease, and trajectory-log writer. Only after all three services confirm reservation can the Attempt be marked running. If any step fails because budget is full, lease is unavailable, or log backlog is high, the scheduler releases already reserved resources and keeps the Attempt waiting.
+
+Teaching goal:
+Show a reversible admission transaction with clear coordinator/service roles: scheduler sends reservation requests, services confirm or fail, scheduler coordinates rollback, and only all confirmations allow commit.
+
+Beginner misconception to prevent:
+Do not show rollback as service-to-service cascade. Do not put backpressure next to successful commit. Do not make request and confirmation look like the same action.
+
+Diagram type:
+Swimlane transaction diagram.
+
+Required visual structure:
+- Four swimlanes from top to bottom: 调度器, 模型服务, 环境服务, 轨迹日志.
+- Left start: small queue labeled "队首 Attempt".
+- Draw a light shaded vertical band around the reservation phase labeled "准入事务".
+- Normal sequence:
+  1. 调度器 sends "请求预算" to 模型服务; 模型服务 performs "执行预留"; confirmation arrow returns "预算确认".
+  2. 调度器 sends "请求租约" to 环境服务; 环境服务 performs "执行预留"; confirmation arrow returns "租约确认".
+  3. 调度器 sends "请求写入" to 轨迹日志; 轨迹日志 performs "打开写入"; confirmation arrow returns "写入确认".
+  4. After all confirmations, a thick teal arrow leaves the transaction band labeled "提交运行".
+- Failure/backpressure causes appear beside their matching steps: 预算已满 beside model reservation, 租约不足 beside sandbox lease, 日志积压 beside trajectory log.
+- If any step fails, draw orange rollback requests from 调度器 to the services that were already reserved. Service nodes say "执行撤销".
+- Add a small join or status box after rollback labeled "全部撤销完成"; then arrow to "等待重试".
+- Do not draw any rollback arrows between services.
+
+Required labels, exact and short:
+- 调度器
+- 模型服务
+- 环境服务
+- 轨迹日志
+- 队首 Attempt
+- 准入事务
+- 请求预算
+- 预算确认
+- 请求租约
+- 租约确认
+- 请求写入
+- 写入确认
+- 执行预留
+- 打开写入
+- 提交运行
+- 发起撤销
+- 执行撤销
+- 全部撤销完成
+- 等待重试
+- 预算已满
+- 租约不足
+- 日志积压
+
+Avoid labels longer than 8 Chinese characters except "全部撤销完成". Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+先确认再启动
+
+Quality constraints:
+- no text overlap, no cropped labels, no arrows through labels
+- final image must remain readable at full text width in a LaTeX book
+- keep the distinction between request, confirmation, rollback, and commit visually clear
+- no decorative people, no generic cloud icons, no PPT card stack

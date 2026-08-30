@@ -1,0 +1,97 @@
+Target image path: figures/sec2/tcp-udp-realtime-imagegen-v3.png
+Source TeX: section/sec2.tex
+Figure label: fig:tcp-udp-realtime
+Created for imagegen: 2026-07-12
+
+FIGURE CONTRACT
+
+Why this figure exists:
+用同一次 A 丢失对比 TCP 和 UDP 对后续状态更新 B、C 的交付方式，由 TCP 队头阻塞自然推进到“应用层按消息语义取舍”。
+
+One teaching question:
+A 丢失后，B 和 C 为什么在 TCP 中等待，而在 UDP 中可以立即交付？
+
+Beginner misconception to prevent:
+- A、B、C 是应用层游戏状态更新，不是 TCP 包名。
+- UDP 不会自动重传；覆盖或确认与重传是应用层的选择。
+- 图中不得出现“ACK重传”。
+
+Diagram role:
+上下两条对齐的事件时间线对比图。
+
+Required mechanism:
+- 上方 TCP 时间线严格按四个时刻从左到右排列：t1 为 A 丢失，t2 为 B 到达接收缓冲区但不能交付，t3 为 C 到达接收缓冲区但不能交付，t4 为重传 A 到达后 A、B、C 按序交付。
+- B 和 C 在 TCP 中只能先进入一个虚线的“接收缓冲区”，其右侧有一道橙色“队头阻塞”隔挡。重传 A 到达后，隔挡解除，三个更新作为一组按序交付。
+- 下方 UDP 时间线使用完全相同的四个时刻：t1 为 A 丢失，t2 为 B 独立交付，t3 为 C 独立交付，t4 留空，明确表示不等待 A。
+- 右侧只放一个紧凑的“应用层取舍”区域：高频状态 -> 新状态覆盖；关键事件 -> 确认与重传 + 请求编号。
+- 底部只保留一句短结论“语义决定取舍”。
+
+Details to leave in prose:
+TCP 字节序号、RTO、拥塞控制、幂等处理、持久化。
+
+SYSTEM STYLE PROMPT
+
+Create a polished mechanism figure for a Chinese undergraduate cloud computing textbook. Use a light cream-white paper background, muted blue for TCP, muted teal for UDP, warm gray for shared structure, and orange only for packet loss and the blocking barrier. Use a restrained semi-flat textbook illustration style with thin consistent outlines, subtle paper texture, generous whitespace, and clear arrows. It must not look like a PowerPoint slide, marketing infographic, dashboard, glossy UI, or black-and-white research paper diagram.
+
+The canvas is wide landscape. Use exactly two aligned horizontal panels, TCP above and UDP below. Each panel is a true left-to-right event timeline with four evenly aligned time columns t1, t2, t3, t4. Technical chronology is the highest priority. Do not use decorative computers or server towers if they consume space; simple sender, buffer, and application symbols are preferable. No crossing arrows. No duplicated data symbols that obscure chronology. Every Chinese label must have reserved space and must not touch arrows or borders.
+
+Use clean Source Han Sans / Noto Sans CJK / PingFang-like Chinese typography. Render every required label verbatim. No malformed Chinese, no invented text, no long sentences, no floating punctuation, no watermark. Only TCP, UDP, A, B, C, t1, t2, t3, t4 may appear in Latin characters.
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width LaTeX textbook mechanism comparison figure
+Input image: Image 1 is a rejected draft and edit target. Keep only its restrained blue/teal textbook palette and two-panel comparison concept. Rebuild the internal layout completely. The rejected draft has incorrect UDP order, confusing duplicated B/C symbols, a backward retransmission arrow, and contradictory TCP delivery states; none of those errors may remain.
+
+Primary request:
+Redraw the figure as a strict four-column event timeline. A, B, C mean three application-level game state updates.
+
+Top TCP panel:
+- t1: show A with an orange loss mark and label “A 丢失”.
+- t2: show B inside a dashed “接收缓冲区”, waiting behind an orange “队头阻塞” barrier.
+- t3: show C joining B inside the same receive buffer, still waiting behind the barrier.
+- t4: show a clearly labeled “重传 A” arriving from left to right; then show one grouped output A B C with label “按序交付”. The barrier is visually released at this point. Do not also show a separate B C output.
+
+Bottom UDP panel:
+- t1: show A with the same orange loss mark and label “A 丢失”.
+- t2: show B moving directly to the application with label “独立交付”.
+- t3: show C moving directly to the application with label “独立交付”.
+- t4: show no retransmission and no waiting. Do not place C before B. Do not duplicate B or C before and after another event.
+
+Application decision area on the far right:
+- “高频状态” points to “新状态覆盖”.
+- “关键事件” points to both “确认与重传” and “请求编号”.
+
+Required labels, exact and short:
+- TCP
+- UDP
+- 游戏状态更新
+- t1
+- t2
+- t3
+- t4
+- A
+- B
+- C
+- A 丢失
+- 重传 A
+- 接收缓冲区
+- 队头阻塞
+- 按序交付
+- 独立交付
+- 应用层取舍
+- 高频状态
+- 新状态覆盖
+- 关键事件
+- 确认与重传
+- 请求编号
+- 语义决定取舍
+
+Hard constraints:
+- The UDP order must be exactly A lost, then B delivered, then C delivered.
+- The TCP order must be exactly A lost, B buffered, C buffered, retransmitted A arrives, then one A B C ordered delivery.
+- No second B C delivery in TCP.
+- No backward retransmission arrow.
+- No label “ACK重传”, “尾延迟”, “重传阻塞延迟”, or “物理时间”.
+- No extra explanatory sentences, no text overlap, no cropped content, no watermark.
+- The result must remain readable at 0.98 linewidth in a LaTeX textbook.

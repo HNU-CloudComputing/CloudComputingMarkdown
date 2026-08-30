@@ -1,0 +1,130 @@
+Target image path: figures/sec2/network-delay.png
+Source TeX: section/sec2.tex
+Figure label: fig:network-lat
+Created for imagegen: 2026-07-15 10:54
+
+FIGURE CONTRACT
+
+Nearby section:
+第二章章首用双人实时对战说明：客户端按照已经收到的状态绘制画面；网络延迟会使客户端暂时持有不同版本；服务器权威状态为后续裁决和同步提供统一依据。
+
+Why this figure exists:
+让读者在一个连续画面中看清旧版本、权威新版本和仍在网络中传输的新版本更新。
+
+One teaching question:
+网络延迟怎样使客户端 A 停留在 v41，而服务器和客户端 B 已经进入 v42？
+
+Beginner misconception to prevent:
+客户端画面不同来自收到的状态版本不同，不代表存在两个真实游戏世界。
+
+Diagram role:
+单排状态版本对比图，辅以状态传输路径。
+
+Required mechanism:
+三幅等高、等宽、占满画布的同一交火场景。客户端 A 为 v41，红方仍暴露在掩体外；服务器和客户端 B 为 v42，红方已经移动到掩体后。服务器发往客户端 A 的 v42 更新仍停留在虚线传输路径上，使用时钟符号和短标签突出网络延迟；服务器发往客户端 B 的 v42 更新已经到达。三幅场景地图、掩体和蓝方位置完全一致。
+
+Required labels:
+- 客户端 A
+- 服务器
+- 客户端 B
+- 状态 v41
+- 状态 v42
+- 网络延迟
+- 晚到更新
+
+Details to leave in the prose:
+攻击是否命中、业务裁决规则、客户端预测、插值、服务器和解、具体延迟数值以及收到更新后的完整第四幅画面。
+
+Caption job:
+说明不同客户端因收到的状态版本不同而显示不同位置，服务器权威更新继续推动各端收敛。
+
+Post-figure sentence:
+局部视图用于及时显示移动和射击，影响双方的结果仍需在服务器权威状态上完成校验与裁决。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must look like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration with clean technical structure
+- light cream-white paper background, muted blue, warm gray, restrained red for the opposing player, and a small amount of orange only for network delay
+- thin confident ink-like outlines, consistent stroke width, subtle paper texture
+- no gradients, no glossy icons, no heavy shadows, no cinematic game art, no cartoon poster styling
+- technically serious and readable for undergraduate beginners
+
+Layout rules:
+- wide landscape canvas, approximately 16:9
+- exactly one horizontal row containing three equal-width and equal-height arena panels
+- the three panels and the narrow arrow gaps between them must fill almost the entire canvas, including the lower-right area
+- use at least 85 percent of the canvas area for meaningful visual content
+- no second row, no fourth arena, no footer panel, no detached inset, no large unused quadrant, no large empty bottom band
+- align the top and bottom edges of all three panels
+- leave only narrow, intentional margins around the whole composition
+- reserve the small gaps between panels for delivery arrows and delay symbols
+- no large decorative title banner
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans, Noto Sans CJK, or PingFang
+- render only the exact short labels listed below
+- no long Chinese sentence, no slogan, no colloquial warning, no badge, no commentary
+- no distorted Chinese characters, wrong glyphs, cropped text, floating punctuation, or wavy baselines
+- keep labels separate from arrows and game objects
+
+Content rules:
+- preserve the state-version semantics exactly
+- all three panels show the identical simple arena, identical rectangular concrete cover, identical blue player, and identical red player
+- keep the blue player fixed in all three panels
+- change only the red player's position between v41 and v42
+- show one delayed v42 packet traveling from Server toward Client A
+- show Client B already matching Server at v42
+- no decorative cloud, no mascot, no alert triangle, no watermark, no logo, no random English text, no invented term
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: full-width landscape concept figure for a Chinese undergraduate cloud computing textbook
+
+Source context from the textbook:
+Two players exchange fire around one concrete cover object. Every client renders from the newest server state it has received. At the same observation moment, Client A still holds stale state v41, while the authoritative server and Client B already hold v42. The v42 update for Client A is visibly still in transit because of network delay.
+
+Teaching goal:
+Make the stale state, current authoritative state, and delayed in-transit update immediately visible without using explanatory sentences inside the image.
+
+Beginner misconception to prevent:
+Do not suggest that all local views are authoritative. State version labels must make Client A's view visibly stale and the Server's v42 visibly authoritative.
+
+Diagram type:
+Single-row state-version comparison with delivery arrows.
+
+Required visual structure:
+- Create exactly three large arena panels in one row: Client A on the left, Server in the center, Client B on the right.
+- Each panel occupies roughly one third of the width and nearly the full usable height. No content below the panels.
+- Use the same restrained game arena in every panel: pale neutral ground, one blue player on the left, one rectangular concrete cover in the center, one red player whose position changes. Omit buildings, clouds, decorative scenery, extra props, muzzle flashes, UI chrome, and ornamental backgrounds.
+- Client A panel: exact labels “客户端 A” and “状态 v41”. The red player is visibly exposed to the right of the cover.
+- Server panel: exact labels “服务器” and “状态 v42”. The red player has moved behind the cover. Use a slightly stronger dark-blue panel outline to indicate authority, without crowns, shields, badges, or slogans.
+- Client B panel: exact labels “客户端 B” and “状态 v42”. The red player position exactly matches the Server panel.
+- Between Server and Client A, draw one bold dashed orange arrow pointing toward Client A. Place one small packet token labeled “状态 v42” on the arrow, plus a small clock symbol and the exact short labels “网络延迟” and “晚到更新”. This must be the strongest visual emphasis after the three state versions.
+- Between Server and Client B, draw one thin solid blue delivery arrow toward Client B to show that v42 has arrived. Do not add another label there.
+- The version labels, player positions, and in-transit packet must tell the entire story. Do not add a convergence panel or any element below the three panels.
+
+Required labels, exact and short:
+- 客户端 A
+- 服务器
+- 客户端 B
+- 状态 v41
+- 状态 v42
+- 网络延迟
+- 晚到更新
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Quality constraints:
+- fill the complete landscape composition with the three panels; absolutely no large blank region in the lower-right or lower half
+- network delay is immediately visible from the clock and the v42 packet still on the dashed arrow toward Client A
+- stale v41 and current v42 are unmistakable from both version labels and the red player's position
+- exact Chinese labels, no misspellings, no duplicated or extra text
+- no text overlap, no labels touching arrows, no cropped elements
+- identical arena geometry and character identity across all three panels
+- readable at full text width in LaTeX
+- no PowerPoint-style cards, no marketing infographic, no long sentence, no phrase such as “不是看错”, no warning badge, no watermark

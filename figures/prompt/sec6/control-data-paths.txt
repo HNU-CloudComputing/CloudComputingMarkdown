@@ -1,0 +1,108 @@
+Target image path: figures/sec6/control-data-paths.png
+Source TeX: section/sec6.tex
+Figure label: fig:interaction-control-data-plane-split
+Created for imagegen: 2026-07-08 14:51
+
+Figure contract:
+- Nearby section: section/sec6.tex, "交互面：分离控制路径与高频数据路径".
+- Why this figure exists: The prose compares a central forwarding bottleneck with split control and data paths. The figure must show that high-frequency I/O goes through Agent Service and I/O Gateway, while ownership checks remain inside the gateway.
+- One teaching question: How do control path and high-frequency data path separate without losing routing, lease, and locking checks?
+- Beginner misconception to prevent: Do not imply that data path bypasses Agent Service or permission checks. Do not place lease validation outside the gateway.
+- Diagram role: Architecture comparison and mechanism path.
+- Required mechanism: Naive central forwarding bottleneck, right-side split architecture, Agent Service in hot path, I/O Gateway containing route table, lease-version validation, and sandbox lock, then Sandbox execution endpoint.
+- Details to leave in the prose: Connection pooling, sharding algorithm, exact API protocol.
+- Caption job: Explain that lifecycle control stays low-frequency, while high-frequency action/observation data uses gateway routing with lease checks.
+- Post-figure sentence: Control constraints move to the gateway, not away from the system.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue for control path, teal for hot data path, small orange for stale lease rejection and bottleneck
+- thin confident outlines, consistent stroke width, soft paper texture
+- no glossy icons, no gradients, no heavy shadows
+
+Layout rules:
+- 16:9 landscape textbook figure
+- left small panel for naive central forwarding, right larger panel for split path
+- blue thin arrows for control path; thick teal arrows for hot data path; orange blocked branch for stale lease
+- all labels in reserved areas; no overlaps; no cropped text
+- avoid a large decorative title banner
+
+Chinese typography rules:
+- clean Chinese sans-serif typography
+- no distorted Chinese characters, no cropped text
+- short labels only; no long sentences in the image
+
+Content rules:
+- The hot path must be: 模型 -> Agent 服务 -> I/O 网关 -> Sandbox 执行端.
+- I/O 网关 must contain "路由表", "租约校验", and "沙箱锁" inside the gateway boundary.
+- Sandbox boxes contain "执行端" only, not "沙箱锁".
+- Route table should include "SandboxId" and "租约版本" short fields.
+- If API Server is shown, put it inside a "控制面" boundary as "控制面接口", not as a peer of control plane.
+- No watermark, no logo, no invented components.
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+The text explains that sending screenshots, command output, file transfer, and mouse/keyboard events through a central controller overloads the control plane. The split design keeps low-frequency lifecycle operations in the control path, while high-frequency actions and observations go through Agent Service and an I/O gateway. The gateway routes by SandboxId, checks lease version, and uses a sandbox lock before forwarding to the sandbox execution endpoint.
+
+Teaching goal:
+Show that the data path is shorter and more scalable, but still guarded by routing, lease validation, and sandbox locking inside the I/O gateway.
+
+Beginner misconception to prevent:
+Do not imply direct model-to-sandbox access. Do not imply that bypassing the central controller bypasses authorization or lease checks.
+
+Diagram type:
+Architecture comparison and path diagram.
+
+Required visual structure:
+- Left panel labeled "朴素转发": 模型 sends 截图, 命令输出, 文件内容 through 中心控制器 to Sandbox; mark "瓶颈" near the central controller.
+- Right panel labeled "路径分离".
+- Top right: a "控制面" boundary containing "控制面接口"; blue arrows to lifecycle labels 创建, 删除, 策略, 心跳.
+- Lower right hot path: 模型 -> Agent 服务 -> I/O 网关 -> Sandbox A / Sandbox B.
+- The I/O 网关 is a large module containing three stacked small modules: 路由表, 租约校验, 沙箱锁.
+- 路由表 table contains columns or short fields: SandboxId, 执行端, 租约版本, with example versions v17 and v18.
+- Each Sandbox box contains only "执行端".
+- Add an orange branch "过期请求" entering I/O 网关 and being blocked at "租约校验", labeled "旧租约拒绝".
+
+Required labels, exact and short:
+- 朴素转发
+- 路径分离
+- 中心控制器
+- 控制面
+- 控制面接口
+- I/O 网关
+- 模型
+- Agent 服务
+- Sandbox
+- 执行端
+- 路由表
+- SandboxId
+- 租约版本
+- 租约校验
+- 沙箱锁
+- 创建
+- 删除
+- 策略
+- 心跳
+- 截图
+- 命令输出
+- 文件内容
+- 过期请求
+- 旧租约拒绝
+- 瓶颈
+
+Avoid labels longer than 8 Chinese characters except "中心控制器" and "控制面接口". Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+网关内校验
+
+Quality constraints:
+- no text overlap, no cropped labels, no arrows through labels
+- final image must remain readable at full text width in a LaTeX book
+- keep the left/right comparison visually clear
+- no marketing cloud poster, no dashboard, no decorative people

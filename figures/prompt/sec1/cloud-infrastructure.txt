@@ -1,0 +1,148 @@
+Target image path: figures/sec1/cloud-infrastructure.png
+Source TeX: section/sec1.tex
+Figure label: fig:sec1-cloud-path
+Created for imagegen: 2026-07-07
+Generated image source: /Users/lin/.codex/generated_images/019f3a2f-6702-7ad0-8e1b-afdd3cf7d448/ig_0784df3f6f6db22d016a4cdea2df4c8191bcddba672c697d36.png
+
+FIGURE BRIEF
+
+正文锚点：
+本图对应第一章 1.3 “看见‘云’：从一台电脑到数据中心”。正文正在解释：玩家按下按键后，操作会被客户端编码成网络消息，先经过本机网卡和接入网络，再进入运营商网络、核心路由器和长距离光纤，最终到达云数据中心中的服务入口；服务器返回裁决结果时，也沿类似路径返回客户端。后文进一步说明数据中心由服务器、存储、交换机、光模块、制冷和运维系统共同构成。
+
+教学目标：
+帮助本科生建立“云有物理支撑”的第一层直觉：一次游戏操作不是直接飞到抽象云朵里，而是沿着具体网络路径到达数据中心，再由数据中心里的计算、网络、存储和运维设施承接。
+
+读者误区：
+读者可能把云理解成一个抽象图标，或把云服务等同于“一台更大的服务器”。本图要拦住这个误解：云是一组被软件统一组织起来的真实基础设施。
+
+图型选择：
+路径泳道图。只画一次操作请求和一次结果返回经过的基础设施路径，不画完整云架构、不画 Kubernetes、不画数据库产品。
+
+必须出现：
+玩家设备、客户端、网卡、接入网络、骨干网络、核心路由器、长距离光纤、数据中心、服务入口、服务器、交换机、存储、制冷、运维监控；请求箭头从左到右，返回箭头从右到左；数据中心边界必须清楚。
+
+必须省略：
+不画云厂商 logo，不画 Kubernetes、Docker、Redis、PostgreSQL，不画长段解释，不画营销式云朵，不画可爱人物，不画复杂全球地图。
+
+精确短标签：
+- 玩家设备
+- 客户端
+- 网卡
+- 接入网络
+- 骨干网络
+- 核心路由器
+- 长距离光纤
+- 数据中心
+- 服务入口
+- 服务器
+- 交换机
+- 存储
+- 制冷
+- 运维监控
+- 操作请求
+- 裁决结果
+- 物理支撑
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- one clear reading path with arrows; no crossing arrows unless unavoidable
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- avoid a large decorative title banner; use small title only if needed
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- Chinese punctuation must use full-width Chinese punctuation and stay on the same baseline as the text
+- no floating comma, no raised comma, no Latin comma inside Chinese sentences
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if a sentence would be long, replace it with a short label or leave the detailed explanation to the caption
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- avoid decorative clipart, cute characters, mascots, stock-business people, and generic cloud icons unless they explain the mechanism
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+第一章正在解释“云”并不只是代码运行的位置。一次玩家操作会从客户端出发，经过本机网卡、接入网络、骨干网络、核心路由器和长距离光纤，到达云数据中心的服务入口。数据中心内部由服务器、交换机、存储、制冷和运维监控共同支撑在线服务。
+
+Teaching goal:
+Create a path-lane concept figure that teaches one thing: a player action reaches cloud service through concrete physical infrastructure, and the cloud service is backed by an organized data center.
+
+Beginner misconception to prevent:
+Do not imply that cloud is a vague cloud icon or a single huge server. The figure must show a concrete path and a clear data center boundary.
+
+Diagram type:
+Path lane diagram.
+
+Required visual structure:
+- Use a horizontal textbook canvas, 1536 by 1024 aspect ratio.
+- Left side: a desktop or laptop-like player device area labeled “玩家设备”, with an internal small box labeled “客户端” and a small network card icon labeled “网卡”.
+- Middle path: three sequential infrastructure segments from left to right:
+  1. “接入网络”
+  2. “骨干网络” with a router node labeled “核心路由器”
+  3. “长距离光纤”
+- Right side: a large rounded boundary labeled “数据中心”.
+- Inside the data center boundary, draw a clean mini scene with a front service gateway labeled “服务入口”, several server rack blocks labeled “服务器”, network switch blocks labeled “交换机”, a storage block labeled “存储”, a cooling pipe or cooling unit labeled “制冷”, and a small monitor panel labeled “运维监控”.
+- A blue arrow labeled “操作请求” travels left to right from 客户端 through the network path into 服务入口.
+- A teal arrow labeled “裁决结果” returns right to left from 服务入口 back to 客户端, below the request arrow.
+- Place one small orange takeaway label near the data center boundary: “物理支撑”.
+- Use clear lane spacing so the two arrows do not overlap labels or devices.
+
+Required labels, exact and short:
+- 玩家设备
+- 客户端
+- 网卡
+- 接入网络
+- 骨干网络
+- 核心路由器
+- 长距离光纤
+- 数据中心
+- 服务入口
+- 服务器
+- 交换机
+- 存储
+- 制冷
+- 运维监控
+- 操作请求
+- 裁决结果
+- 物理支撑
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+物理支撑
+
+Negative requirements:
+- Do not show Kubernetes.
+- Do not show Docker.
+- Do not show Redis.
+- Do not show PostgreSQL.
+- Do not show cloud vendor logos.
+- Do not show a big decorative cloud icon as the main subject.
+- Do not show stock-business people or cartoon mascots.
+- Do not show a world map.
+- Do not use 3D glossy server icons.
+- Do not add English labels except unavoidable tiny hardware hints; prefer Chinese labels only.
+
+Quality constraints:
+- the figure should contain enough concrete infrastructure detail to support the textbook explanation
+- no text overlap, no label touching arrows, no cropped elements
+- Chinese punctuation baseline must be normal; if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+- final image must remain readable after being scaled to full text width in a LaTeX book

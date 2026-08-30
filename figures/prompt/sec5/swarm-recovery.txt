@@ -1,0 +1,137 @@
+Target image path: figures/sec5/swarm-recovery.png
+Source TeX: section/sec5.tex
+Figure label: fig:swarm-cluster
+Updated for imagegen: 2026-06-26
+
+Figure contract:
+Figure id: fig:swarm-cluster
+Nearby section: section/sec5.tex, \subsubsection{从单机到多机：Docker Swarm 与集群编排}
+Why this figure exists: 帮助本科生看清 Swarm 集群的三个核心能力：Manager 角色维护全局期望状态并做调度决策，加入同一 overlay 网络的服务任务可通过服务名跨节点访问，Worker 节点故障时 Manager 在存活节点上补回无状态副本。
+One teaching question: 当一台 Worker 节点宕机后，Swarm Manager 如何感知副本丢失并在另一台节点上恢复服务？
+Beginner misconception to prevent: 读者可能误以为 Swarm 中每台机器仍然独立运行各自的容器（类似在每台机器上各跑一次 Compose），没有全局调度。另一类误解是把 Manager 里的 postgres、redis 看成控制面组件。实际上 Manager 是节点角色，这台节点既承担控制职责，也可以运行被约束到该节点上的业务任务。
+Diagram role: Architecture with state transition (normal state → failure → recovery)
+Required mechanism: Manager 角色持有全局期望状态（哪个服务需要几个副本）；Manager 将副本分配到资源充足的 Worker 节点；postgres 与 redis 是运行在 Manager 节点上的业务任务，不是 Manager 控制职责本身；postgres、redis、lobby-api、gateway 都接入同一张 overlay 网络，跨节点服务名解析对应用透明；Worker-A 故障后 Manager 检测到无状态副本缺失，在 Worker-B 上启动替代副本；外部流量通过集群 ingress 入口进入 gateway，不绑定某一台 Worker。
+Required labels: Manager 节点, 控制职责, 业务任务, Worker-A, Worker-B, lobby-api, gateway, postgres, redis, overlay 网络, 服务名访问, 调度决策, 故障检测, 副本补回, 玩家客户端, ingress 入口, 副本1, 副本2, 补回, 故障
+Details to leave in the prose: 不在图中解释 VXLAN 封装细节、Raft 一致性协议（Manager 高可用）、具体的心跳超时参数、docker stack deploy 命令语法。
+Caption job: 说明 Manager 角色调度服务副本，overlay 网络连接加入该网络的服务任务并支持服务名访问，节点故障时 Manager 在存活节点上自动补回无状态副本以维持期望状态。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- Use a two-panel layout: left panel shows normal operation (all nodes healthy), right panel shows failure recovery (Worker-A down, lost stateless replicas replaced on Worker-B). The two panels share a horizontal timeline arrow or a simple "故障发生" divider.
+- Each panel contains: one Manager node (top-center) and two Worker nodes (bottom-left and bottom-right).
+- Manager node is visually distinct and split into two clearly separated zones: a top zone labeled "控制职责" and a lower zone labeled "业务任务" containing postgres and redis.
+- The "控制职责" zone must contain only the label "控制职责" and a simple gear icon. Do not add bullet lists or extra explanatory text inside it.
+- Inside each Worker node: rounded rectangles representing containers, with service names labeled.
+- A large pale dashed rounded rectangle labeled "overlay 网络" must surround the whole Manager node and both Worker nodes as one cross-node logical network area. This intentionally includes the Manager node so postgres and redis are not left outside the overlay. Do not draw the overlay boundary only around Worker-A and Worker-B.
+- Thin arrows from Manager to Workers labeled "调度决策" in left panel.
+- In right panel: Worker-A is grayed out or marked with an orange X; an orange arrow from Manager to Worker-B labeled "副本补回" shows recovery.
+- External client (玩家客户端) enters through a neutral cluster-level label "ingress 入口", then points to gateway. Do not make ingress look bound to Worker-A only.
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- DO NOT include any banner, tagline, or conclusion text at the bottom of the figure
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Create a Docker Swarm cluster topology figure showing the contrast between normal operation and failure recovery. The figure must make four things visually obvious: (1) Manager node has a separate control-role area and may also host business tasks, (2) Manager controls scheduling decisions across multiple Workers, (3) overlay network connects all stack service tasks that joined the network, including postgres and redis on the Manager node, (4) when a Worker fails, Manager automatically reschedules lost stateless replicas onto surviving Workers.
+
+Source context from the textbook:
+The section introduces Docker Swarm as the step between single-machine Compose and Kubernetes. A game backend with four components (PostgreSQL, Redis, lobby-api, gateway) is deployed to a three-node cluster (1 Manager + 2 Workers). PostgreSQL and Redis are business tasks constrained to the Manager node in this teaching example; they are not part of the Manager control plane. lobby-api and gateway each have 2 replicas distributed across the Workers. When Worker-A fails, Manager detects the lost stateless replicas and starts replacements on Worker-B, maintaining the desired replica count. The stack services communicate through an overlay network that provides cross-node DNS resolution using service names.
+
+Teaching goal:
+Show the "desired state → actual state" reconciliation loop that distinguishes cluster orchestration from single-machine orchestration. The reader should immediately see: (1) Manager has a global view and makes placement decisions, (2) Manager control role is different from business tasks running on the Manager node, (3) service tasks on different nodes are logically connected by the overlay network, (4) Worker failure triggers automatic recovery for lost stateless replicas without human intervention.
+
+Beginner misconception to prevent:
+The figure must NOT show Workers as independent islands. The overlay network boundary must visually encompass postgres, redis, lobby-api, and gateway service tasks, making it clear they share a logical network. The Manager must have visible control arrows to Workers, but postgres and redis must be visually separated as business tasks running on the Manager node, not as control-plane internals. Ingress must not appear tied to only Worker-A.
+
+Diagram type:
+Architecture with state transition, landscape 16:9 textbook diagram.
+
+Required visual structure:
+- Two panels side by side, separated by a thin vertical divider or a small label "故障发生 →"
+- LEFT PANEL (normal state):
+  - Top-center: rounded rectangle labeled "Manager 节点", slightly larger, with a teal/blue outline. Inside it, draw two separated zones: top small zone "控制职责" with only a small gear icon and no extra text; lower zone "业务任务" containing small service boxes "postgres" and "redis".
+  - Bottom-left: rounded rectangle labeled "Worker-A" containing two small container boxes: "lobby-api (副本1)" and "gateway (副本1)".
+  - Bottom-right: rounded rectangle labeled "Worker-B" containing two small container boxes: "lobby-api (副本2)" and "gateway (副本2)".
+  - A large pale dashed rounded rectangle labeled "overlay 网络" surrounds the Manager node, Worker-A, and Worker-B together as one cross-node logical network area. This is required so postgres and redis are visibly inside the overlay area. Do not draw a smaller dashed box only around Worker-A and Worker-B.
+  - Thin blue arrows from Manager to Worker-A and Worker-B, labeled "调度决策".
+  - Top-left: small icon "玩家客户端" with arrow labeled "ingress 入口" entering a neutral cluster entry point, then pointing toward gateway. Do not point the entry only to Worker-A.
+  - Inside the overlay network: a few thin gray lines between gateway, lobby-api, postgres, and redis labeled "服务名访问".
+- RIGHT PANEL (failure recovery):
+  - Same layout, but Worker-A is grayed out with an orange "X" or "故障" label.
+  - Worker-B now contains FOUR containers: the original "lobby-api (副本2)" and "gateway (副本2)", plus newly added "lobby-api (补回)" and "gateway (补回)" highlighted with a subtle orange or teal border.
+  - An orange dashed arrow from Manager to Worker-B labeled "副本补回".
+  - Manager has a small label "故障检测" with an arrow pointing to the grayed Worker-A.
+  - The overlay network dashed rectangle still encompasses active service task boxes on Manager node and Worker-B. Worker-A is grayed out to show its tasks are no longer active.
+
+Required labels, exact and short:
+- Manager
+- Manager 节点
+- 控制职责
+- 业务任务
+- Worker-A
+- Worker-B
+- lobby-api
+- gateway
+- postgres
+- redis
+- overlay 网络
+- 服务名访问
+- 调度决策
+- 故障检测
+- 副本补回
+- 玩家客户端
+- ingress 入口
+- 副本1
+- 副本2
+- 补回
+- 故障
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Quality constraints:
+- In the normal-state panel, Worker-A must contain exactly two labels: "lobby-api" with "副本1", and "gateway" with "副本1". Worker-B must contain exactly two labels: "lobby-api" with "副本2", and "gateway" with "副本2". Do not mix up the replica numbers.
+- In the Manager node, "控制职责" must be visually separate from "业务任务"; postgres and redis must sit in the business-task zone, not inside the control-role zone. The control zone must not contain bullets, long phrases, or extra text beyond "控制职责".
+- In the failure-recovery panel, Worker-A must be gray and failed, still showing the lost "副本1" containers. Worker-B must show original "副本2" containers plus new replacement containers marked "补回".
+- The overlay network boundary must visibly include the Manager node and both Worker nodes together. Reject any layout where the dashed overlay rectangle starts below the Manager node and misses postgres/redis.
+- Manager's control role must be visually clear through arrows and positioning.
+- Ingress must be a cluster-level entry path, not an arrow that implies only Worker-A can receive external traffic.
+- The failure/recovery panel must show a clear before/after contrast with the normal panel.
+- Worker-A in the recovery panel must be obviously non-functional (grayed, crossed, or faded).
+- New replicas on Worker-B should be visually distinguishable from original replicas (subtle border color or "补回" label).
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+
+Avoid:
+- no bottom banner with conclusion text
+- no PPT-style colored summary cards
+- no marketing infographic style
+- no cute mascot, no stock business people, no decorative cloud icons
+- no watermark, no logo, no random English text, no invented terms
+- no VXLAN encapsulation details (those belong in chapter 6)
+- no Raft consensus details for Manager HA

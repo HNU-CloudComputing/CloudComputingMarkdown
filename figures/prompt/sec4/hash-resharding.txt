@@ -1,0 +1,109 @@
+Target image path: figures/sec4/hash-resharding.png
+Source TeX: section/sec4.tex
+Figure label: fig:hash_sharding_rehash_cost
+Created for imagegen: 2026-07-18
+Change request: 将图中所有"playerID"改为"userID"，"玩家"改为"用户"，保持其余结构与视觉不变。
+
+FIGURE CONTRACT
+
+Figure id: fig:hash_sharding_rehash_cost
+Nearby section: section/sec4.tex, 分片键与映射策略，哈希分片扩容代价
+Why this figure exists: 直观展示普通哈希分片从4个分片扩容到5个时，大量用户的分片归属需要重新计算，说明取模哈希扩容的不稳定性。
+One teaching question: 为什么取模基数从4变成5时，即使用户ID和哈希函数不变，目标分片也可能改变？
+Beginner misconception to prevent: 学生可能以为扩容只需要在新分片上放新数据，旧数据可以原地不动。
+Diagram role: 前后对比+归属迁移示意。
+Required mechanism: 扩容前 userID % 4，扩容后 userID % 5；用连续用户ID（107-112）展示旧归属与新归属的差异。
+Details to leave in prose: 一致性哈希如何解决这个问题的机制在下一节展开。
+Caption job: 普通哈希分片扩容会改变取模基数，导致大量用户的分片归属需要重新计算。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for changed归属
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+
+Layout rules:
+- one clear left-to-right before/after comparison
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label
+- keep all important content inside the safe area with wide margins
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels
+
+Content rules:
+- preserve the technical meaning from the source text
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Draw a wide landscape textbook diagram showing hash-based sharding rehash cost when expanding from 4 shards to 5 shards.
+
+Teaching goal:
+Show that changing the modulo base causes many existing users to be remapped to different shards, even though their user IDs and the hash function have not changed.
+
+Beginner misconception to prevent:
+Adding a shard only affects new data.
+
+Diagram type:
+Before/after comparison with migration arrows.
+
+Required visual structure:
+- TOP LEFT: a rounded rectangle labeled "扩容前" containing the formula "userID % 4" and "4 个分片" below it.
+- TOP RIGHT: a rounded rectangle labeled "扩容后" containing the formula "userID % 5" and "5 个分片" below it.
+- CENTER: an orange arrow labeled "分片数改变" pointing from left to right between the two formulas.
+
+- MIDDLE: Six user ID circles labeled 107, 108, 109, 110, 111, 112 in a horizontal row.
+- Below each user circle, two labels stacked:
+  - top label in gray: "旧 -> 分片 X"
+  - bottom label in orange: "新 -> 分片 Y"
+- Draw curved arrows from each user circle down to the corresponding old shard (left group) and new shard (right group).
+- Use blue arrows for unchanged mappings and orange arrows for changed mappings.
+
+- BOTTOM LEFT: four rectangular blocks labeled "旧分片 0", "旧分片 1", "旧分片 2", "旧分片 3".
+- BOTTOM RIGHT: five rectangular blocks labeled "新分片 0", "新分片 1", "新分片 2", "新分片 3", "新分片 4".
+
+- RIGHT SIDE: a small legend box labeled "橙色 = 归属变化".
+
+- BOTTOM CENTER: a caption strip reading "取模基数一变，很多用户要重新搬家".
+
+Required labels, exact and short:
+- 扩容前
+- userID % 4
+- 4 个分片
+- 分片数改变
+- 扩容后
+- userID % 5
+- 5 个分片
+- 107, 108, 109, 110, 111, 112
+- 旧 -> 分片 X
+- 新 -> 分片 Y
+- 旧分片 0, 旧分片 1, 旧分片 2, 旧分片 3
+- 新分片 0, 新分片 1, 新分片 2, 新分片 3, 新分片 4
+- 橙色 = 归属变化
+- 取模基数一变，很多用户要重新搬家
+
+Main takeaway, if shown in the image:
+取模基数改变导致大量用户重新映射
+
+Quality constraints:
+- all labels must remain readable when scaled to full text width in a LaTeX book
+- no text overlap, no label touching arrows, no cropped elements
+- no watermark, no logo
+- the orange legend and orange changed-mapping arrows must be visually consistent
+
+Avoid:
+- no PPT-style colored cards
+- no marketing infographic style
+- no decorative clipart
+- no game-specific terms like "player" or "playerID"

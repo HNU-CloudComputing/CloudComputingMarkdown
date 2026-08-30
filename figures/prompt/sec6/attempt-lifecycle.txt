@@ -1,0 +1,106 @@
+Target image path: figures/sec6/attempt-lifecycle.png
+Source TeX: section/sec6.tex
+Figure label: fig:attempt-state-machine
+Created for imagegen: 2026-07-08 14:51
+
+Figure contract:
+- Nearby section: section/sec6.tex, "总体架构：先分清任务状态、资源状态和轨迹状态".
+- Why this figure exists: The prose explains that an Attempt has many states and that every persisted transition needs a CAS-style version check. The figure must show lifecycle states without making the version check look like a one-time entry gate.
+- One teaching question: How does an Attempt keep one accepted timeline when normal execution, waiting, timeout, cancellation, failure, and verifier abnormal exit may race?
+- Beginner misconception to prevent: Do not imply that CAS is only checked once at startup. Do not merge verifier abnormal exit into model task failure.
+- Diagram role: State lifecycle.
+- Required mechanism: Normal path, waiting subpath, direct task failure, verification outcomes, timeout/cancel terminal states, and a global CAS constraint on every state write-back.
+- Details to leave in the prose: Exact storage schema, timeout durations, retry implementation.
+- Caption job: Explain that state transitions, timeout branches, and CAS version checks keep one accepted task timeline.
+- Post-figure sentence: Admission, lease, timeout recycling, and verification attribution attach to the same Attempt record.
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue and teal for normal and attribution transitions, warm gray for secondary structure, small orange for timeout and cancellation
+- thin confident ink-like outlines, consistent stroke width, soft paper texture
+- no glossy icons, no gradients, no heavy drop shadows, no decorative people
+
+Layout rules:
+- 16:9 landscape textbook figure
+- clear left-to-right main lifecycle path with lower waiting branches and lower terminal branches
+- every label sits in a reserved label box with padding
+- no text overlaps arrows, borders, icons, or other text
+- avoid a large title banner
+
+Chinese typography rules:
+- clean Chinese sans-serif typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no cropped text, no wavy baselines
+- short labels only, preferably 2-8 Chinese characters
+- no long Chinese sentences inside the diagram
+
+Content rules:
+- Do NOT draw "版本检查" as a lifecycle node or entry gate.
+- Do NOT draw an arrow from "版本检查" to "等待调度".
+- Show CAS as a global constraint box or legend in an empty corner: "CAS 检查", with small labels "版本号" and "租约持有者".
+- Optionally put tiny "CAS" markers on a few representative transition arrows, but do not repeat long text on every arrow.
+- Terminal states use double borders or a clearly distinct style.
+- Green or teal attribution arrows must be explained by a legend item.
+- No watermark, no logo, no invented states.
+
+USER CONTEXT PROMPT
+
+Source context from the textbook:
+The text says an Attempt may be waiting for scheduling, creating an environment, ready, running, waiting for the model, waiting for a tool, verifying, succeeded, failed, cancelled, or timed out. It also says each persisted state transition checks whether the old state/version is still valid, usually by comparing version number and lease holder. Verifier abnormal exit is recorded separately and must not be treated as model task failure.
+
+Teaching goal:
+Show the Attempt lifecycle while making CAS version checking a global constraint on all state write-backs, not an initial lifecycle state.
+
+Beginner misconception to prevent:
+Do not make the Attempt look like a single local linear procedure. Do not imply one-time version checking. Do not merge "验证异常" into "任务失败".
+
+Diagram type:
+State lifecycle diagram.
+
+Required visual structure:
+- Main normal path left to right: 等待调度 -> 创建环境 -> 环境就绪 -> 执行中 -> 验证中 -> 成功.
+- Lower loop or branch from 执行中 to 等待模型 and 等待工具, then back to 执行中.
+- Add an attribution branch from 执行中 to 任务失败.
+- Add attribution branches from 验证中 to 任务失败 and 验证异常.
+- Add orange dashed timeout arrows from representative non-terminal states to 已超时; include a legend "超时分支".
+- Add orange or red dashed cancellation arrow from non-terminal area to 已取消; include a legend "取消分支".
+- Put terminal states in double-border boxes: 成功, 任务失败, 验证异常, 已取消, 已超时.
+- In the upper-right or lower-right empty area, place a global constraint box, not connected as a state: "CAS 检查" with small sublabels "版本号" and "租约持有者".
+- Add a small legend: blue solid = 正常推进, teal/green solid = 结果归因, orange dashed = 超时分支, red/orange dashed = 取消分支, small CAS marker = 写回检查.
+
+Required labels, exact and short:
+- 等待调度
+- 创建环境
+- 环境就绪
+- 执行中
+- 等待模型
+- 等待工具
+- 验证中
+- 成功
+- 任务失败
+- 验证异常
+- 已取消
+- 已超时
+- CAS 检查
+- 版本号
+- 租约持有者
+- 正常推进
+- 结果归因
+- 超时分支
+- 取消分支
+- 写回检查
+
+Avoid labels longer than 8 Chinese characters except "租约持有者". Do not add extra Chinese sentences beyond the listed labels.
+
+Main takeaway, if shown in the image:
+一条时间线
+
+Quality constraints:
+- no text overlap, no cropped labels, no arrow crossing through labels
+- final image must remain readable when scaled to full text width in a LaTeX book
+- Chinese labels must be legible and not distorted
+- no PPT card deck, no marketing infographic style

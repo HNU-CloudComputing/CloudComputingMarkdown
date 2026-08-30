@@ -1,0 +1,126 @@
+Target image path: figures/sec5/container-network.png
+Source TeX: section/sec5.tex
+Figure label: fig:chapter5-5
+Created for imagegen: 2026-06-25
+
+Figure contract:
+Figure id: fig:chapter5-5
+Nearby section: section/sec5.tex, \subsubsection{容器网络：Network Namespace 与端口映射}
+Why this figure exists: 帮助本科生看清容器网络中两类通信路径的空间关系：容器之间通过虚拟网络内的 DNS 服务名互相访问，外部客户端通过宿主机端口映射进入容器。
+One teaching question: 容器之间如何通过服务名找到对方的 IP 并建立连接，外部玩家客户端又如何通过宿主机端口映射到达容器内的服务？
+Beginner misconception to prevent: 读者可能误以为容器之间可以用 127.0.0.1 互相访问，或者误以为外部客户端可以直接连接容器的内部 IP。实际上容器内的 127.0.0.1 只指向自身，外部流量必须经过宿主机端口映射。
+Diagram role: Network topology with data flow paths
+Required mechanism: 多个容器接入同一个 Docker 用户自定义网络（虚拟局域网）；每个容器拥有独立的 Network Namespace 和虚拟网卡，获得网络内部 IP；Docker 内置 DNS 服务器运行在该网络中，将服务名解析为对应容器的内部 IP；容器间通信通过服务名经 DNS 解析后直接在虚拟网络内转发；外部客户端无法直接访问虚拟网络，必须通过宿主机端口映射（宿主机端口 → 容器端口）进入。
+Required labels: 玩家客户端, 宿主机, 公网 IP, 端口映射, 8080:8080, Docker 用户自定义网络, gateway, lobby, redis, PG 数据库, 172.18.0.2, 172.18.0.3, 172.18.0.4, 172.18.0.5, :8080, :9000, :6379, :5432, Docker DNS, 查询 redis, 返回 172.18.0.4, 服务名解析
+Details to leave in the prose: 不在图中解释 veth pair、Linux bridge、iptables NAT 规则等底层实现；不在图中写 socket API 调用过程；不在图中画 127.0.0.1 的错误示例。
+Caption job: 说明容器通过 Docker 用户自定义网络获得独立 IP，容器间通过内置 DNS 将服务名解析为网络内部 IP 后直接通信，外部客户端通过宿主机端口映射到达容器。
+
+SYSTEM STYLE PROMPT
+
+You are creating a concept figure for a Chinese undergraduate cloud computing textbook.
+The figure must feel like a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- semi-flat textbook teaching illustration, clean technical structure, light cream-white paper background
+- muted blue, teal, warm gray, and a small amount of orange for the single key warning or state change
+- thin but confident ink-like outlines, consistent stroke width, soft paper texture, no glossy icons, no gradients, no heavy drop shadows
+- calm, readable, friendly, but technically serious
+- enough mechanism detail to teach the idea; do not make the picture overly empty or generic
+
+Layout rules:
+- Use a left-to-right layout with three zones: external (left), host boundary (center-left), virtual network (center-right and right).
+- The Docker virtual network should be enclosed in a clearly visible rounded dashed rectangle, taking up the right two-thirds of the figure.
+- The host boundary should be a subtle vertical divider or a thin rounded rectangle enclosing the virtual network plus a host network interface.
+- External client (玩家客户端) sits outside the host boundary on the far left.
+- Port mapping arrow must visually cross the host boundary, making it clear this is the only path from outside to inside.
+- Inside the virtual network: four containers arranged in a 2x2 grid or horizontal row, each as a small rounded rectangle with container name and IP label.
+- Docker DNS sits as a small component inside the virtual network (centered or at top), with a query/response example shown as two short arrows.
+- every text label must sit in its own reserved label area or label box
+- no text may overlap icons, arrows, borders, or other text
+- leave generous padding around every Chinese label; keep labels away from arrowheads and object edges
+- keep all important content inside the safe area with wide margins
+- DO NOT include any banner, tagline, or conclusion text at the bottom of the figure
+
+Chinese typography rules:
+- use clean Chinese sans-serif textbook typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- no distorted Chinese characters, no wrong glyphs, no cropped text, no wavy baselines
+- prefer short labels of 2-8 Chinese characters; avoid long sentence labels inside the image
+- if punctuation cannot be rendered cleanly, omit punctuation and use short phrase labels instead
+
+Content rules:
+- preserve the technical meaning from the source text
+- show relationships, boundaries, direction, and state changes, not just isolated icons
+- no watermark, no logo, no random English text, no invented terms
+
+USER CONTEXT PROMPT
+
+Use case: scientific-educational
+Asset type: concept figure for a Chinese undergraduate cloud computing textbook
+Primary request: Create a container networking topology figure that visually separates two communication patterns: (1) inter-container communication via Docker DNS inside a virtual network, and (2) external access via host port mapping. The figure must make it visually obvious that the virtual network is an isolated space that external clients cannot directly enter.
+
+Source context from the textbook:
+Each container has its own Network Namespace with an independent IP, NIC, and routing table. Containers on the same Docker user-defined network can communicate using service names (e.g., "redis:6379"). Docker runs an embedded DNS server inside the network that resolves service names to container IPs. External clients (game players) cannot reach containers directly because the virtual network is invisible from outside. The only way for external traffic to enter is through port mapping (-p host_port:container_port), which forwards packets arriving at a host port into the target container.
+
+Teaching goal:
+Show two distinct communication paths in one figure: (1) lobby container queries Docker DNS for "redis", gets 172.18.0.4, then connects to redis:6379 — all within the virtual network; (2) a player client connects to host_IP:8080, which is port-mapped to the gateway container's port 8080 inside the network. The spatial separation between "inside the network" and "outside the host" must be immediately clear.
+
+Beginner misconception to prevent:
+The figure must NOT show any direct arrow from the external client into a container without passing through the port mapping mechanism. The host boundary must be a visible wall that only port mapping can cross.
+
+Diagram type:
+Network topology with data flow paths, landscape 16:9 textbook diagram.
+
+Required visual structure:
+- Far left: a small icon or rectangle labeled "玩家客户端" with a short arrow pointing right.
+- Center-left: a vertical zone representing the host machine boundary. At the boundary, a small box or label "宿主机" with "公网 IP" below it. The port mapping mechanism is shown here: an arrow labeled "端口映射 8080:8080" crosses from outside into the virtual network, targeting the gateway container.
+- Center-right to far right: a large dashed rounded rectangle labeled "Docker 用户自定义网络" at its top. Inside this rectangle:
+  - Four containers in a row or 2x2 grid: "gateway" (172.18.0.2, :8080), "lobby" (172.18.0.3, :9000), "redis" (172.18.0.4, :6379), "PG 数据库" (172.18.0.5, :5432).
+  - Each container shown as a small rounded rectangle with the service name prominently displayed and the IP + port in smaller text below.
+  - A "Docker DNS" component shown as a small rounded rectangle or icon at the top-center of the virtual network area.
+  - One DNS query example: a teal arrow from "lobby" to "Docker DNS" labeled "查询 redis", and a teal arrow back labeled "返回 172.18.0.4". Then a blue arrow from "lobby" to "redis" showing the resulting connection.
+  - Inside the virtual network, a few thin gray arrows between containers (gateway → lobby, lobby → redis, lobby → postgres) to suggest internal connectivity.
+- The port mapping arrow from the external client must be visually distinct (e.g., orange or thicker blue) and must clearly cross the host boundary.
+- A small "X" or blocked indicator near the host boundary to suggest that direct access without port mapping is not possible (optional but helpful).
+
+Required labels, exact and short:
+- 玩家客户端
+- 宿主机
+- 公网 IP
+- 端口映射
+- 8080:8080
+- Docker 用户自定义网络
+- gateway
+- lobby
+- redis
+- PG 数据库
+- 172.18.0.2
+- 172.18.0.3
+- 172.18.0.4
+- 172.18.0.5
+- :8080
+- :9000
+- :6379
+- :5432
+- Docker DNS
+- 查询 redis
+- 返回 172.18.0.4
+- 服务名解析
+
+Avoid labels longer than 8 Chinese characters. Do not add extra Chinese sentences beyond the listed labels.
+
+Quality constraints:
+- The Docker virtual network boundary (dashed rectangle) must be the most prominent structural element.
+- The port mapping arrow must be the only path crossing from outside into the virtual network.
+- No arrow from 玩家客户端 may directly reach any container without passing through the port mapping point.
+- The DNS query/response example must be visually clear: two short arrows with labels, not merged into a single ambiguous arrow.
+- Container IPs must be clearly associated with their respective containers (placed inside or directly below each container box).
+- no text overlap, no label touching arrows, no cropped elements
+- final image must remain readable after being scaled to full text width in a LaTeX book
+
+Avoid:
+- no bottom banner with conclusion text
+- no PPT-style colored summary cards
+- no marketing infographic style
+- no cute mascot, no stock business people, no decorative cloud icons
+- no watermark, no logo, no random English text, no invented terms
+- no veth pair, no Linux bridge, no iptables details (those belong in chapter 6)

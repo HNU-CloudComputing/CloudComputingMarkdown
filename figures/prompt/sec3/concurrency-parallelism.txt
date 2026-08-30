@@ -1,0 +1,108 @@
+Target image path: figures/sec3/concurrency-parallelism.png
+Edit target: figures/sec3/concurrency-parallelism.png
+Source TeX: section/sec3.tex
+Figure label: fig:concurrency-parallelism
+Created for imagegen: 2026-07-24
+
+FIGURE CONTRACT
+
+Figure id: fig:concurrency-parallelism
+Nearby section: 第三章“从顺序处理到并发组织”
+Why this figure exists: 帮助初学者在同一张图中区分并发和并行：并发让单核在某任务等待时切换到其他可运行任务，并行让多个 CPU 核在同一时间执行不同计算段。
+One teaching question: 单核交错执行与多核同时执行在时间轴上分别是什么样子？
+Beginner misconception to prevent: 把单核上多个任务在同一时间段同时计算误认为并行；把并行理解为只增加任务队列；忽略时间方向。
+Diagram role: 同轴对比图。
+Required mechanism: 左侧只有一条 CPU 执行带，同一时刻最多一个蓝色计算段占用 CPU；任务 A/B/C 的橙色 I/O 等待可以在各自泳道持续，CPU 在等待空隙切换到其他任务。右侧三个 CPU 核在同一时间区间各执行一个蓝色计算段，并用共同时间轴与单核基线比较完成时间。
+Required labels: 并发，并行，单核执行，任务A，任务B，任务C，计算，I/O等待，任务切换，多个CPU核，CPU核1，CPU核2，CPU核3，同时计算，单核基线，完成时间，时间。
+Details to leave in prose: 不画调度器实现、线程状态、上下文切换成本、具体毫秒数、请求队列曲线和负载摊开子图。
+Caption job: 明确并发在单核上交错使用计算时间，并行在多核上同时执行计算段。
+Post-figure sentence: 当连接规模继续增加时，等待、计算和共享状态竞争会共同推高主处理队列。
+
+SYSTEM STYLE PROMPT
+
+You are editing a concept figure for a Chinese undergraduate cloud computing textbook.
+The result must be a polished modern textbook illustration, not a PowerPoint slide, not a marketing infographic, not a dashboard, and not an academic black-and-white paper diagram.
+
+Visual style:
+- preserve the source image's semi-flat textbook teaching style
+- light cream-white paper background, muted blue and teal, warm gray, small orange accents for I/O waiting
+- thin confident outlines, consistent stroke width, no gradients, no glossy icons, no heavy shadows
+- calm, readable, technically serious
+
+Layout rules:
+- landscape 16:9 comparison with two balanced panels
+- left panel “并发”, right panel “并行”
+- both panels use a continuous left-to-right physical time axis with an arrow labeled “时间”
+- all blocks align to the same time direction
+- no overlapping compute blocks on the single-core execution band
+- no arrows crossing labels, no cropped text, generous safe margins
+
+Chinese typography rules:
+- clean Chinese sans-serif typography similar to Source Han Sans / Noto Sans CJK / PingFang
+- labels must be short, exact, and readable after LaTeX scaling
+- no malformed Chinese, no random English text, no watermark
+
+USER CONTEXT PROMPT
+
+Use case: precise-object-edit
+Asset type: full-width concurrency-versus-parallelism teaching figure
+Input image: the supplied concurrency-parallelism.png is the edit target and style reference.
+
+Primary request:
+Redesign the information layout while preserving the source palette and textbook feel. Remove the lower request-queue chart and lower load-balancing subfigure so the entire image focuses on one teaching distinction: single-core interleaving versus multi-core simultaneous computation.
+
+Left panel — “并发”:
+- title label “并发”
+- subtitle label “单核执行”
+- draw one continuous horizontal CPU execution band with a left-to-right time arrow labeled “时间”
+- above the CPU band, use three aligned task swimlanes labeled “任务A”“任务B”“任务C”
+- the three task swimlanes may show orange “I/O等待” blocks and thin gray ready/wait lines, but must not contain any blue “计算” block
+- every blue “计算” block must appear only on the single shared CPU execution band; label the sequential CPU segments with “任务A”“任务B” or “任务C” so the reader can see which task currently owns the CPU
+- blue compute segments on the single CPU band must be strictly sequential and must never overlap horizontally
+- orange “I/O等待” blocks stay on the corresponding task swimlane and may overlap in time with a blue CPU segment owned by another task, because waiting does not occupy the CPU
+- use two small curved arrows labeled “任务切换” to show that when one task enters I/O waiting, the CPU runs another ready task
+- the picture must make it impossible to read two tasks as computing simultaneously on one CPU
+
+Right panel — “并行”:
+- title label “并行”
+- subtitle label “多个CPU核”
+- draw three horizontal rows labeled “CPU核1”“CPU核2”“CPU核3”
+- draw one shared left-to-right time axis labeled “时间”
+- in the same horizontal time interval, place one blue “计算” block on each CPU row
+- add one brace or short annotation “同时计算” spanning the three aligned compute blocks
+- below the three rows, draw one longer warm-gray bar labeled “单核基线” and mark its right endpoint “完成时间”; the three-core blocks must finish earlier than this baseline
+- do not omit the time arrow on the right panel
+
+Required labels, exact and short:
+- 并发
+- 并行
+- 单核执行
+- 任务A
+- 任务B
+- 任务C
+- 计算
+- I/O等待
+- 任务切换
+- 多个CPU核
+- CPU核1
+- CPU核2
+- CPU核3
+- 同时计算
+- 单核基线
+- 完成时间
+- 时间
+
+Avoid labels longer than 8 Chinese characters. No long Chinese sentences inside the image.
+
+Avoid:
+- no lower request-queue curve
+- no lower load-balancing diagram
+- no blue compute blocks anywhere in the three task swimlanes
+- no overlapping blue compute blocks in the single-core panel; all computation appears only on one shared CPU band
+- no missing time arrow
+- no broken or discontinuous physical time axis
+- no PPT-style cards, decorative icons, mascots, watermark
+- no text overlap, no cropped labels, no invented terminology
+
+Built-in imagegen mode: precise-object-edit
+Selected generated source: /Users/lin/.codex/generated_images/019f940d-1c89-76c2-8264-3c4a9219af5d/exec-62133d30-769f-4cdc-8c2f-66e302dfaf32.png
