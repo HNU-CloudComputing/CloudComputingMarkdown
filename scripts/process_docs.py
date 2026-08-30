@@ -213,6 +213,13 @@ def normalize_figures(content, metadata=None):
         number = figure_numbers.get(label)
         if not number and label in by_label:
             number = by_label[label].get("number")
+        if not number:
+            print(
+                "UNRESOLVED_FIGURE_REFERENCE "
+                f"raw={match.group(0)!r} label={label!r} "
+                f"figure_ids={sorted(figure_numbers)!r} "
+                f"tex_labels={sorted(by_label)!r}"
+            )
         return f'[{number}](#{label})' if number else match.group(0)
 
     return EMPTY_FIGURE_REFERENCE_PATTERN.sub(empty_figure_reference_replacer, content)
