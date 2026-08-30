@@ -204,7 +204,7 @@ def normalize_figures(content, metadata=None):
         return f'[{number}](#{label})' if number else match.group(0)
 
     return re.sub(
-        r'\\?\[\s*\\?\]\s*\\?\(#([^\)\\]+)\\?\)',
+        r'\\?\[\s*\\?\]\s*\\?\(\s*\\?#([^\)\\]+)\\?\)',
         empty_figure_reference_replacer,
         content
     )
@@ -316,6 +316,16 @@ def process_markdown_file(filepath):
         raise ValueError(
             f"标题数量在清洗过程中发生变化：{filepath} "
             f"({source_heading_count} -> {processed_heading_count})"
+        )
+
+    remaining_empty_figure_refs = re.findall(
+        r'\\?\[\s*\\?\]\s*\\?\(\s*\\?#fig:[^\n\)]+\\?\)',
+        content
+    )
+    if remaining_empty_figure_refs:
+        raise ValueError(
+            f"仍存在未恢复编号的空图引用：{filepath} "
+            f"({len(remaining_empty_figure_refs)} 处)"
         )
 
     with open(filepath, 'w', encoding='utf-8') as f:
