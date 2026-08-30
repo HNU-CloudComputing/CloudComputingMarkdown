@@ -6,22 +6,33 @@ hide:
 
 <div class="course-home">
   <section class="course-home-hero" aria-labelledby="course-home-title">
-    <div class="course-home-kicker">湖南大学计算机学院 · 云计算课程教材</div>
+    <div class="course-home-kicker">
+      <span>HNU GUOLAB · ONLINE READER</span>
+      <span>MARKDOWN EDITION</span>
+    </div>
     <div class="course-home-hero-grid">
-      <div>
+      <div class="course-home-title-page">
+        <span class="book-page-label">湖南大学计算机学院 · 云计算课程教材</span>
+        <span class="book-page-number">Ⅰ</span>
         <h1 id="course-home-title">云计算原理与实践</h1>
         <p class="course-home-subtitle">以在线游戏为载体</p>
+        <span class="book-page-imprint">GUOLAB · DIGITAL READER</span>
+      </div>
+      <div class="course-home-reading-page">
+        <span class="book-page-label">READING GUIDE</span>
+        <h2>从一个在线游戏开始</h2>
         <p class="course-home-lead">以在线游戏为贯穿案例，从网络通信、单机并发和分布式协同逐步进入云原生部署与核心原理。</p>
+        <dl class="course-home-meta">
+          <div><dt>课程性质</dt><dd>本科专业选修课</dd></div>
+          <div><dt>阅读方式</dt><dd>网页正文与配套 PDF</dd></div>
+          <div><dt>出版单位</dt><dd>湖南大学计算机学院 GuoLab 团队</dd></div>
+        </dl>
         <div class="course-home-actions">
-          <a class="course-home-button course-home-button-primary" href="https://hnu-cloudcomputing.github.io/CloudComputingPDF/">阅读 PDF 版</a>
-          <a class="course-home-button course-home-button-secondary" href="https://hnu-cloudcomputing.github.io/cloudcompute-pages/">返回课程主页</a>
+          <a class="course-home-button course-home-button-primary" href="intro/">开始阅读</a>
+          <a class="course-home-button course-home-button-secondary" href="https://hnu-cloudcomputing.github.io/CloudComputingPDF/">阅读 PDF 版</a>
+          <a class="course-home-text-link" href="https://hnu-cloudcomputing.github.io/cloudcompute-pages/">返回课程主页 →</a>
         </div>
       </div>
-      <dl class="course-home-meta">
-        <div><dt>课程性质</dt><dd>本科专业选修课</dd></div>
-        <div><dt>阅读方式</dt><dd>网页正文与配套 PDF</dd></div>
-        <div><dt>出版单位</dt><dd>湖南大学计算机学院 GuoLab 团队</dd></div>
-      </dl>
     </div>
   </section>
 
@@ -114,7 +125,6 @@ hide:
     <div class="course-home-license">
       <span class="course-home-section-label">COPYRIGHT AND USE</span>
       <h2>版权与使用说明</h2>
-      <p class="course-home-copyright">Copyright © 2026 GuoLab. All Rights Reserved.</p>
       <p>本项目中的文档、示例代码和架构图表均受版权保护。公开内容可用于个人学习、学术研究和非商业教育实践；未经书面许可，不得用于商业产品、付费课程、培训项目或商业出版物。完整条款请参阅 <a href="https://github.com/HNU-CloudComputing/CloudComputingMarkdown/blob/main/LICENSE">LICENSE</a>。</p>
     </div>
   </section>
