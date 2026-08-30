@@ -1,5 +1,6 @@
 import os
 import re
+import html
 import yaml
 
 CCBOOK_PATH = "latex_source"
@@ -9,6 +10,49 @@ MKDOCS_YML = "mkdocs.yml"
 TITLE_PATTERN = re.compile(r'\\(?:chapter|section)\*?\{([^}]+)\}')
 BOOK_TITLE = "云计算原理与实践：以在线游戏为载体"
 LICENSE_URL = "https://github.com/HNU-CloudComputing/CloudComputingMarkdown/blob/main/LICENSE"
+
+def normalize_figures(content):
+    """把 Pandoc 的独立图片统一转换为带编号、锚点和可见图注的 HTML figure。"""
+    markdown_figure = re.compile(
+        r'^!\[(.*?)\]\((\S+?)(?:\s+"[^"]*")?\)(?:\s*\{([^}\n]*)\})?[ \t]*$',
+        flags=re.MULTILINE
+    )
+
+    def markdown_figure_replacer(match):
+        caption = match.group(1).strip()
+        src = html.escape(match.group(2), quote=True)
+        attrs = match.group(3) or ""
+        id_match = re.search(r'(?:^|\s)#([^\s]+)', attrs)
+        figure_id = f' id="{html.escape(id_match.group(1), quote=True)}"' if id_match else ""
+        escaped_caption = html.escape(caption)
+        return (
+            f'<figure{figure_id}>\n'
+            f'<img src="{src}" alt="{escaped_caption}" style="max-width:100%; height:auto;" />\n'
+            f'<figcaption>{escaped_caption}</figcaption>\n'
+            f'</figure>'
+        )
+
+    content = markdown_figure.sub(markdown_figure_replacer, content)
+
+    html_figure = re.compile(
+        r'<figure\b([^>]*)>\s*(<img\b[^>]*?/?>)\s*<figcaption>(.*?)</figcaption>\s*</figure>',
+        flags=re.DOTALL | re.IGNORECASE
+    )
+    figure_number = 0
+
+    def html_figure_replacer(match):
+        nonlocal figure_number
+        figure_number += 1
+        attrs, image, caption = match.groups()
+        caption = re.sub(r'^图\s*\d+\s*[：:]\s*', '', caption.strip())
+        return (
+            f'<figure{attrs}>\n'
+            f'{image}\n'
+            f'<figcaption>图 {figure_number}：{caption}</figcaption>\n'
+            f'</figure>'
+        )
+
+    return html_figure.sub(html_figure_replacer, content)
 
 # ==========================================
 # 1. 深度清洗 Markdown 文件
@@ -37,10 +81,20 @@ def process_markdown_file(filepath):
         flags=re.DOTALL
     )
 
+    # 统一 Pandoc 不同版本产生的图片结构，保留图编号、锚点和可见图注。
+    content = normalize_figures(content)
+
     # 3. 彻底清理其他残留的 Pandoc Div 边界 (:::)
     content = re.sub(r'^:::.*$', '', content, flags=re.MULTILINE)
 
     # 4. 清理各类无用标签、外壳、图片属性以及 HTML 乱码
+    # Pandoc 会把独立 LaTeX label 转成 []{#label ...}。保留为不可见锚点，
+    # 避免通用属性清理只删掉 {#...} 后在页面留下可见的 []。
+    content = re.sub(
+        r'\[\s*\]\s*\{#([^\s}]+)[^}]*\}',
+        lambda match: f'<span id="{html.escape(match.group(1), quote=True)}"></span>',
+        content
+    )
     content = re.sub(r'\s*\{#[^\}]+\}', '', content)
     content = re.sub(r'\{width=[^\}]+\}', '', content)
     content = re.sub(r'\s*\{=html\}', '', content)
