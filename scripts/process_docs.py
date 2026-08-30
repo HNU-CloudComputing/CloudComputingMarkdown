@@ -9,7 +9,9 @@ MAIN_TEX = os.path.join(CCBOOK_PATH, "main.tex")
 DOCS_DIR = "docs"
 MKDOCS_YML = "mkdocs.yml"
 TITLE_PATTERN = re.compile(r'\\(?:chapter|section)\*?\{([^}]+)\}')
-BOOK_TITLE = "云计算原理与实践：以在线游戏为载体"
+BOOK_MAIN_TITLE = "云计算原理与实践"
+BOOK_SUBTITLE = "以在线游戏为载体"
+BOOK_TITLE = f"{BOOK_MAIN_TITLE}：{BOOK_SUBTITLE}"
 LICENSE_URL = "https://github.com/HNU-CloudComputing/CloudComputingMarkdown/blob/main/LICENSE"
 FIGURE_PUBLIC_BASE = "https://hnu-cloudcomputing.github.io/CloudComputingMarkdown/"
 
@@ -260,14 +262,22 @@ def parse_structure():
 # 3. 动态更新 docs/index.md 与 mkdocs.yml 的 nav
 # ==========================================
 def update_index_and_nav(chapters, appendices):
-    index_content = f"# ☁️ {BOOK_TITLE}\n\n"
-    index_content += "这是由 **GuoLab** 倾力编写的教科书在线阅读版。以下为最新章节导航：\n\n"
-    index_content += "### 📖 章节目录\n\n"
+    index_content = f"# {BOOK_MAIN_TITLE}\n\n"
+    index_content += (
+        f'<p style="font-size:1.25rem; color:#666; margin-top:-0.75rem; '
+        f'margin-bottom:0.25rem;">{BOOK_SUBTITLE}</p>\n\n'
+    )
+    index_content += (
+        '<p style="font-size:0.9rem; color:#777; margin-top:0;">'
+        '湖南大学云计算课程教材 · 在线阅读版</p>\n\n'
+    )
+    index_content += "本书由 **GuoLab** 编写。以下为最新章节导航：\n\n"
+    index_content += "## 目录\n\n"
     for ch in chapters:
         index_content += f"- [**{ch['full_title']}**]({ch['file']})\n"
     
     if appendices:
-        index_content += "\n### 📑 附录内容\n\n"
+        index_content += "\n## 附录\n\n"
         for ap in appendices:
             index_content += f"- [**{ap['full_title']}**]({ap['file']})\n"
 
