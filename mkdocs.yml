@@ -34,6 +34,6 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 extra_css:
-  - stylesheets/course.css
+  - stylesheets/course.css?v=20260830-openbook
 
 copyright: Copyright © 2026 GuoLab. All Rights Reserved.
