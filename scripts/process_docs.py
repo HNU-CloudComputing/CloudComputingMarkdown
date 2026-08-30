@@ -80,6 +80,70 @@ def clean_latex_caption(caption):
     caption = re.sub(r'\s+', ' ', caption)
     return caption.strip()
 
+
+def source_path_for_markdown(filepath):
+    """按 Markdown 文件名定位对应的 LaTeX 源文件。"""
+    stem = os.path.splitext(os.path.basename(filepath))[0]
+    candidates = [
+        os.path.join(CCBOOK_PATH, "section", f"{stem}.tex"),
+        os.path.join(CCBOOK_PATH, "appendix", f"{stem}.tex"),
+    ]
+    return next((path for path in candidates if os.path.isfile(path)), None)
+
+
+def ordered_source_paths():
+    """按整书 main.tex 的 input 顺序返回内容源文件。"""
+    main_tex = os.path.join(CCBOOK_PATH, "main.tex")
+    if not os.path.isfile(main_tex):
+        return []
+    with open(main_tex, "r", encoding="utf-8") as source:
+        main_content = source.read()
+    paths = []
+    for item in re.findall(r'\\input\{([^}]+)\}', main_content):
+        if "preamble" in item:
+            continue
+        rel_path = item if item.endswith(".tex") else f"{item}.tex"
+        path = os.path.join(CCBOOK_PATH, rel_path)
+        if os.path.isfile(path):
+            paths.append(path)
+    return paths
+
+
+def count_source_artifacts(tex, kind):
+    if kind == "code":
+        return len(re.findall(r'\\begin\{(?:lstlisting|pseudocodebox)\}', tex))
+    if kind == "figure":
+        blocks = re.findall(
+            r'\\begin\{figure\*?\}(.*?)\\end\{figure\*?\}',
+            tex,
+            flags=re.DOTALL,
+        )
+    elif kind == "table":
+        blocks = re.findall(
+            r'\\begin\{(?:table\*?|longtable)\}(.*?)'
+            r'\\end\{(?:table\*?|longtable)\}',
+            tex,
+            flags=re.DOTALL,
+        )
+    else:
+        return 0
+    return sum(bool(re.search(r'\\caption(?:\[[^\]]*\])?\s*\{', block)) for block in blocks)
+
+
+def artifact_offset(filepath, kind):
+    """计算目标文件之前已经出现的图、表或伪代码数量。"""
+    target = source_path_for_markdown(filepath)
+    if not target:
+        return 0
+    target = os.path.abspath(target)
+    offset = 0
+    for source_path in ordered_source_paths():
+        if os.path.abspath(source_path) == target:
+            break
+        with open(source_path, "r", encoding="utf-8") as source:
+            offset += count_source_artifacts(source.read(), kind)
+    return offset
+
 def load_figure_metadata(filepath):
     """从对应 TeX 源文件读取图路径、label 与 caption，兼容旧版 Pandoc。"""
     stem = os.path.splitext(os.path.basename(filepath))[0]
@@ -96,7 +160,8 @@ def load_figure_metadata(filepath):
 
     by_label = {}
     by_path = {}
-    figure_number = 0
+    figure_offset = artifact_offset(filepath, "figure")
+    figure_number = figure_offset
     blocks = re.findall(
         r'\\begin\{figure\*?\}(.*?)\\end\{figure\*?\}',
         tex,
@@ -122,7 +187,7 @@ def load_figure_metadata(filepath):
         by_path[image_path] = item
         if item["label"]:
             by_label[item["label"]] = item
-    return {"by_label": by_label, "by_path": by_path}
+    return {"by_label": by_label, "by_path": by_path, "offset": figure_offset}
 
 def normalize_figures(content, metadata=None):
     """把 Pandoc 的独立图片统一转换为带编号、锚点和可见图注的 HTML figure。"""
@@ -186,7 +251,7 @@ def normalize_figures(content, metadata=None):
         r'<figure\b([^>]*)>\s*(<img\b[^>]*?/?>)\s*<figcaption>(.*?)</figcaption>\s*</figure>',
         flags=re.DOTALL | re.IGNORECASE
     )
-    figure_number = 0
+    figure_number = metadata.get("offset", 0)
     figure_numbers = {}
 
     def html_figure_replacer(match):
@@ -211,8 +276,7 @@ def normalize_figures(content, metadata=None):
         return (
             f'<figure{attrs}>\n'
             f'{image}\n'
-            f'<figcaption style="font-size:0.85em; font-style:normal; color:#666; '
-            f'text-align:center; margin-top:0.5rem;">图 {figure_number}：{caption}</figcaption>\n'
+            f'<figcaption>图 {figure_number}：{caption}</figcaption>\n'
             f'</figure>'
         )
 
@@ -236,7 +300,87 @@ def normalize_figures(content, metadata=None):
             )
         return f'[{number}](#{label})' if number else match.group(0)
 
-    return EMPTY_FIGURE_REFERENCE_PATTERN.sub(empty_figure_reference_replacer, content)
+    content = EMPTY_FIGURE_REFERENCE_PATTERN.sub(empty_figure_reference_replacer, content)
+
+    def labeled_figure_reference_replacer(match):
+        label = match.group(1)
+        item = by_label.get(label)
+        number = figure_numbers.get(label) or (item.get("number") if item else None)
+        return f'[{number}](#{label})' if number else match.group(0)
+
+    return re.sub(
+        r'\[(?:\d+|\?)\]\(#(fig:[^\)]+)\)',
+        labeled_figure_reference_replacer,
+        content,
+    )
+
+
+def load_table_metadata(filepath):
+    """读取本章表格标题、label 及其整书连续编号。"""
+    tex_path = source_path_for_markdown(filepath)
+    table_offset = artifact_offset(filepath, "table")
+    if not tex_path:
+        return {"by_label": {}, "offset": table_offset}
+    with open(tex_path, "r", encoding="utf-8") as source:
+        tex = source.read()
+    blocks = re.findall(
+        r'\\begin\{(?:table\*?|longtable)\}(.*?)'
+        r'\\end\{(?:table\*?|longtable)\}',
+        tex,
+        flags=re.DOTALL,
+    )
+    by_label = {}
+    number = table_offset
+    for block in blocks:
+        caption = clean_latex_caption(extract_command_argument(block, "caption"))
+        if not caption:
+            continue
+        number += 1
+        label_match = re.search(r'\\label\{([^}]+)\}', block)
+        if label_match:
+            by_label[label_match.group(1).strip()] = {
+                "caption": caption,
+                "number": number,
+            }
+    return {"by_label": by_label, "offset": table_offset}
+
+
+def normalize_tables(content, filepath):
+    """恢复表格锚点、整书编号和表注，并保持 Markdown 表格结构。"""
+    metadata = load_table_metadata(filepath)
+    by_label = metadata["by_label"]
+
+    table_div = re.compile(
+        r'^:::[ \t]*\{#(tab:[^\s}]+)[^}]*\}[ \t]*\n'
+        r'(.*?)\n'
+        r'^:[ \t]+([^\n]+)[ \t]*\n'
+        r'^:::[ \t]*$',
+        flags=re.MULTILINE | re.DOTALL,
+    )
+
+    def table_replacer(match):
+        label, table_markdown, pandoc_caption = match.groups()
+        item = by_label.get(label)
+        number = item["number"] if item else metadata["offset"] + 1
+        caption = item["caption"] if item else pandoc_caption.strip()
+        return (
+            f'<span id="{html.escape(label, quote=True)}"></span>\n\n'
+            f'{table_markdown.strip()}\n\n'
+            f'<div class="table-caption">表 {number}：{html.escape(caption)}</div>'
+        )
+
+    content = table_div.sub(table_replacer, content)
+
+    def table_reference_replacer(match):
+        label = match.group(1)
+        item = by_label.get(label)
+        return f'[{item["number"]}](#{label})' if item else match.group(0)
+
+    return re.sub(
+        r'\[(?:\d+|\?)\]\(#(tab:[^\)]+)\)',
+        table_reference_replacer,
+        content,
+    )
 
 def restore_empty_figure_references(content, metadata):
     """在 Pandoc 属性清理后，用 TeX 元数据恢复残留的空图引用。"""
@@ -308,6 +452,30 @@ def fence_title(title):
     return title.replace('"', "'")
 
 
+def code_caption_title(title):
+    """去掉标题末尾与“伪代码 X”前缀重复的类型说明。"""
+    title = fence_title(title)
+    title = re.sub(r'\s*[（(]伪代码[）)]\s*$', '', title)
+    title = re.sub(r'\s*伪代码\s*$', '', title)
+    return title.strip()
+
+
+def infer_code_language(language, code, title=""):
+    """为未声明语言的代码框选择保守的 Pygments lexer。"""
+    if language:
+        return language.lower()
+    hint = f"{title}\n{code}".lower()
+    if re.search(r'\b(select|insert|update|delete|create table|mget|redis)\b', hint):
+        return "bash" if "mget" in hint or "redis" in hint else "sql"
+    if re.search(r'(?m)^\s*(apiversion|kind|metadata|spec):', code, flags=re.IGNORECASE):
+        return "yaml"
+    if re.search(r'\b(func|package|goroutine|defer)\b|:=', code):
+        return "go"
+    if re.search(r'(?m)^\s*(from|run|copy|entrypoint|cmd)\b', code, flags=re.IGNORECASE):
+        return "docker"
+    return "text"
+
+
 def add_heading_numbers(content, filepath):
     """按章节为 H2-H6 添加稳定的层级编号，并保留原有锚点。"""
     stem = os.path.splitext(os.path.basename(filepath))[0]
@@ -362,6 +530,7 @@ def process_markdown_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
     source_heading_count = len(re.findall(r'^#{1,6}\s+', content, flags=re.MULTILINE))
+    code_number = artifact_offset(filepath, "code")
 
     # 1. 修复被错误转义的双引号与反斜杠空格
     content = content.replace(r'\"', '"')
@@ -370,10 +539,16 @@ def process_markdown_file(filepath):
     # 2. 核心修复：将 Pandoc 转换出来的 pseudocodebox / 伪代码环境转换为标准代码块
     # 匹配模式形如：::: pseudocodebox 或包含标题的伪代码容器
     def pseudocode_replacer(match):
+        nonlocal code_number
         title = match.group(1).strip() if match.group(1) else ""
         code = match.group(2).strip()
-        title_attr = f' title="{fence_title(title)}"' if title else ""
-        return f"\n\n```go{title_attr} linenums=\"1\"\n{code}\n```\n\n"
+        code_number += 1
+        clean_title = code_caption_title(title)
+        caption = f'：{clean_title}' if clean_title else ""
+        return (
+            f"\n\n```go\n{code}\n```\n"
+            f'<div class="code-caption">伪代码 {code_number}{caption}</div>\n\n'
+        )
 
     content = re.sub(
         r'^:::[ \t]*(?:pseudocodebox|\{[^\n}]*\.pseudocodebox[^\n}]*\})'
@@ -386,6 +561,7 @@ def process_markdown_file(filepath):
     # 统一 Pandoc 不同版本产生的图片结构，保留图编号、锚点和可见图注。
     figure_metadata = load_figure_metadata(filepath)
     content = normalize_figures(content, figure_metadata)
+    content = normalize_tables(content, filepath)
 
     # 3. 彻底清理其他残留的 Pandoc Div 边界 (:::)
     content = re.sub(r'^:::.*$', '', content, flags=re.MULTILINE)
@@ -413,9 +589,18 @@ def process_markdown_file(filepath):
 
     # 5. 智能区分代码块标题和表格标题
     content = re.sub(r'^:\s+([^\n]+)\n+(?=```)', r'**\1**\n\n', content, flags=re.MULTILINE)
+    fallback_table_number = (
+        artifact_offset(filepath, "table")
+        + len(load_table_metadata(filepath)["by_label"])
+    )
     def caption_replacer(match):
+        nonlocal fallback_table_number
+        fallback_table_number += 1
         caption_text = match.group(1).strip()
-        return f'\n\n<center style="color: #888; font-size: 0.9em;">表：{caption_text}</center>\n\n'
+        return (
+            f'\n\n<div class="table-caption">表 {fallback_table_number}：'
+            f'{html.escape(caption_text)}</div>\n\n'
+        )
     content = re.sub(r'^:\s+([^\n]+)$', caption_replacer, content, flags=re.MULTILINE)
 
     # 6. 修复标准代码块
@@ -427,6 +612,7 @@ def process_markdown_file(filepath):
         flags=re.MULTILINE | re.DOTALL,
     )
     def code_replacer(match):
+        nonlocal code_number
         attr, code = match.group(1), match.group(2)
         lang_match = re.search(r'language="?([a-zA-Z0-9_-]+)"?', attr)
         lang = lang_match.group(1) if lang_match else ""
@@ -437,13 +623,18 @@ def process_markdown_file(filepath):
         if not caption_match:
             caption_match = re.search(r'caption=\{([^}]*)\}', attr)
         title_match = re.search(r'title="([^"]*)"', attr)
-        title = fence_title(
+        title = code_caption_title(
             caption_match.group(1) if caption_match else (
                 title_match.group(1) if title_match else ""
             )
         )
-        title_attr = f' title="{title}"' if title else ""
-        return f"\n\n```{lang.lower()}{title_attr} linenums=\"1\"\n{code}\n```\n\n"
+        lang = infer_code_language(lang, code, title)
+        code_number += 1
+        caption = f'：{title}' if title else ""
+        return (
+            f"\n\n```{lang}\n{code}\n```\n"
+            f'<div class="code-caption">伪代码 {code_number}{caption}</div>\n\n'
+        )
     content = re.sub(
         r'^```[ \t]*[\{\[]([^\n\}\]]*)[\}\]][ \t]*\n(.*?)^```[ \t]*$',
         code_replacer,

@@ -7,7 +7,15 @@
   --md-default-fg-color: #26312d;
   --md-default-fg-color--light: #66736e;
   --md-typeset-a-color: #23635b;
-  --md-code-bg-color: #e7ece7;
+  --md-code-fg-color: #34404a;
+  --md-code-bg-color: #eef1f3;
+  --md-code-hl-keyword-color: #6f4a8e;
+  --md-code-hl-function-color: #285f87;
+  --md-code-hl-name-color: #355e78;
+  --md-code-hl-string-color: #2f7255;
+  --md-code-hl-number-color: #9b5d32;
+  --md-code-hl-comment-color: #78837d;
+  --md-code-hl-operator-color: #59656d;
   --md-text-font: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
   --md-code-font: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --course-navy: #173f3b;
@@ -135,60 +143,122 @@ body {
 }
 
 .md-typeset .highlight {
-  margin: 1.4em 0;
-  border: 1px solid #b9d3e5;
-  border-radius: 0.45rem;
+  margin: 1.4em 0 0.4em;
+  border: 1px solid #d4d9df;
+  border-radius: 0.4rem;
   overflow: hidden;
-  box-shadow: 0 7px 18px rgba(23, 63, 59, 0.07);
-}
-
-.md-typeset .highlight > .filename {
-  display: block;
-  margin: 0;
-  padding: 0.62rem 1rem;
-  color: #173f3b;
-  background: #d9edf8;
-  border-bottom: 1px solid #b9d3e5;
-  font-family: "Songti SC", "Noto Serif CJK SC", "STSong", Georgia, serif;
-  font-size: 0.92rem;
-  font-weight: 800;
-  letter-spacing: 0.025em;
-}
-
-.md-typeset .highlighttable th.filename {
-  padding: 0.62rem 1rem;
-  color: #173f3b;
-  background: #d9edf8;
-  border-bottom: 1px solid #b9d3e5;
-  text-align: left;
-}
-
-.md-typeset .highlighttable th.filename .filename {
-  color: inherit;
-  font-family: "Songti SC", "Noto Serif CJK SC", "STSong", Georgia, serif;
-  font-size: 0.92rem;
-  font-weight: 800;
-  letter-spacing: 0.025em;
+  background: #f6f7f9;
+  box-shadow: 0 4px 14px rgba(40, 48, 56, 0.06);
 }
 
 .md-typeset .highlight pre {
   margin: 0;
+  padding-top: 0.95rem;
+  padding-bottom: 0.95rem;
   border-radius: 0;
-  background: #f7fbfd;
+  background: #f6f7f9;
 }
 
-.md-typeset .highlighttable {
-  margin: 0;
+.md-typeset .highlight code {
+  background: transparent;
 }
 
-.md-typeset .highlighttable td {
-  background: #f7fbfd;
+.md-typeset .highlight .nx {
+  color: #355e78;
 }
 
-.md-typeset .highlighttable .linenos {
-  color: #7b8e9a;
-  border-right: 1px solid #d6e4ec;
-  background: #eef5f8;
+.md-typeset .code-caption,
+.md-typeset .table-caption,
+.md-typeset figcaption {
+  display: block;
+  width: 100%;
+  max-width: none;
+  color: #65706b;
+  font-family: "Times New Roman", "Songti SC", "Noto Serif CJK SC", "STSong", serif;
+  font-size: 0.82rem;
+  font-style: normal;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.md-typeset .code-caption {
+  margin: 0.45rem auto 1.55rem;
+}
+
+.md-typeset figure {
+  display: block;
+  width: 100%;
+  margin: 1.6rem auto 2rem;
+  text-align: center;
+}
+
+.md-typeset figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.md-typeset figcaption {
+  margin: 0.7rem auto 0;
+  padding: 0 0.5rem;
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.md-typeset span.math.inline {
+  display: inline !important;
+  float: none !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+.md-typeset .md-typeset__table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  text-align: center;
+}
+
+.md-typeset .md-typeset__table table:not(.highlighttable) {
+  display: table;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  margin: 1.3rem auto 0.45rem;
+  overflow: hidden;
+  border: 1px solid #ccd5d0;
+  border-radius: 0.35rem;
+  background: #fffdfa;
+  border-collapse: separate;
+  border-spacing: 0;
+  box-shadow: 0 4px 14px rgba(36, 49, 43, 0.05);
+}
+
+.md-typeset .md-typeset__table table:not(.highlighttable) th {
+  color: #243d38;
+  background: #e5ece8;
+  font-weight: 800;
+}
+
+.md-typeset .md-typeset__table table:not(.highlighttable) td,
+.md-typeset .md-typeset__table table:not(.highlighttable) th {
+  padding: 0.72rem 0.9rem;
+  border-right: 1px solid #d6ddd9;
+  border-bottom: 1px solid #d6ddd9;
+}
+
+.md-typeset .md-typeset__table table:not(.highlighttable) tr > :last-child {
+  border-right: 0;
+}
+
+.md-typeset .md-typeset__table table:not(.highlighttable) tbody tr:nth-child(even) {
+  background: #f7f9f7;
+}
+
+.md-typeset .table-caption {
+  margin: 0.45rem auto 1.6rem;
 }
 
 .md-nav__link--active,
