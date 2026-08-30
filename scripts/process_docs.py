@@ -32,8 +32,121 @@ def resolve_figure_src(src):
         return FIGURE_PUBLIC_BASE + quote(src, safe="/")
     return src
 
-def normalize_figures(content):
+def extract_command_argument(text, command):
+    """提取一个允许嵌套花括号的 LaTeX 命令参数。"""
+    match = re.search(rf'\\{command}(?:\[[^\]]*\])?\s*\{{', text)
+    if not match:
+        return ""
+    start = match.end()
+    depth = 1
+    for index in range(start, len(text)):
+        if text[index] == "{" and text[index - 1] != "\\":
+            depth += 1
+        elif text[index] == "}" and text[index - 1] != "\\":
+            depth -= 1
+            if depth == 0:
+                return text[start:index]
+    return ""
+
+def clean_latex_caption(caption):
+    """把图注中的常见行内 LaTeX 命令转换为可显示纯文本。"""
+    previous = None
+    while previous != caption:
+        previous = caption
+        caption = re.sub(
+            r'\\(?:textbf|textit|emph|texttt|underline)\{([^{}]*)\}',
+            r'\1',
+            caption
+        )
+    caption = re.sub(r'\\url\{([^{}]*)\}', r'\1', caption)
+    caption = caption.replace(r'\%', '%').replace(r'\_', '_').replace('~', ' ')
+    caption = re.sub(r'\s+', ' ', caption)
+    return caption.strip()
+
+def load_figure_metadata(filepath):
+    """从对应 TeX 源文件读取图路径、label 与 caption，兼容旧版 Pandoc。"""
+    stem = os.path.splitext(os.path.basename(filepath))[0]
+    candidates = [
+        os.path.join(CCBOOK_PATH, "section", f"{stem}.tex"),
+        os.path.join(CCBOOK_PATH, "appendix", f"{stem}.tex"),
+    ]
+    tex_path = next((path for path in candidates if os.path.isfile(path)), None)
+    if not tex_path:
+        return {"by_label": {}, "by_path": {}}
+
+    with open(tex_path, "r", encoding="utf-8") as source:
+        tex = source.read()
+
+    by_label = {}
+    by_path = {}
+    blocks = re.findall(
+        r'\\begin\{figure\*?\}(.*?)\\end\{figure\*?\}',
+        tex,
+        flags=re.DOTALL
+    )
+    for block in blocks:
+        image_match = re.search(
+            r'\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}',
+            block
+        )
+        label_match = re.search(r'\\label\{([^}]+)\}', block)
+        caption = clean_latex_caption(extract_command_argument(block, "caption"))
+        if not image_match or not caption:
+            continue
+        image_path = image_match.group(1).strip().lstrip("./")
+        item = {
+            "path": image_path,
+            "label": label_match.group(1).strip() if label_match else "",
+            "caption": caption,
+        }
+        by_path[image_path] = item
+        if item["label"]:
+            by_label[item["label"]] = item
+    return {"by_label": by_label, "by_path": by_path}
+
+def normalize_figures(content, metadata=None):
     """把 Pandoc 的独立图片统一转换为带编号、锚点和可见图注的 HTML figure。"""
+    metadata = metadata or {"by_label": {}, "by_path": {}}
+    by_label = metadata.get("by_label", {})
+    by_path = metadata.get("by_path", {})
+
+    def find_metadata(label, src):
+        if label and label in by_label:
+            return by_label[label]
+        normalized_src = html.unescape(src).strip()
+        while normalized_src.startswith("../"):
+            normalized_src = normalized_src[3:]
+        normalized_src = normalized_src.lstrip("./")
+        return by_path.get(normalized_src)
+
+    def build_figure(caption, src, label=""):
+        item = find_metadata(label, src)
+        if (not caption.strip() or caption.strip().lower() in {"image", "figure", "fig"}) and item:
+            caption = item["caption"]
+        if not label and item:
+            label = item["label"]
+        escaped_caption = html.escape(caption.strip())
+        escaped_src = html.escape(resolve_figure_src(src), quote=True)
+        figure_id = f' id="{html.escape(label, quote=True)}"' if label else ""
+        return (
+            f'<figure{figure_id}>\n'
+            f'<img src="{escaped_src}" alt="{escaped_caption}" style="max-width:100%; height:auto;" />\n'
+            f'<figcaption>{escaped_caption}</figcaption>\n'
+            f'</figure>'
+        )
+
+    legacy_labeled_figure = re.compile(
+        r'^!\[(.*?)\]\((\S+?)(?:\s+"[^"]*")?\)(?:\s*\{([^}\n]*)\})?[ \t]*\n'
+        r'(?:[ \t]*\n)*\[\]\{#([^\s}]+)[^}]*\}[ \t]*$',
+        flags=re.MULTILINE
+    )
+
+    def legacy_labeled_figure_replacer(match):
+        caption, src, _, label = match.groups()
+        return build_figure(caption, src, label)
+
+    content = legacy_labeled_figure.sub(legacy_labeled_figure_replacer, content)
+
     markdown_figure = re.compile(
         r'^!\[(.*?)\]\((\S+?)(?:\s+"[^"]*")?\)(?:\s*\{([^}\n]*)\})?[ \t]*$',
         flags=re.MULTILINE
@@ -41,17 +154,11 @@ def normalize_figures(content):
 
     def markdown_figure_replacer(match):
         caption = match.group(1).strip()
-        src = html.escape(resolve_figure_src(match.group(2)), quote=True)
+        src = match.group(2)
         attrs = match.group(3) or ""
         id_match = re.search(r'(?:^|\s)#([^\s]+)', attrs)
-        figure_id = f' id="{html.escape(id_match.group(1), quote=True)}"' if id_match else ""
-        escaped_caption = html.escape(caption)
-        return (
-            f'<figure{figure_id}>\n'
-            f'<img src="{src}" alt="{escaped_caption}" style="max-width:100%; height:auto;" />\n'
-            f'<figcaption>{escaped_caption}</figcaption>\n'
-            f'</figure>'
-        )
+        label = id_match.group(1) if id_match else ""
+        return build_figure(caption, src, label)
 
     content = markdown_figure.sub(markdown_figure_replacer, content)
 
@@ -60,6 +167,7 @@ def normalize_figures(content):
         flags=re.DOTALL | re.IGNORECASE
     )
     figure_number = 0
+    figure_numbers = {}
 
     def html_figure_replacer(match):
         nonlocal figure_number
@@ -77,6 +185,9 @@ def normalize_figures(content):
             flags=re.IGNORECASE
         )
         caption = re.sub(r'^图\s*\d+\s*[：:]\s*', '', caption.strip())
+        id_match = re.search(r'\bid=["\']([^"\']+)["\']', attrs, flags=re.IGNORECASE)
+        if id_match:
+            figure_numbers[id_match.group(1)] = figure_number
         return (
             f'<figure{attrs}>\n'
             f'{image}\n'
@@ -85,7 +196,18 @@ def normalize_figures(content):
             f'</figure>'
         )
 
-    return html_figure.sub(html_figure_replacer, content)
+    content = html_figure.sub(html_figure_replacer, content)
+
+    def empty_figure_reference_replacer(match):
+        label = match.group(1)
+        number = figure_numbers.get(label)
+        return f'[{number}](#{label})' if number else match.group(0)
+
+    return re.sub(
+        r'\[\s*\]\(#([^\)]+)\)',
+        empty_figure_reference_replacer,
+        content
+    )
 
 # ==========================================
 # 1. 深度清洗 Markdown 文件
@@ -115,7 +237,7 @@ def process_markdown_file(filepath):
     )
 
     # 统一 Pandoc 不同版本产生的图片结构，保留图编号、锚点和可见图注。
-    content = normalize_figures(content)
+    content = normalize_figures(content, load_figure_metadata(filepath))
 
     # 3. 彻底清理其他残留的 Pandoc Div 边界 (:::)
     content = re.sub(r'^:::.*$', '', content, flags=re.MULTILINE)
