@@ -204,7 +204,7 @@ def normalize_figures(content, metadata=None):
         return f'[{number}](#{label})' if number else match.group(0)
 
     return re.sub(
-        r'\[\s*\]\(#([^\)]+)\)',
+        r'\\?\[\s*\\?\]\s*\\?\(#([^\)\\]+)\\?\)',
         empty_figure_reference_replacer,
         content
     )
