@@ -325,7 +325,8 @@ def process_markdown_file(filepath):
     if remaining_empty_figure_refs:
         raise ValueError(
             f"仍存在未恢复编号的空图引用：{filepath} "
-            f"({len(remaining_empty_figure_refs)} 处)"
+            f"({len(remaining_empty_figure_refs)} 处；"
+            f"首条原始内容={remaining_empty_figure_refs[0]!r})"
         )
 
     with open(filepath, 'w', encoding='utf-8') as f:
