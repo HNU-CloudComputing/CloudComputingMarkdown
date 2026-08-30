@@ -31,7 +31,7 @@ def extract_figure_label(text):
 
 def extract_cross_reference_label(text):
     """从 Pandoc 字符串中提取规范的 section/table label。"""
-    match = re.search(r'(?:sec|tab)(?:\\?:)[A-Za-z0-9_:\\-]+', text)
+    match = re.search(r'(?:sec(?:\d+)?|tab)(?:\\?:)[A-Za-z0-9_:\\-]+', text)
     return match.group(0).replace("\\", "") if match else ""
 
 def resolve_figure_src(src):
@@ -143,6 +143,93 @@ def artifact_offset(filepath, kind):
         with open(source_path, "r", encoding="utf-8") as source:
             offset += count_source_artifacts(source.read(), kind)
     return offset
+
+
+def load_section_label_index():
+    """从整书 TeX 标题层级构建 label -> 页面/编号映射。"""
+    command_levels = {
+        "section": 1,
+        "subsection": 2,
+        "subsubsection": 3,
+        "paragraph": 4,
+        "subparagraph": 5,
+    }
+    heading_pattern = re.compile(
+        r'\\(section|subsection|subsubsection|paragraph|subparagraph)'
+        r'\*?\s*\{'
+    )
+    index = {}
+    for source_path in ordered_source_paths():
+        stem = os.path.splitext(os.path.basename(source_path))[0]
+        chapter_match = re.fullmatch(r'sec(\d+)', stem, flags=re.IGNORECASE)
+        appendix_match = re.fullmatch(
+            r'appendix([A-Za-z]+)', stem, flags=re.IGNORECASE
+        )
+        if chapter_match:
+            prefix = chapter_match.group(1)
+        elif appendix_match:
+            prefix = appendix_match.group(1).upper()
+        else:
+            prefix = ""
+
+        with open(source_path, "r", encoding="utf-8") as source:
+            tex = source.read()
+        headings = list(heading_pattern.finditer(tex))
+        counters = [0] * 6
+        for position, match in enumerate(headings):
+            level = command_levels[match.group(1)]
+            if level == 1:
+                for depth in range(2, 6):
+                    counters[depth] = 0
+                number = prefix
+            else:
+                counters[level] += 1
+                for depth in range(level + 1, 6):
+                    counters[depth] = 0
+                for depth in range(2, level):
+                    if counters[depth] == 0:
+                        counters[depth] = 1
+                hierarchy = [str(counters[depth]) for depth in range(2, level + 1)]
+                number = '.'.join(([prefix] if prefix else []) + hierarchy)
+
+            block_end = (
+                headings[position + 1].start()
+                if position + 1 < len(headings)
+                else len(tex)
+            )
+            block = tex[match.start():block_end]
+            for label in re.findall(r'\\label\{(sec[^}]+)\}', block):
+                label = label.strip()
+                index[label] = {
+                    "number": number,
+                    "page": f"{stem}.md",
+                }
+    return index
+
+
+def normalize_section_references(content, filepath):
+    """把 Pandoc 未解析的章内/跨章 section label 转为编号链接。"""
+    label_index = load_section_label_index()
+    current_page = os.path.basename(filepath)
+
+    def replacer(match):
+        label = extract_cross_reference_label(match.group(0))
+        item = label_index.get(label)
+        if not item:
+            return match.group(0)
+        target = f'#{label}' if item["page"] == current_page else f'{item["page"]}#{label}'
+        return f'[{item["number"]}]({target})'
+
+    label_token = r'sec(?:\d+)?(?:\\?:)[A-Za-z0-9_:\\-]+'
+    patterns = [
+        rf'\[\\?\[?{label_token}\\?\]?\]\(#[^\)]+\)',
+        rf'\[{label_token}\]\(#[^\)]+\)',
+        rf'\[\]\(#{label_token}\)',
+        rf'\[{label_token}\]',
+    ]
+    for pattern in patterns:
+        content = re.sub(pattern, replacer, content)
+    return content
 
 def load_figure_metadata(filepath):
     """从对应 TeX 源文件读取图路径、label 与 caption，兼容旧版 Pandoc。"""
@@ -567,6 +654,16 @@ def process_markdown_file(filepath):
     content = re.sub(r'^:::.*$', '', content, flags=re.MULTILINE)
 
     # 4. 清理各类无用标签、外壳、图片属性以及 HTML 乱码
+    # 标题上的原始 TeX label 必须保留为显式锚点，供章内和跨章链接使用。
+    content = re.sub(
+        r'^(#{1,6}\s+.*?)\s+\{#([^\s}]+)[^}]*\}\s*$',
+        lambda match: (
+            f'<span id="{html.escape(match.group(2), quote=True)}"></span>\n\n'
+            f'{match.group(1)}'
+        ),
+        content,
+        flags=re.MULTILINE,
+    )
     # Pandoc 会把独立 LaTeX label 转成 []{#label ...}。保留为不可见锚点，
     # 避免通用属性清理只删掉 {#...} 后在页面留下可见的 []。
     content = re.sub(
@@ -581,6 +678,7 @@ def process_markdown_file(filepath):
     content = re.sub(r'\\*\[\\*\]\\*\(', '[](', content)
     content = restore_empty_figure_references(content, figure_metadata)
     content = restore_cross_document_references(content)
+    content = normalize_section_references(content, filepath)
     content = re.sub(r'\[\s*\]\(#[^\)]+\)', '', content)
     content = re.sub(r'\[(fig|tab|sec):[^\]]+\]', '', content)
     content = re.sub(r'如图\s+所示', '如图所示', content)
