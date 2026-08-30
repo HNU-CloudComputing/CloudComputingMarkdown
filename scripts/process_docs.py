@@ -407,7 +407,8 @@ def process_markdown_file(filepath):
     if remaining_cross_document_refs:
         raise ValueError(
             f"仍存在未恢复的跨文件引用：{filepath} "
-            f"({len(remaining_cross_document_refs)} 处)"
+            f"({len(remaining_cross_document_refs)} 处；"
+            f"首条原始内容={remaining_cross_document_refs[0]!r})"
         )
 
     with open(filepath, 'w', encoding='utf-8') as f:
