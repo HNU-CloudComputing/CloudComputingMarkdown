@@ -60,7 +60,9 @@ jobs:
             filename=$(basename -- "$file")
             filename="${filename%.*}"
             if [[ "$filename" != *"bak"* ]]; then
-              pandoc "$file" -f latex -t markdown-multiline_tables-grid_tables-simple_tables -o "../docs/${filename}.md" --wrap=none
+              prepared="${RUNNER_TEMP}/${filename}.pandoc.tex"
+              python3 ../scripts/prepare_latex_for_pandoc.py "$file" "$prepared"
+              pandoc "$prepared" -f latex -t markdown-multiline_tables-grid_tables-simple_tables -o "../docs/${filename}.md" --wrap=none
             fi
           done
 

@@ -24,7 +24,10 @@ theme:
 markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
-  - pymdownx.highlight
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.superfences
   - footnotes
   - tables
@@ -34,6 +37,6 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 extra_css:
-  - stylesheets/course.css?v=20260830-openbook
+  - stylesheets/course.css?v=20260830-codeblocks
 
 copyright: Copyright © 2026 GuoLab. All Rights Reserved.

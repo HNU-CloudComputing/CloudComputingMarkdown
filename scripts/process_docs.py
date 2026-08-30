@@ -299,6 +299,62 @@ def finalize_known_cross_document_references(content):
         content = content.replace(f'[](#' + label + ')', replacement)
     return content
 
+
+def fence_title(title):
+    """清理并转义 MkDocs 代码框标题。"""
+    title = html.unescape(title or "")
+    title = re.sub(r'<[^>]+>', '', title)
+    title = re.sub(r'\s+', ' ', title).strip()
+    return title.replace('"', "'")
+
+
+def add_heading_numbers(content, filepath):
+    """按章节为 H2-H6 添加稳定的层级编号，并保留原有锚点。"""
+    stem = os.path.splitext(os.path.basename(filepath))[0]
+    chapter_match = re.fullmatch(r'sec(\d+)', stem, flags=re.IGNORECASE)
+    appendix_match = re.fullmatch(r'appendix([A-Za-z]+)', stem, flags=re.IGNORECASE)
+    if chapter_match:
+        prefix = chapter_match.group(1)
+    elif appendix_match:
+        prefix = appendix_match.group(1).upper()
+    else:
+        prefix = ""
+
+    counters = [0] * 7
+    heading_pattern = re.compile(r'^(#{1,6})\s+(.+)$', flags=re.MULTILINE)
+
+    def replacer(match):
+        hashes, raw_title = match.groups()
+        level = len(hashes)
+        if level == 1:
+            for index in range(2, 7):
+                counters[index] = 0
+            return match.group(0)
+
+        counters[level] += 1
+        for index in range(level + 1, 7):
+            counters[index] = 0
+        for index in range(2, level):
+            if counters[index] == 0:
+                counters[index] = 1
+
+        attrs = ""
+        attrs_match = re.search(r'(\s+\{[^}]+\})\s*$', raw_title)
+        if attrs_match:
+            attrs = attrs_match.group(1)
+            raw_title = raw_title[:attrs_match.start()].rstrip()
+
+        raw_title = re.sub(
+            r'^(?:\d+(?:\.\d+)*|[A-Z](?:\.\d+)*)\s+',
+            '',
+            raw_title,
+        )
+        hierarchy = [str(counters[index]) for index in range(2, level + 1)]
+        number = '.'.join(([prefix] if prefix else []) + hierarchy)
+        return f'{hashes} {number} {raw_title}{attrs}'
+
+    return heading_pattern.sub(replacer, content)
+
 # ==========================================
 # 1. 深度清洗 Markdown 文件
 # ==========================================
@@ -316,14 +372,15 @@ def process_markdown_file(filepath):
     def pseudocode_replacer(match):
         title = match.group(1).strip() if match.group(1) else ""
         code = match.group(2).strip()
-        header = f"**{title}**\n\n" if title else ""
-        return f"\n\n{header}```go\n{code}\n```\n\n"
+        title_attr = f' title="{fence_title(title)}"' if title else ""
+        return f"\n\n```go{title_attr} linenums=\"1\"\n{code}\n```\n\n"
 
     content = re.sub(
-        r':::\s*(?:\{[^}]*\}|pseudocodebox)\s*(?:\{([^}]*)\})?\s*\n(.*?)\n:::',
+        r'^:::[ \t]*(?:pseudocodebox|\{[^\n}]*\.pseudocodebox[^\n}]*\})'
+        r'[ \t]*(?:\{([^}]*)\})?[ \t]*\n(.*?)^:::[ \t]*$',
         pseudocode_replacer,
         content,
-        flags=re.DOTALL
+        flags=re.MULTILINE | re.DOTALL
     )
 
     # 统一 Pandoc 不同版本产生的图片结构，保留图编号、锚点和可见图注。
@@ -362,7 +419,13 @@ def process_markdown_file(filepath):
     content = re.sub(r'^:\s+([^\n]+)$', caption_replacer, content, flags=re.MULTILINE)
 
     # 6. 修复标准代码块
-    content = re.sub(r'```[a-zA-Z0-9_-]*\s*\n(```[^\n]*\n.*?)\n```\s*\n```', r'\n\n\1\n```\n\n', content, flags=re.DOTALL)
+    content = re.sub(
+        r'^```[a-zA-Z0-9_-]*[ \t]*\n(^```[^\n]*\n.*?)\n'
+        r'^```[ \t]*\n^```[ \t]*$',
+        r'\n\n\1\n```\n\n',
+        content,
+        flags=re.MULTILINE | re.DOTALL,
+    )
     def code_replacer(match):
         attr, code = match.group(1), match.group(2)
         lang_match = re.search(r'language="?([a-zA-Z0-9_-]+)"?', attr)
@@ -370,8 +433,23 @@ def process_markdown_file(filepath):
         if not lang:
             class_match = re.search(r'\.([a-zA-Z0-9_-]+)', attr)
             lang = class_match.group(1) if class_match and 'numberLines' not in attr else ""
-        return f"\n\n```{lang}\n{code}\n```\n\n"
-    content = re.sub(r'```\s*[\{\[](.*?)[\}\]]\n(.*?)\n```', code_replacer, content, flags=re.DOTALL)
+        caption_match = re.search(r'caption="([^"]*)"', attr)
+        if not caption_match:
+            caption_match = re.search(r'caption=\{([^}]*)\}', attr)
+        title_match = re.search(r'title="([^"]*)"', attr)
+        title = fence_title(
+            caption_match.group(1) if caption_match else (
+                title_match.group(1) if title_match else ""
+            )
+        )
+        title_attr = f' title="{title}"' if title else ""
+        return f"\n\n```{lang.lower()}{title_attr} linenums=\"1\"\n{code}\n```\n\n"
+    content = re.sub(
+        r'^```[ \t]*[\{\[]([^\n\}\]]*)[\}\]][ \t]*\n(.*?)^```[ \t]*$',
+        code_replacer,
+        content,
+        flags=re.MULTILINE | re.DOTALL,
+    )
 
     # 7. 表格强制隔离
     def table_padder(match):
@@ -405,6 +483,7 @@ def process_markdown_file(filepath):
     content = content.replace("figures/figures/", "figures/")
     content = re.sub(r'\n{3,}', '\n\n', content)
     content = finalize_known_cross_document_references(content)
+    content = add_heading_numbers(content, filepath)
 
     processed_heading_count = len(re.findall(r'^#{1,6}\s+', content, flags=re.MULTILINE))
     if processed_heading_count != source_heading_count:
