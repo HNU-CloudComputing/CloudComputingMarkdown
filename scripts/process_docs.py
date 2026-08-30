@@ -524,7 +524,7 @@ hide:
         <dl class="course-home-meta">
           <div><dt>课程性质</dt><dd>本科专业选修课</dd></div>
           <div><dt>阅读方式</dt><dd>网页正文与配套 PDF</dd></div>
-          <div><dt>出版单位</dt><dd>湖南大学计算机学院 GuoLab 团队</dd></div>
+          <div><dt>编写单位</dt><dd>湖南大学计算机学院 GuoLab 团队</dd></div>
         </dl>
         <div class="course-home-actions">
           <a class="course-home-button course-home-button-primary" href="intro/">开始阅读</a>
@@ -607,7 +607,7 @@ hide:
       <h2>编者信息</h2>
       <dl>
         <div><dt>核心编者与架构设计</dt><dd><a href="https://grzy.hnu.edu.cn/site/index/chenguo">陈果</a>、徐方林、胡文举、庞海鑫、谢先衍、贺臻、张道平</dd></div>
-        <div><dt>出版单位</dt><dd>湖南大学计算机学院 GuoLab 团队</dd></div>
+        <div><dt>编写单位</dt><dd>湖南大学计算机学院 GuoLab 团队</dd></div>
         <div><dt>联系邮箱</dt><dd><a href="mailto:guochen@hnu.edu.cn">guochen@hnu.edu.cn</a>、<a href="mailto:xfl825@hnu.edu.cn">xfl825@hnu.edu.cn</a>、<a href="mailto:ashionial@hnu.edu.cn">ashionial@hnu.edu.cn</a></dd></div>
       </dl>
     </div>
