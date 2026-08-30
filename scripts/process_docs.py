@@ -29,6 +29,11 @@ def extract_figure_label(text):
     match = re.search(r'fig(?:\\?:)[A-Za-z0-9_:\\-]+', text)
     return match.group(0).replace("\\", "") if match else ""
 
+def extract_cross_reference_label(text):
+    """从 Pandoc 字符串中提取规范的 section/table label。"""
+    match = re.search(r'(?:sec|tab)(?:\\?:)[A-Za-z0-9_:\\-]+', text)
+    return match.group(0).replace("\\", "") if match else ""
+
 def resolve_figure_src(src):
     """把构建输入中的相对图片路径转换为本站公开图片的绝对 URL。"""
     src = html.unescape(src.strip())
@@ -261,11 +266,9 @@ def restore_empty_figure_references(content, metadata):
 def restore_cross_document_references(content):
     """恢复按章独立转换时 Pandoc 无法解析的跨文件引用。"""
     def replacer(match):
-        normalized = match.group(0).replace("\\", "")
-        label_match = re.search(r'#((?:sec|tab):[^\)\s]+)', normalized)
-        if not label_match:
+        label = extract_cross_reference_label(match.group(0))
+        if not label:
             return match.group(0)
-        label = label_match.group(1)
 
         chapter_match = re.fullmatch(r'sec:chapter(\d+)', label)
         if chapter_match:
