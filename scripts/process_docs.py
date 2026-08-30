@@ -82,6 +82,7 @@ def load_figure_metadata(filepath):
 
     by_label = {}
     by_path = {}
+    figure_number = 0
     blocks = re.findall(
         r'\\begin\{figure\*?\}(.*?)\\end\{figure\*?\}',
         tex,
@@ -96,11 +97,13 @@ def load_figure_metadata(filepath):
         caption = clean_latex_caption(extract_command_argument(block, "caption"))
         if not image_match or not caption:
             continue
+        figure_number += 1
         image_path = image_match.group(1).strip().lstrip("./")
         item = {
             "path": image_path,
             "label": label_match.group(1).strip() if label_match else "",
             "caption": caption,
+            "number": figure_number,
         }
         by_path[image_path] = item
         if item["label"]:
@@ -208,6 +211,8 @@ def normalize_figures(content, metadata=None):
             return match.group(0)
         label = label_match.group(1).strip()
         number = figure_numbers.get(label)
+        if not number and label in by_label:
+            number = by_label[label].get("number")
         return f'[{number}](#{label})' if number else match.group(0)
 
     return EMPTY_FIGURE_REFERENCE_PATTERN.sub(empty_figure_reference_replacer, content)
