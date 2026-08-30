@@ -20,6 +20,10 @@ PSEUDOCODE_PATTERN = re.compile(
     r"\\end\{pseudocodebox\}",
     flags=re.DOTALL,
 )
+LONGTABLE_PATTERN = re.compile(
+    r"\\begin\{longtable\}(.*?)\\end\{longtable\}",
+    flags=re.DOTALL,
+)
 
 
 def clean_title(title):
@@ -85,7 +89,28 @@ def normalize_source(source):
         pseudocode_replacer,
         source,
     )
-    return source, tcolor_count, pseudocode_count
+
+    def longtable_replacer(match):
+        body = match.group(1)
+        if r"\endfirsthead" in body:
+            first_head, remainder = body.split(r"\endfirsthead", 1)
+            if r"\endhead" in remainder:
+                remainder = remainder.split(r"\endhead", 1)[1]
+            if r"\endfoot" in remainder:
+                remainder = remainder.split(r"\endfoot", 1)[1]
+            if r"\endlastfoot" in remainder:
+                remainder = remainder.split(r"\endlastfoot", 1)[1]
+            body = first_head + remainder
+        body = re.sub(
+            r'(?m)^(\s*)(\d+(?:\.\d+)+)(\s*&)',
+            lambda row: f'{row.group(1)}\\mbox{{{row.group(2)}}}{row.group(3)}',
+            body,
+        )
+        body = re.sub(r'\\path\{([^}]*)\}', r'\\texttt{\1}', body)
+        return f"\\begin{{tabular}}{body}\\end{{tabular}}"
+
+    source, longtable_count = LONGTABLE_PATTERN.subn(longtable_replacer, source)
+    return source, tcolor_count, pseudocode_count, longtable_count
 
 
 def main():
@@ -97,11 +122,12 @@ def main():
     args = parser.parse_args()
 
     source = args.input.read_text(encoding="utf-8")
-    normalized, tcolor_count, pseudocode_count = normalize_source(source)
+    normalized, tcolor_count, pseudocode_count, longtable_count = normalize_source(source)
     args.output.write_text(normalized, encoding="utf-8")
     print(
         f"CODE_ENV_NORMALIZED file={args.input} "
-        f"tcolor={tcolor_count} pseudocode={pseudocode_count}",
+        f"tcolor={tcolor_count} pseudocode={pseudocode_count} "
+        f"longtable={longtable_count}",
         file=sys.stderr,
     )
 
