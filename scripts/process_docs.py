@@ -1,6 +1,7 @@
 import os
 import re
 import html
+import sys
 from urllib.parse import quote
 import yaml
 
@@ -218,7 +219,9 @@ def normalize_figures(content, metadata=None):
                 "UNRESOLVED_FIGURE_REFERENCE "
                 f"raw={match.group(0)!r} label={label!r} "
                 f"figure_ids={sorted(figure_numbers)!r} "
-                f"tex_labels={sorted(by_label)!r}"
+                f"tex_labels={sorted(by_label)!r}",
+                file=sys.stderr,
+                flush=True
             )
         return f'[{number}](#{label})' if number else match.group(0)
 
