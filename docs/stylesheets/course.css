@@ -39,6 +39,15 @@ body {
   letter-spacing: 0.03em;
 }
 
+.md-header__topic:first-child {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.md-header__topic[data-md-component="header-topic"] {
+  display: none;
+}
+
 .md-tabs {
   background: var(--course-navy);
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
@@ -249,8 +258,8 @@ body {
 
 .course-home-path {
   display: grid;
-  grid-template-columns: minmax(240px, 0.72fr) minmax(0, 1.8fr);
-  gap: 3rem;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.7fr);
+  gap: 2.5rem;
   align-items: start;
 }
 
@@ -267,7 +276,7 @@ body {
   padding: 0;
   color: var(--course-navy);
   border: 0;
-  font-size: 1.7rem;
+  font-size: 1.55rem;
 }
 
 .course-home-path-heading p {
