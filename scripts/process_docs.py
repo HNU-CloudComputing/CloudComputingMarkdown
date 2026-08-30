@@ -20,6 +20,9 @@ COURSE_SITE_URL = "https://hnu-cloudcomputing.github.io/cloudcompute-pages/"
 EMPTY_FIGURE_REFERENCE_PATTERN = re.compile(
     r'\\?\[\s*\\?\]\s*\\?\(\s*\\?#fig:[^\n\)]+\\?\)'
 )
+EMPTY_CROSS_REFERENCE_PATTERN = re.compile(
+    r'\\?\[\s*\\?\]\s*\\?\(\s*\\?#(?:sec|tab):[^\n\)]+\\?\)'
+)
 
 def extract_figure_label(text):
     """从带 Pandoc 转义或附加属性的字符串中提取规范 figure label。"""
@@ -257,22 +260,24 @@ def restore_empty_figure_references(content, metadata):
 
 def restore_cross_document_references(content):
     """恢复按章独立转换时 Pandoc 无法解析的跨文件引用。"""
-    content = re.sub(
-        r'\[\s*\]\(#sec:chapter(\d+)\)',
-        lambda match: f'[{match.group(1)}](sec{match.group(1)}.md)',
-        content
-    )
-    content = re.sub(
-        r'\[\s*\]\(#sec:appendix-lab-guide\)',
-        '[B](AppendixB.md)',
-        content
-    )
-    content = re.sub(
-        r'\[\s*\]\(#tab:serverless-k8s-decision\)',
-        '[“Serverless 与 Kubernetes 的场景化决策参考”](sec5.md)',
-        content
-    )
-    return content
+    def replacer(match):
+        normalized = match.group(0).replace("\\", "")
+        label_match = re.search(r'#((?:sec|tab):[^\)\s]+)', normalized)
+        if not label_match:
+            return match.group(0)
+        label = label_match.group(1)
+
+        chapter_match = re.fullmatch(r'sec:chapter(\d+)', label)
+        if chapter_match:
+            number = chapter_match.group(1)
+            return f'[{number}](sec{number}.md)'
+        if label == 'sec:appendix-lab-guide':
+            return '[B](AppendixB.md)'
+        if label == 'tab:serverless-k8s-decision':
+            return '[“Serverless 与 Kubernetes 的场景化决策参考”](sec5.md)'
+        return match.group(0)
+
+    return EMPTY_CROSS_REFERENCE_PATTERN.sub(replacer, content)
 
 # ==========================================
 # 1. 深度清洗 Markdown 文件
@@ -394,10 +399,7 @@ def process_markdown_file(filepath):
             f"首条原始内容={remaining_empty_figure_refs[0]!r})"
         )
 
-    remaining_cross_document_refs = re.findall(
-        r'\[\s*\]\(#(?:sec|tab):[^\)]+\)',
-        content
-    )
+    remaining_cross_document_refs = EMPTY_CROSS_REFERENCE_PATTERN.findall(content)
     if remaining_cross_document_refs:
         raise ValueError(
             f"仍存在未恢复的跨文件引用：{filepath} "
