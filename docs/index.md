@@ -1,50 +1,122 @@
 ---
 hide:
-  - navigation # 隐藏左侧目录树，让首页更宽阔
-  - toc        # 隐藏右侧大纲
+  - navigation
+  - toc
 ---
 
-# 云计算原理与实践
+<div class="course-home">
+  <section class="course-home-hero" aria-labelledby="course-home-title">
+    <div class="course-home-kicker">湖南大学 · 云计算课程教材</div>
+    <div class="course-home-hero-grid">
+      <div>
+        <h1 id="course-home-title">云计算原理与实践</h1>
+        <p class="course-home-subtitle">以在线游戏为载体</p>
+        <p class="course-home-lead">以在线游戏为贯穿案例，从网络通信、单机并发和分布式协同逐步进入云原生部署与核心原理。</p>
+        <div class="course-home-actions">
+          <a class="course-home-button course-home-button-primary" href="https://hnu-cloudcomputing.github.io/CloudComputingPDF/">阅读 PDF 版</a>
+          <a class="course-home-button course-home-button-secondary" href="https://hnu-cloudcomputing.github.io/cloudcompute-pages/">返回课程主页</a>
+        </div>
+      </div>
+      <dl class="course-home-meta">
+        <div><dt>课程性质</dt><dd>本科专业选修课</dd></div>
+        <div><dt>内容结构</dt><dd>前言 · 六章 · 两份附录</dd></div>
+        <div><dt>阅读方式</dt><dd>网页正文与配套 PDF</dd></div>
+        <div><dt>编写单位</dt><dd>湖南大学 HNU GuoLab</dd></div>
+      </dl>
+    </div>
+  </section>
 
-<p style="font-size:1.25rem; color:#666; margin-top:-0.75rem; margin-bottom:0.25rem;">以在线游戏为载体</p>
+  <section class="course-home-path" aria-labelledby="course-home-path-title">
+    <header class="course-home-path-heading">
+      <span>LEARNING PATH</span>
+      <h2 id="course-home-path-title">从在线原型到云平台</h2>
+      <p>课程以系统规模增长为线索，每一阶段都由上一阶段暴露的工程问题推动。</p>
+    </header>
+    <div class="course-home-path-grid">
+      <article><span>01</span><h3>建立在线闭环</h3><p>从单机程序进入客户端—服务器架构，完成连接、消息、裁决与状态同步。</p></article>
+      <article><span>02</span><h3>提升单机能力</h3><p>通过 goroutine、同步机制、连接池和对象复用控制并发与尾延迟。</p></article>
+      <article><span>03</span><h3>扩展多机系统</h3><p>引入分片、路由、跨节点协同、复制与共识，处理容量和故障问题。</p></article>
+      <article><span>04</span><h3>交给平台治理</h3><p>使用容器与 Kubernetes 统一交付、调度、扩缩容和故障恢复。</p></article>
+    </div>
+  </section>
 
-<p style="font-size:0.9rem; color:#777; margin-top:0;">湖南大学云计算课程教材 · 在线阅读版</p>
-
-欢迎阅读《云计算原理与实践：以在线游戏为载体》在线电子书。
-
-本书不会枯燥地堆砌理论，而是用一款“玩法做减法、工程约束不打折”的在线对战游戏贯穿全篇。我们将带领读者从最基础的单机连接开始，一步步跨越并发瓶颈、拆分微服务、引入分布式协同，最终将游戏部署为拥有弹性伸缩能力的云原生集群。
-
-在这里，你不仅是在读一本书，更是在亲手搭建一座“兵工厂”。
-
-<br>
-
-## 目录
-
-> 点击下方章节标题即可快速跳转阅读。
-
-* **[第一章 谋定全局：在线系统与云计算](sec1.md)**
-    *探讨网络游戏到在线系统工程的演进，构建宏观架构蓝图。*
-* **[第二章 双雄对战：网络通信](sec2.md)**
-    *打破单机思维，引入 CS 架构，实现权威裁决与状态同步。*
-* **[第三章 英雄集结：单机并发](sec3.md)**
-    *引入高并发模型与锁机制，解决海量请求下的性能瓶颈。*
-* **[第四章 切分世界：分布式系统](sec4.md)**
-    *突破单机极限，多图多服架构拆分与分布式数据一致性权衡。*
-* **[第五章 飞升入定：云原生部署](sec5.md)**
-    *拥抱云原生，Docker 容器化、Kubernetes 集群编排与 Serverless 弹性伸缩。*
-* **[第六章 穷理尽微：云原生核心原理](sec6.md)**
-    *揭开底层引擎盖，深入探讨分布式网络通信与调优方案。*
-
----
-
-## 编者信息
-
-- **核心编者与架构设计：** [陈果](https://grzy.hnu.edu.cn/site/index/chenguo)、徐方林、胡文举、庞海鑫、谢先衍、贺臻、张道平
-- **所属单位：** 湖南大学 HNU GuoLab
-- **联系邮箱：** `guochen@hnu.edu.cn`、`xfl825@hnu.edu.cn`、`ashionial@hnu.edu.cn`
-
-## 版权与使用说明
-
-Copyright © 2026 GuoLab. All Rights Reserved.
-
-本项目中的文档、示例代码和架构图表均受版权保护。公开内容可用于个人学习、学术研究和非商业教育实践；未经书面许可，不得用于商业产品、付费课程、培训项目或商业出版物。完整条款请参阅 [LICENSE](https://github.com/HNU-CloudComputing/CloudComputingMarkdown/blob/main/LICENSE)。
+  <section class="course-home-section" aria-labelledby="course-home-chapters">
+    <header class="course-home-section-heading">
+      <span>COURSE READER</span>
+      <h2 id="course-home-chapters">课程内容</h2>
+      <p>按照课程进度逐章阅读；前言说明全书的教学主线，六章正文对应课程的核心知识结构。</p>
+    </header>
+    <div class="course-home-grid">
+      <a class="course-home-card" href="intro/">
+        <span class="course-home-index">导读</span>
+        <span class="course-home-card-copy"><strong>前言</strong><small>前言 · 网页阅读</small></span>
+        <span class="course-home-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="course-home-card" href="sec1/">
+        <span class="course-home-index">01</span>
+        <span class="course-home-card-copy"><strong>第一章 谋定全局：在线系统与云计算</strong><small>课程章节 · 网页阅读</small></span>
+        <span class="course-home-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="course-home-card" href="sec2/">
+        <span class="course-home-index">02</span>
+        <span class="course-home-card-copy"><strong>第二章 双雄对战：网络通信</strong><small>课程章节 · 网页阅读</small></span>
+        <span class="course-home-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="course-home-card" href="sec3/">
+        <span class="course-home-index">03</span>
+        <span class="course-home-card-copy"><strong>第三章 英雄集结：单机并发</strong><small>课程章节 · 网页阅读</small></span>
+        <span class="course-home-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="course-home-card" href="sec4/">
+        <span class="course-home-index">04</span>
+        <span class="course-home-card-copy"><strong>第四章 切分世界：分布式系统</strong><small>课程章节 · 网页阅读</small></span>
+        <span class="course-home-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="course-home-card" href="sec5/">
+        <span class="course-home-index">05</span>
+        <span class="course-home-card-copy"><strong>第五章 飞升入定：云原生部署</strong><small>课程章节 · 网页阅读</small></span>
+        <span class="course-home-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="course-home-card" href="sec6/">
+        <span class="course-home-index">06</span>
+        <span class="course-home-card-copy"><strong>第六章 穷理尽微：云原生核心原理</strong><small>课程章节 · 网页阅读</small></span>
+        <span class="course-home-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+  <section class="course-home-section course-home-section-compact" aria-labelledby="course-home-appendix">
+    <header class="course-home-section-heading">
+      <span>SUPPLEMENTARY MATERIAL</span>
+      <h2 id="course-home-appendix">附录</h2>
+    </header>
+    <div class="course-home-grid course-home-grid-appendix">
+      <a class="course-home-card" href="AppendixA/">
+        <span class="course-home-index">A</span>
+        <span class="course-home-card-copy"><strong>章节重难知识点索引</strong><small>补充材料 · 网页阅读</small></span>
+        <span class="course-home-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="course-home-card" href="AppendixB/">
+        <span class="course-home-index">B</span>
+        <span class="course-home-card-copy"><strong>配套实验与开源代码</strong><small>补充材料 · 网页阅读</small></span>
+        <span class="course-home-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+  <section class="course-home-information" aria-label="教材与版权信息">
+    <div class="course-home-editorial">
+      <span class="course-home-section-label">EDITORIAL TEAM</span>
+      <h2>编者信息</h2>
+      <dl>
+        <div><dt>核心编者与架构设计</dt><dd><a href="https://grzy.hnu.edu.cn/site/index/chenguo">陈果</a>、徐方林、胡文举、庞海鑫、谢先衍、贺臻、张道平</dd></div>
+        <div><dt>所属单位</dt><dd>湖南大学 HNU GuoLab</dd></div>
+        <div><dt>联系邮箱</dt><dd><a href="mailto:guochen@hnu.edu.cn">guochen@hnu.edu.cn</a>、<a href="mailto:xfl825@hnu.edu.cn">xfl825@hnu.edu.cn</a>、<a href="mailto:ashionial@hnu.edu.cn">ashionial@hnu.edu.cn</a></dd></div>
+      </dl>
+    </div>
+    <div class="course-home-license">
+      <span class="course-home-section-label">COPYRIGHT AND USE</span>
+      <h2>版权与使用说明</h2>
+      <p class="course-home-copyright">Copyright © 2026 GuoLab. All Rights Reserved.</p>
+      <p>本项目中的文档、示例代码和架构图表均受版权保护。公开内容可用于个人学习、学术研究和非商业教育实践；未经书面许可，不得用于商业产品、付费课程、培训项目或商业出版物。完整条款请参阅 <a href="https://github.com/HNU-CloudComputing/CloudComputingMarkdown/blob/main/LICENSE">LICENSE</a>。</p>
+    </div>
+  </section>
+</div>

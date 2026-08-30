@@ -14,6 +14,8 @@ BOOK_SUBTITLE = "以在线游戏为载体"
 BOOK_TITLE = f"{BOOK_MAIN_TITLE}：{BOOK_SUBTITLE}"
 LICENSE_URL = "https://github.com/HNU-CloudComputing/CloudComputingMarkdown/blob/main/LICENSE"
 FIGURE_PUBLIC_BASE = "https://hnu-cloudcomputing.github.io/CloudComputingMarkdown/"
+PDF_SITE_URL = "https://hnu-cloudcomputing.github.io/CloudComputingPDF/"
+COURSE_SITE_URL = "https://hnu-cloudcomputing.github.io/cloudcompute-pages/"
 
 def resolve_figure_src(src):
     """把构建输入中的相对图片路径转换为本站公开图片的绝对 URL。"""
@@ -262,39 +264,119 @@ def parse_structure():
 # 3. 动态更新 docs/index.md 与 mkdocs.yml 的 nav
 # ==========================================
 def update_index_and_nav(chapters, appendices):
-    index_content = f"# {BOOK_MAIN_TITLE}\n\n"
-    index_content += (
-        f'<p style="font-size:1.25rem; color:#666; margin-top:-0.75rem; '
-        f'margin-bottom:0.25rem;">{BOOK_SUBTITLE}</p>\n\n'
-    )
-    index_content += (
-        '<p style="font-size:0.9rem; color:#777; margin-top:0;">'
-        '湖南大学云计算课程教材 · 在线阅读版</p>\n\n'
-    )
-    index_content += "本书由 **GuoLab** 编写。以下为最新章节导航：\n\n"
-    index_content += "## 目录\n\n"
+    index_content = f"""---
+hide:
+  - navigation
+  - toc
+---
+
+<div class="course-home">
+  <section class="course-home-hero" aria-labelledby="course-home-title">
+    <div class="course-home-kicker">湖南大学 · 云计算课程教材</div>
+    <div class="course-home-hero-grid">
+      <div>
+        <h1 id="course-home-title">{BOOK_MAIN_TITLE}</h1>
+        <p class="course-home-subtitle">{BOOK_SUBTITLE}</p>
+        <p class="course-home-lead">以在线游戏为贯穿案例，从网络通信、单机并发和分布式协同逐步进入云原生部署与核心原理。</p>
+        <div class="course-home-actions">
+          <a class="course-home-button course-home-button-primary" href="{PDF_SITE_URL}">阅读 PDF 版</a>
+          <a class="course-home-button course-home-button-secondary" href="{COURSE_SITE_URL}">返回课程主页</a>
+        </div>
+      </div>
+      <dl class="course-home-meta">
+        <div><dt>课程性质</dt><dd>本科专业选修课</dd></div>
+        <div><dt>内容结构</dt><dd>前言 · 六章 · 两份附录</dd></div>
+        <div><dt>阅读方式</dt><dd>网页正文与配套 PDF</dd></div>
+        <div><dt>编写单位</dt><dd>湖南大学 HNU GuoLab</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="course-home-path" aria-labelledby="course-home-path-title">
+    <header class="course-home-path-heading">
+      <span>LEARNING PATH</span>
+      <h2 id="course-home-path-title">从在线原型到云平台</h2>
+      <p>课程以系统规模增长为线索，每一阶段都由上一阶段暴露的工程问题推动。</p>
+    </header>
+    <div class="course-home-path-grid">
+      <article><span>01</span><h3>建立在线闭环</h3><p>从单机程序进入客户端—服务器架构，完成连接、消息、裁决与状态同步。</p></article>
+      <article><span>02</span><h3>提升单机能力</h3><p>通过 goroutine、同步机制、连接池和对象复用控制并发与尾延迟。</p></article>
+      <article><span>03</span><h3>扩展多机系统</h3><p>引入分片、路由、跨节点协同、复制与共识，处理容量和故障问题。</p></article>
+      <article><span>04</span><h3>交给平台治理</h3><p>使用容器与 Kubernetes 统一交付、调度、扩缩容和故障恢复。</p></article>
+    </div>
+  </section>
+
+  <section class="course-home-section" aria-labelledby="course-home-chapters">
+    <header class="course-home-section-heading">
+      <span>COURSE READER</span>
+      <h2 id="course-home-chapters">课程内容</h2>
+      <p>按照课程进度逐章阅读；前言说明全书的教学主线，六章正文对应课程的核心知识结构。</p>
+    </header>
+    <div class="course-home-grid">
+"""
+
     for ch in chapters:
-        index_content += f"- [**{ch['full_title']}**]({ch['file']})\n"
-    
+        title = html.escape(ch["full_title"])
+        key = os.path.splitext(ch["file"])[0]
+        if "intro" in key.lower():
+            index_label = "导读"
+            meta = "前言"
+        else:
+            num_match = re.search(r'\d+', key)
+            index_label = f"{int(num_match.group(0)):02d}" if num_match else "章节"
+            meta = "课程章节"
+        index_content += f"""      <a class="course-home-card" href="{key}/">
+        <span class="course-home-index">{index_label}</span>
+        <span class="course-home-card-copy"><strong>{title}</strong><small>{meta} · 网页阅读</small></span>
+        <span class="course-home-arrow" aria-hidden="true">→</span>
+      </a>
+"""
+
+    index_content += """    </div>
+  </section>
+"""
+
     if appendices:
-        index_content += "\n## 附录\n\n"
+        index_content += """  <section class="course-home-section course-home-section-compact" aria-labelledby="course-home-appendix">
+    <header class="course-home-section-heading">
+      <span>SUPPLEMENTARY MATERIAL</span>
+      <h2 id="course-home-appendix">附录</h2>
+    </header>
+    <div class="course-home-grid course-home-grid-appendix">
+"""
         for ap in appendices:
-            index_content += f"- [**{ap['full_title']}**]({ap['file']})\n"
+            title = html.escape(ap["full_title"])
+            key = os.path.splitext(ap["file"])[0]
+            letter = key.replace("Appendix", "").replace("appendix", "") or "附录"
+            index_content += f"""      <a class="course-home-card" href="{key}/">
+        <span class="course-home-index">{html.escape(letter)}</span>
+        <span class="course-home-card-copy"><strong>{title}</strong><small>补充材料 · 网页阅读</small></span>
+        <span class="course-home-arrow" aria-hidden="true">→</span>
+      </a>
+"""
+        index_content += """    </div>
+  </section>
+"""
 
-    index_content += """
-
-## 编者信息
-
-- **核心编者与架构设计：** [陈果](https://grzy.hnu.edu.cn/site/index/chenguo)、徐方林、胡文举、庞海鑫、谢先衍、贺臻、张道平
-- **所属单位：** 湖南大学 HNU GuoLab
-- **联系邮箱：** `guochen@hnu.edu.cn`、`xfl825@hnu.edu.cn`、`ashionial@hnu.edu.cn`
-
-## 版权与使用说明
-
-Copyright © 2026 GuoLab. All Rights Reserved.
-
-本项目中的文档、示例代码和架构图表均受版权保护。公开内容可用于个人学习、学术研究和非商业教育实践；未经书面许可，不得用于商业产品、付费课程、培训项目或商业出版物。完整条款请参阅 [LICENSE]({license_url})。
-""".format(license_url=LICENSE_URL)
+    index_content += f"""  <section class="course-home-information" aria-label="教材与版权信息">
+    <div class="course-home-editorial">
+      <span class="course-home-section-label">EDITORIAL TEAM</span>
+      <h2>编者信息</h2>
+      <dl>
+        <div><dt>核心编者与架构设计</dt><dd><a href="https://grzy.hnu.edu.cn/site/index/chenguo">陈果</a>、徐方林、胡文举、庞海鑫、谢先衍、贺臻、张道平</dd></div>
+        <div><dt>所属单位</dt><dd>湖南大学 HNU GuoLab</dd></div>
+        <div><dt>联系邮箱</dt><dd><a href="mailto:guochen@hnu.edu.cn">guochen@hnu.edu.cn</a>、<a href="mailto:xfl825@hnu.edu.cn">xfl825@hnu.edu.cn</a>、<a href="mailto:ashionial@hnu.edu.cn">ashionial@hnu.edu.cn</a></dd></div>
+      </dl>
+    </div>
+    <div class="course-home-license">
+      <span class="course-home-section-label">COPYRIGHT AND USE</span>
+      <h2>版权与使用说明</h2>
+      <p class="course-home-copyright">Copyright © 2026 GuoLab. All Rights Reserved.</p>
+      <p>本项目中的文档、示例代码和架构图表均受版权保护。公开内容可用于个人学习、学术研究和非商业教育实践；未经书面许可，不得用于商业产品、付费课程、培训项目或商业出版物。完整条款请参阅 <a href="{LICENSE_URL}">LICENSE</a>。</p>
+    </div>
+  </section>
+</div>
+"""
             
     with open(os.path.join(DOCS_DIR, "index.md"), "w", encoding="utf-8") as f:
         f.write(index_content)

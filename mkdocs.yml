@@ -4,12 +4,22 @@ site_description: 《云计算原理与实践：以在线游戏为载体》在�
 theme:
   name: material
   language: zh
+  font: false
+  palette:
+    scheme: default
+    primary: custom
+    accent: custom
+  icon:
+    logo: material/school
   features:
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
+    - navigation.tracking
     - navigation.top
     - search.suggest
     - search.highlight
+    - content.code.copy
 
 markdown_extensions:
   - pymdownx.arithmatex:
@@ -22,3 +32,8 @@ markdown_extensions:
 extra_javascript:
   - javascripts/mathjax.js
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+extra_css:
+  - stylesheets/course.css
+
+copyright: Copyright © 2026 GuoLab. All Rights Reserved.
