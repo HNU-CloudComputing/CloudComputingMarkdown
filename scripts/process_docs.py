@@ -255,6 +255,25 @@ def restore_empty_figure_references(content, metadata):
 
     return EMPTY_FIGURE_REFERENCE_PATTERN.sub(replacer, content)
 
+def restore_cross_document_references(content):
+    """恢复按章独立转换时 Pandoc 无法解析的跨文件引用。"""
+    content = re.sub(
+        r'\[\s*\]\(#sec:chapter(\d+)\)',
+        lambda match: f'[{match.group(1)}](sec{match.group(1)}.md)',
+        content
+    )
+    content = re.sub(
+        r'\[\s*\]\(#sec:appendix-lab-guide\)',
+        '[B](AppendixB.md)',
+        content
+    )
+    content = re.sub(
+        r'\[\s*\]\(#tab:serverless-k8s-decision\)',
+        '[“Serverless 与 Kubernetes 的场景化决策参考”](sec5.md)',
+        content
+    )
+    return content
+
 # ==========================================
 # 1. 深度清洗 Markdown 文件
 # ==========================================
@@ -302,6 +321,7 @@ def process_markdown_file(filepath):
     content = re.sub(r'\s*\{=html\}', '', content)
     content = re.sub(r'\{reference-type="ref"[^\}]+\}', '', content)
     content = restore_empty_figure_references(content, figure_metadata)
+    content = restore_cross_document_references(content)
     content = re.sub(r'\[\s*\]\(#[^\)]+\)', '', content)
     content = re.sub(r'\[(fig|tab|sec):[^\]]+\]', '', content)
     content = re.sub(r'如图\s+所示', '如图所示', content)
@@ -372,6 +392,16 @@ def process_markdown_file(filepath):
             f"仍存在未恢复编号的空图引用：{filepath} "
             f"({len(remaining_empty_figure_refs)} 处；"
             f"首条原始内容={remaining_empty_figure_refs[0]!r})"
+        )
+
+    remaining_cross_document_refs = re.findall(
+        r'\[\s*\]\(#(?:sec|tab):[^\)]+\)',
+        content
+    )
+    if remaining_cross_document_refs:
+        raise ValueError(
+            f"仍存在未恢复的跨文件引用：{filepath} "
+            f"({len(remaining_cross_document_refs)} 处)"
         )
 
     with open(filepath, 'w', encoding='utf-8') as f:
