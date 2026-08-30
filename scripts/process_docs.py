@@ -16,6 +16,9 @@ LICENSE_URL = "https://github.com/HNU-CloudComputing/CloudComputingMarkdown/blob
 FIGURE_PUBLIC_BASE = "https://hnu-cloudcomputing.github.io/CloudComputingMarkdown/"
 PDF_SITE_URL = "https://hnu-cloudcomputing.github.io/CloudComputingPDF/"
 COURSE_SITE_URL = "https://hnu-cloudcomputing.github.io/cloudcompute-pages/"
+EMPTY_FIGURE_REFERENCE_PATTERN = re.compile(
+    r'\\?\[\s*\\?\]\s*\\?\(\s*\\?#fig:[^\n\)]+\\?\)'
+)
 
 def resolve_figure_src(src):
     """把构建输入中的相对图片路径转换为本站公开图片的绝对 URL。"""
@@ -199,15 +202,15 @@ def normalize_figures(content, metadata=None):
     content = html_figure.sub(html_figure_replacer, content)
 
     def empty_figure_reference_replacer(match):
-        label = match.group(1).replace("\\", "").strip()
+        normalized = match.group(0).replace("\\", "")
+        label_match = re.search(r'#([^\)]+)', normalized)
+        if not label_match:
+            return match.group(0)
+        label = label_match.group(1).strip()
         number = figure_numbers.get(label)
         return f'[{number}](#{label})' if number else match.group(0)
 
-    return re.sub(
-        r'\\?\[\s*\\?\]\s*\\?\(\s*\\?#([^\n\)]*?)\\?\)',
-        empty_figure_reference_replacer,
-        content
-    )
+    return EMPTY_FIGURE_REFERENCE_PATTERN.sub(empty_figure_reference_replacer, content)
 
 # ==========================================
 # 1. 深度清洗 Markdown 文件
@@ -318,10 +321,7 @@ def process_markdown_file(filepath):
             f"({source_heading_count} -> {processed_heading_count})"
         )
 
-    remaining_empty_figure_refs = re.findall(
-        r'\\?\[\s*\\?\]\s*\\?\(\s*\\?#fig:[^\n\)]+\\?\)',
-        content
-    )
+    remaining_empty_figure_refs = EMPTY_FIGURE_REFERENCE_PATTERN.findall(content)
     if remaining_empty_figure_refs:
         raise ValueError(
             f"仍存在未恢复编号的空图引用：{filepath} "
