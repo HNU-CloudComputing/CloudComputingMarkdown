@@ -4,15 +4,15 @@ hide:
   - toc        # 隐藏右侧大纲
 ---
 
-# ☁️ 云计算技术实践
+# ☁️ 云计算原理与实践：以在线游戏为载体
 
 <p align="center" style="font-size: 1.2rem; color: #666; margin-top: -10px;">
-  <b>云端创世：从一行代码到游戏纪元</b>
+  <b>在线阅读版</b>
 </p>
 
 ---
 
-欢迎来到《云计算技术实践》在线电子书。
+欢迎阅读《云计算原理与实践：以在线游戏为载体》在线电子书。
 
 本书不会枯燥地堆砌理论，而是用一款“玩法做减法、工程约束不打折”的在线对战游戏贯穿全篇。我们将带领读者从最基础的单机连接开始，一步步跨越并发瓶颈、拆分微服务、引入分布式协同，最终将游戏部署为拥有弹性伸缩能力的云原生集群。
 
@@ -38,6 +38,15 @@ hide:
     *揭开底层引擎盖，深入探讨分布式网络通信与调优方案。*
 
 ---
-<p align="center" style="font-size: 0.9rem; color: #999;">
-  <i>开始你的云端架构师之旅吧！</i><br>
-</p>
+
+## 编者信息
+
+- **核心编者与架构设计：** [陈果](https://grzy.hnu.edu.cn/site/index/chenguo)、徐方林、胡文举、庞海鑫、谢先衍、贺臻、张道平
+- **所属单位：** 湖南大学 HNU GuoLab
+- **联系邮箱：** `guochen@hnu.edu.cn`、`xfl825@hnu.edu.cn`、`ashionial@hnu.edu.cn`
+
+## 版权与使用说明
+
+Copyright © 2026 GuoLab. All Rights Reserved.
+
+本项目中的文档、示例代码和架构图表均受版权保护。公开内容可用于个人学习、学术研究和非商业教育实践；未经书面许可，不得用于商业产品、付费课程、培训项目或商业出版物。完整条款请参阅 [LICENSE](https://github.com/HNU-CloudComputing/CloudComputingMarkdown/blob/main/LICENSE)。

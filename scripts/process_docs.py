@@ -7,6 +7,8 @@ MAIN_TEX = os.path.join(CCBOOK_PATH, "main.tex")
 DOCS_DIR = "docs"
 MKDOCS_YML = "mkdocs.yml"
 TITLE_PATTERN = re.compile(r'\\(?:chapter|section)\*?\{([^}]+)\}')
+BOOK_TITLE = "云计算原理与实践：以在线游戏为载体"
+LICENSE_URL = "https://github.com/HNU-CloudComputing/CloudComputingMarkdown/blob/main/LICENSE"
 
 # ==========================================
 # 1. 深度清洗 Markdown 文件
@@ -14,6 +16,7 @@ TITLE_PATTERN = re.compile(r'\\(?:chapter|section)\*?\{([^}]+)\}')
 def process_markdown_file(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
+    source_heading_count = len(re.findall(r'^#{1,6}\s+', content, flags=re.MULTILINE))
 
     # 1. 修复被错误转义的双引号与反斜杠空格
     content = content.replace(r'\"', '"')
@@ -72,22 +75,39 @@ def process_markdown_file(filepath):
         return f"\n\n{match.group(1)}\n\n"
     content = re.sub(r'(^\|[^\n]*(?:\n\|[^\n]*)*)', table_padder, content, flags=re.MULTILINE)
 
-    # 8. 精准修复数学公式
-    content = content.replace(r'\$', '___ESCAPED_DOLLAR___')
-    def math_replacer(match):
-        block_math, inline_math = match.group(1), match.group(2)
-        if block_math is not None:
-            return f"\n\n$$\n{block_math.strip()}\n$$\n\n"
-        elif inline_math is not None:
-            cleaned = inline_math.strip().replace('\n', ' ')
-            cleaned = re.sub(r'\s+', ' ', cleaned)
+    # 8. 只在普通正文中修复数学公式，避免把代码里的 SQL 占位符（如 $1）
+    #    或 shell 变量误判为公式边界。行内公式不得跨行。
+    def normalize_math(text):
+        text = text.replace(r'\$', '___ESCAPED_DOLLAR___')
+
+        def block_math_replacer(match):
+            return f"\n\n$$\n{match.group(1).strip()}\n$$\n\n"
+
+        def inline_math_replacer(match):
+            cleaned = re.sub(r'\s+', ' ', match.group(1).strip())
             return f"${cleaned}$"
-    content = re.sub(r'\$\$(.*?)\$\$|\$([^\$]+?)\$', math_replacer, content, flags=re.DOTALL)
-    content = content.replace('___ESCAPED_DOLLAR___', r'\$')
+
+        text = re.sub(r'\$\$(.*?)\$\$', block_math_replacer, text, flags=re.DOTALL)
+        text = re.sub(r'(?<!\$)\$([^\n\$]+?)\$(?!\$)', inline_math_replacer, text)
+        return text.replace('___ESCAPED_DOLLAR___', r'\$')
+
+    fenced_code = re.compile(r'(^```[^\n]*\n.*?^```[ \t]*$)', flags=re.MULTILINE | re.DOTALL)
+    content_parts = fenced_code.split(content)
+    content = ''.join(
+        part if index % 2 else normalize_math(part)
+        for index, part in enumerate(content_parts)
+    )
 
     # 9. 修复图片路径与压缩空行
     content = content.replace("figures/figures/", "figures/")
     content = re.sub(r'\n{3,}', '\n\n', content)
+
+    processed_heading_count = len(re.findall(r'^#{1,6}\s+', content, flags=re.MULTILINE))
+    if processed_heading_count != source_heading_count:
+        raise ValueError(
+            f"标题数量在清洗过程中发生变化：{filepath} "
+            f"({source_heading_count} -> {processed_heading_count})"
+        )
 
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(content)
@@ -157,7 +177,7 @@ def parse_structure():
 # 3. 动态更新 docs/index.md 与 mkdocs.yml 的 nav
 # ==========================================
 def update_index_and_nav(chapters, appendices):
-    index_content = "# ☁️ 云计算技术实践课程在线文档\n\n"
+    index_content = f"# ☁️ {BOOK_TITLE}\n\n"
     index_content += "这是由 **GuoLab** 倾力编写的教科书在线阅读版。以下为最新章节导航：\n\n"
     index_content += "### 📖 章节目录\n\n"
     for ch in chapters:
@@ -167,6 +187,21 @@ def update_index_and_nav(chapters, appendices):
         index_content += "\n### 📑 附录内容\n\n"
         for ap in appendices:
             index_content += f"- [**{ap['full_title']}**]({ap['file']})\n"
+
+    index_content += """
+
+## 编者信息
+
+- **核心编者与架构设计：** [陈果](https://grzy.hnu.edu.cn/site/index/chenguo)、徐方林、胡文举、庞海鑫、谢先衍、贺臻、张道平
+- **所属单位：** 湖南大学 HNU GuoLab
+- **联系邮箱：** `guochen@hnu.edu.cn`、`xfl825@hnu.edu.cn`、`ashionial@hnu.edu.cn`
+
+## 版权与使用说明
+
+Copyright © 2026 GuoLab. All Rights Reserved.
+
+本项目中的文档、示例代码和架构图表均受版权保护。公开内容可用于个人学习、学术研究和非商业教育实践；未经书面许可，不得用于商业产品、付费课程、培训项目或商业出版物。完整条款请参阅 [LICENSE]({license_url})。
+""".format(license_url=LICENSE_URL)
             
     with open(os.path.join(DOCS_DIR, "index.md"), "w", encoding="utf-8") as f:
         f.write(index_content)

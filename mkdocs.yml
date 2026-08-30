@@ -1,5 +1,5 @@
-site_name: 云计算技术实践
-site_description: 云端创世：从一行代码到游戏纪元
+site_name: 云计算原理与实践：以在线游戏为载体
+site_description: 《云计算原理与实践：以在线游戏为载体》在线阅读版
 
 theme:
   name: material
