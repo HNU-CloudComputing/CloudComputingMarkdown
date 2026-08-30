@@ -523,7 +523,6 @@ hide:
         <p class="course-home-lead">以在线游戏为贯穿案例，从网络通信、单机并发和分布式协同逐步进入云原生部署与核心原理。</p>
         <dl class="course-home-meta">
           <div><dt>课程性质</dt><dd>本科专业选修课</dd></div>
-          <div><dt>阅读方式</dt><dd>网页正文与配套 PDF</dd></div>
           <div><dt>编写单位</dt><dd>湖南大学计算机学院 GuoLab 团队</dd></div>
         </dl>
         <div class="course-home-actions">
@@ -532,20 +531,6 @@ hide:
           <a class="course-home-text-link" href="{COURSE_SITE_URL}">返回课程主页 →</a>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section class="course-home-path" aria-labelledby="course-home-path-title">
-    <header class="course-home-path-heading">
-      <span>LEARNING PATH</span>
-      <h2 id="course-home-path-title">从在线原型到云平台</h2>
-      <p>课程以系统规模增长为线索，每一阶段都由上一阶段暴露的工程问题推动。</p>
-    </header>
-    <div class="course-home-path-grid">
-      <article><span>01</span><h3>建立在线闭环</h3><p>从单机程序进入客户端—服务器架构，完成连接、消息、裁决与状态同步。</p></article>
-      <article><span>02</span><h3>提升单机能力</h3><p>通过 goroutine、同步机制、连接池和对象复用控制并发与尾延迟。</p></article>
-      <article><span>03</span><h3>扩展多机系统</h3><p>引入分片、路由、跨节点协同、复制与共识，处理容量和故障问题。</p></article>
-      <article><span>04</span><h3>交给平台治理</h3><p>使用容器与 Kubernetes 统一交付、调度、扩缩容和故障恢复。</p></article>
     </div>
   </section>
 
