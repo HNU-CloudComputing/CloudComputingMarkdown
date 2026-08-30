@@ -199,12 +199,12 @@ def normalize_figures(content, metadata=None):
     content = html_figure.sub(html_figure_replacer, content)
 
     def empty_figure_reference_replacer(match):
-        label = match.group(1)
+        label = match.group(1).replace("\\", "").strip()
         number = figure_numbers.get(label)
         return f'[{number}](#{label})' if number else match.group(0)
 
     return re.sub(
-        r'\\?\[\s*\\?\]\s*\\?\(\s*\\?#([^\)\\]+)\\?\)',
+        r'\\?\[\s*\\?\]\s*\\?\(\s*\\?#([^\n\)]*?)\\?\)',
         empty_figure_reference_replacer,
         content
     )
