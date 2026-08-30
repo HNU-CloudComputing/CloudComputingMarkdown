@@ -21,6 +21,11 @@ EMPTY_FIGURE_REFERENCE_PATTERN = re.compile(
     r'\\?\[\s*\\?\]\s*\\?\(\s*\\?#fig:[^\n\)]+\\?\)'
 )
 
+def extract_figure_label(text):
+    """从带 Pandoc 转义或附加属性的字符串中提取规范 figure label。"""
+    match = re.search(r'fig(?:\\?:)[A-Za-z0-9_:\\-]+', text)
+    return match.group(0).replace("\\", "") if match else ""
+
 def resolve_figure_src(src):
     """把构建输入中的相对图片路径转换为本站公开图片的绝对 URL。"""
     src = html.unescape(src.strip())
@@ -206,11 +211,9 @@ def normalize_figures(content, metadata=None):
     content = html_figure.sub(html_figure_replacer, content)
 
     def empty_figure_reference_replacer(match):
-        normalized = match.group(0).replace("\\", "")
-        label_match = re.search(r'#([^\)]+)', normalized)
-        if not label_match:
+        label = extract_figure_label(match.group(0))
+        if not label:
             return match.group(0)
-        label = label_match.group(1).strip()
         number = figure_numbers.get(label)
         if not number and label in by_label:
             number = by_label[label].get("number")
@@ -241,11 +244,9 @@ def restore_empty_figure_references(content, metadata):
     }
 
     def replacer(match):
-        normalized = match.group(0).replace("\\", "")
-        label_match = re.search(r'#([^\)]+)', normalized)
-        if not label_match:
+        label = extract_figure_label(match.group(0))
+        if not label:
             return match.group(0)
-        label = label_match.group(1).strip()
         item = by_label.get(label)
         number = html_numbers.get(label)
         if not number and item:
