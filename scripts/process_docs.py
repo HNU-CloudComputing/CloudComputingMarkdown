@@ -328,6 +328,7 @@ def process_markdown_file(filepath):
     content = re.sub(r'\{width=[^\}]+\}', '', content)
     content = re.sub(r'\s*\{=html\}', '', content)
     content = re.sub(r'\{reference-type="ref"[^\}]+\}', '', content)
+    content = content.replace(r'[\](', '[](').replace(r'\[\](', '[](')
     content = restore_empty_figure_references(content, figure_metadata)
     content = restore_cross_document_references(content)
     content = re.sub(r'\[\s*\]\(#[^\)]+\)', '', content)
